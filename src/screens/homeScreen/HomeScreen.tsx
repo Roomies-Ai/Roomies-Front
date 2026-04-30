@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../src/api/client';
+import apiClient from '../../api/Axios';
 
 interface GoogleUser {
     name: string;

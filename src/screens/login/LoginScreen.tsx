@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLoginScreen } from './useLoginScreen';
+import LoginToggle from './components/loginToggle/LoginToggle';
 
 const LoginScreen: React.FC = () => {
-    const navigate = useNavigate();
-    const [authType, setAuthType] = useState<'login' | 'signup'>('login');
-    const [showPassword, setShowPassword] = useState(false);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Redirect to home for now to simulate successful login
-        navigate('/home');
-    };
+    const {
+        authType,
+        showPassword,
+        handleSubmit,
+        toggleAuthType,
+        toggleShowPassword
+    } = useLoginScreen();
 
     return (
         <div className="max-w-5000 mx-auto bg-background-light dark:bg-background-dark text-charcoal dark:text-white overflow-x-hidden min-h-screen transition-colors duration-200">
@@ -39,25 +37,7 @@ const LoginScreen: React.FC = () => {
 
                 {/* Main Card Section (Overlapping the header) */}
                 <div className="relative -mt-8 flex-1 w-full bg-white dark:bg-background-dark rounded-t-[32px] px-6 py-8 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:shadow-none transition-colors duration-200">
-                    {/* Auth Toggle (Segmented Buttons) */}
-                    <div className="mb-8">
-                        <div className="flex h-12 w-full items-center justify-center rounded-full bg-input-bg dark:bg-[#1f2b36] p-1.5">
-                            <label
-                                className={`group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 transition-all duration-200 ${authType === 'login' ? 'bg-white dark:bg-[#2c3b4a] shadow-[0_2px_8px_rgba(0,0,0,0.08)]' : ''}`}
-                                onClick={() => setAuthType('login')}
-                            >
-                                <span className={`truncate text-sm font-bold ${authType === 'login' ? 'text-charcoal dark:text-white' : 'text-medium-gray dark:text-[#94a3b8]'}`}>Log In</span>
-                                <input checked={authType === 'login'} className="invisible w-0 h-0 absolute" name="auth_type" type="radio" value="login" readOnly />
-                            </label>
-                            <label
-                                className={`group flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 transition-all duration-200 ${authType === 'signup' ? 'bg-white dark:bg-[#2c3b4a] shadow-[0_2px_8px_rgba(0,0,0,0.08)]' : ''}`}
-                                onClick={() => setAuthType('signup')}
-                            >
-                                <span className={`truncate text-sm font-bold ${authType === 'signup' ? 'text-charcoal dark:text-white' : 'text-medium-gray dark:text-[#94a3b8]'}`}>Sign Up</span>
-                                <input checked={authType === 'signup'} className="invisible w-0 h-0 absolute" name="auth_type" type="radio" value="signup" readOnly />
-                            </label>
-                        </div>
-                    </div>
+                    <LoginToggle authType={authType} onToggle={toggleAuthType} />
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         {/* Email Field */}
@@ -82,7 +62,7 @@ const LoginScreen: React.FC = () => {
                                 />
                                 <div
                                     className="pr-6 text-medium-gray hover:text-primary transition-colors flex items-center justify-center cursor-pointer"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={toggleShowPassword}
                                 >
                                     <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>
                                         {showPassword ? 'visibility' : 'visibility_off'}
