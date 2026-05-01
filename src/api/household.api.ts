@@ -1,0 +1,21 @@
+import apiClient from './Axios';
+import type { Household, CreateHouseholdRequest, JoinHouseholdRequest } from '../types/household';
+
+export const householdApi = {
+    getMyHouseholds: async (): Promise<Household[]> => {
+        const response = await apiClient.get<Household[]>('/households/me');
+        return response.data;
+    },
+    createHousehold: async (data: CreateHouseholdRequest): Promise<Household> => {
+        const response = await apiClient.post<Household>('/households', data);
+        return response.data;
+    },
+    joinHousehold: async (data: JoinHouseholdRequest): Promise<Household> => {
+        const response = await apiClient.post<Household>('/households/join', data);
+        return response.data;
+    },
+    generateInviteCode: async (id: string): Promise<{ inviteCode: string }> => {
+        const response = await apiClient.post<{ inviteCode: string }>(`/households/${id}/invites`);
+        return response.data;
+    }
+};
