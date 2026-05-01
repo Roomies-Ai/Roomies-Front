@@ -21,7 +21,7 @@ export const useLoginScreen = () => {
 
                 dispatch(setCredentials({ user: mockUser, token: mockToken }));
                 dispatch(setLoading(false));
-                navigate('/home');
+                navigate('/households');
             }, 1000);
         } catch (err: any) {
             dispatch(setError(err.message || 'Authentication failed'));
