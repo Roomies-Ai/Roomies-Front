@@ -7,6 +7,7 @@ import { useCreateHousehold } from './hooks/useCreateHousehold';
 import Step1Name from './components/Step1Name';
 import Step2Type from './components/Step2Type';
 import Step3Pets from './components/Step3Pets';
+import Step4Tasks from './components/Step4Tasks';
 
 const CreateHouseholdScreen: React.FC = () => {
     const {
@@ -21,18 +22,24 @@ const CreateHouseholdScreen: React.FC = () => {
         setNewPetName,
         newPetKind,
         setNewPetKind,
+        suggestedTasks,
+        isGeneratingTasks,
         isLoading,
         isFetchingTypes,
         error,
         handleAddPet,
         handleRemovePet,
-        handleCreate,
+        handleToggleTask,
+        handleUpdateTask,
+        handleFinish,
         nextStep,
-        prevStep
+        prevStep,
+        handleAddManualTask,
+        handleRemoveTask
     } = useCreateHousehold();
 
     return (
-        <div className="min-h-[80vh] flex flex-col p-6 overflow-hidden">
+        <div className="min-h-[80vh] flex flex-col p-6 overflow-hidden max-w-2xl mx-auto w-full">
             {/* Header / Navigation */}
             <div className="flex justify-between items-center mb-8">
                 <button 
@@ -42,7 +49,7 @@ const CreateHouseholdScreen: React.FC = () => {
                     <ChevronLeft size={24} />
                 </button>
                 <div className="flex gap-1.5">
-                    {[1, 2, 3].map((s) => (
+                    {[1, 2, 3, 4].map((s) => (
                         <div 
                             key={s} 
                             className={`h-1.5 rounded-full transition-all duration-500 ${
@@ -79,9 +86,21 @@ const CreateHouseholdScreen: React.FC = () => {
                         setNewPetKind={setNewPetKind}
                         onAddPet={handleAddPet}
                         onRemovePet={handleRemovePet}
-                        onCreate={handleCreate}
+                        onCreate={nextStep}
                         isLoading={isLoading}
                         error={error}
+                    />
+                )}
+                {step === 4 && (
+                    <Step4Tasks 
+                        tasks={suggestedTasks}
+                        isGenerating={isGeneratingTasks}
+                        onToggleTask={handleToggleTask}
+                        onUpdateTask={handleUpdateTask}
+                        onAddTask={handleAddManualTask}
+                        onRemoveTask={handleRemoveTask}
+                        onFinish={handleFinish}
+                        isLoading={isLoading}
                     />
                 )}
             </AnimatePresence>
