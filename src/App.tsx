@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginScreen from './screens/login/LoginScreen';
 import HomeScreen from './screens/homeScreen/HomeScreen';
+import HouseHolds from './screens/houseHolds/HouseHolds';
 import NewTaskScreen from './screens/tasks/NewTaskScreen';
 import Layout from './components/layout/Layout';
 import { useAppSelector } from './store/hooks';
@@ -26,7 +27,7 @@ const App = () => {
                     <LoginScreen />
                 </PublicRoute>
             } />
-            
+
             {/* Authenticated Routes */}
             <Route element={
                 <ProtectedRoute>
@@ -39,6 +40,7 @@ const App = () => {
                 <Route path="/ai" element={<HomeScreen />} />
                 <Route path="/roomies" element={<HomeScreen />} />
                 <Route path="/profile" element={<HomeScreen />} />
+                <Route path="/households" element={<HouseHolds />} />
             </Route>
 
             <Route path="/" element={<Navigate to={"/home"} />} />
