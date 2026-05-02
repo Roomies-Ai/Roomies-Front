@@ -1,4 +1,4 @@
-import { Minus, Plus, Star } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 
 import type { PointsControlProps } from './Step4.types';
 
@@ -12,8 +12,7 @@ const PointsControl: React.FC<PointsControlProps> = ({ points, onChange }) => {
                 <Minus size={14} strokeWidth={2.5} />
             </button>
             
-            <div className="flex items-center gap-1.5 min-w-[60px] justify-center">
-                <Star size={12} className="fill-yellow-400 text-yellow-400" />
+            <div className="flex items-center gap-1 min-w-[50px] justify-center">
                 <input 
                     type="number"
                     min="1"

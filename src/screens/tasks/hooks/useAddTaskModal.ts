@@ -11,16 +11,17 @@ export const useAddTaskModal = ({
     onUpdate, 
     onDelete, 
     onRefresh, 
-    taskToEdit 
+    taskToEdit,
+    lockedHouseholdId
 }: AddTaskModalProps) => {
-    const [selectedHousehold, setSelectedHousehold] = useState('');
+    const [selectedHousehold, setSelectedHousehold] = useState(lockedHouseholdId || '');
     const [mode, setMode] = useState<'MANUAL' | 'AI'>('MANUAL');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [points, setPoints] = useState(5);
     const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
     const [selectedTaskType, setSelectedTaskType] = useState<string | number | null>(null);
-    const [dueDate, setDueDate] = useState<string>('');
+    const [dueDate, setDueDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [isAddingType, setIsAddingType] = useState(false);
     const [newTypeName, setNewTypeName] = useState('');
     const [isCreatingType, setIsCreatingType] = useState(false);
@@ -31,10 +32,14 @@ export const useAddTaskModal = ({
     const activeHousehold = households.find(h => h.id === selectedHousehold);
 
     useEffect(() => {
+        if (lockedHouseholdId) {
+            setSelectedHousehold(lockedHouseholdId);
+            return;
+        }
         if (households.length > 0 && !selectedHousehold) {
             setSelectedHousehold(households[0].id);
         }
-    }, [households, selectedHousehold]);
+    }, [households, selectedHousehold, lockedHouseholdId]);
 
     useEffect(() => {
         if (taskToEdit && isOpen) {
@@ -125,9 +130,11 @@ export const useAddTaskModal = ({
         setIsParsing(true);
         try {
             const data = await taskApi.parseTelegram(selectedHousehold, aiMessage);
+            const today = new Date().toISOString().split('T')[0];
             const sanitized = data.map((s: any) => ({
                 ...s,
                 description: s.description || s.title || 'Task generated via AI',
+                dueDate: s.dueDate || today,
                 isApproved: true
             }));
             setSuggestions(sanitized);
@@ -157,7 +164,7 @@ export const useAddTaskModal = ({
         setPoints(5);
         setSelectedAssignee(null);
         setSelectedTaskType(null);
-        setDueDate('');
+        setDueDate(new Date().toISOString().split('T')[0]);
         setAiMessage('');
         setSuggestions([]);
         onClose();

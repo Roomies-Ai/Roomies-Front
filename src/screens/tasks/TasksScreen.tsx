@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Loader2, ClipboardCheck, Sparkles, Home, ChevronRight, ChevronDown, User, Users } from 'lucide-react';
+import { Plus, Loader2, ClipboardCheck, Sparkles, Home, ChevronDown, User, Users } from 'lucide-react';
 import Header from '../../components/layout/Header';
 import { useTasks } from './hooks/useTasks';
 import TaskItem from './components/TaskItem';

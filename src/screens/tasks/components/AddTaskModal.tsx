@@ -66,7 +66,7 @@ const AddTaskModal = (props: AddTaskModalProps) => {
                             </button>
                         </div>
 
-                        {!taskToEdit && (
+                        {!taskToEdit && !props.lockedHouseholdId && (
                             <HouseholdSelector 
                                 households={households} 
                                 selectedHousehold={selectedHousehold} 
@@ -101,6 +101,7 @@ const AddTaskModal = (props: AddTaskModalProps) => {
                                 suggestions={suggestions} setSuggestions={setSuggestions}
                                 handleToggleSuggestion={handleToggleSuggestion}
                                 handleConfirmAi={handleConfirmAi}
+                                activeHousehold={activeHousehold}
                             />
                         )}
                     </div>

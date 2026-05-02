@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import type { TaskCardProps } from '../HouseholdDetail.types';
 import TaskIcon from './ui/TaskIcon';
@@ -5,7 +6,7 @@ import MemberAvatar from './ui/MemberAvatar';
 import PointsBadge from './ui/PointsBadge';
 import { Calendar } from 'lucide-react';
 
-const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsClick, formatRelativeDate, idx }: TaskCardProps) => {
+const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsClick, onEdit, idx }: TaskCardProps) => {
     const isMyTask = String(task.assignee?.id) === String(currentUser?.id || currentUser?.userId);
     const isPending = task.status?.toLowerCase() === 'pending';
     const isCompleted = task.status?.toLowerCase() === 'completed';
@@ -17,7 +18,8 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ delay: idx * 0.05 }}
-            className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col gap-6"
+            onClick={() => onEdit?.(task)}
+            className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col gap-6 cursor-pointer hover:border-primary/20 hover:shadow-md transition-all group"
         >
             <div className="flex justify-between items-start">
                 <div className="flex gap-4 flex-1 min-w-0">
@@ -44,7 +46,10 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
 
             <div className="flex justify-between items-center">
                 <button 
-                    onClick={() => onAssignClick(task.id)}
+                    onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        onAssignClick(task.id);
+                    }}
                     className="flex items-center gap-3 hover:bg-slate-50 p-2 -ml-2 rounded-2xl transition-colors"
                 >
                     <MemberAvatar username={task.assignee?.username} />
@@ -58,7 +63,7 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
                         <motion.button 
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation();
                                 onUpdateStatus(task.id, task.status);
                             }}
@@ -72,7 +77,10 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
                         </motion.button>
                         <PointsBadge 
                             points={task.points || 0} 
-                            onClick={() => onPointsClick(task.id, task.points || 0)}
+                            onClick={(e: React.MouseEvent) => {
+                                e.stopPropagation();
+                                onPointsClick(task.id, task.points || 0);
+                            }}
                             interactive={isPending}
                         />
                     </div>
