@@ -20,5 +20,12 @@ export const taskApi = {
     getFairnessSuggestions: async (taskId: string): Promise<any[]> => {
         const response = await apiClient.get(`/tasks/${taskId}/fairness-suggestions`);
         return response.data;
+    },
+    parseTelegram: async (householdId: string, message: string): Promise<any[]> => {
+        const response = await apiClient.post('/tasks/telegram/parse', { householdId, message });
+        return response.data;
+    },
+    deleteTask: async (id: string): Promise<void> => {
+        await apiClient.delete(`/tasks/${id}`);
     }
 };
