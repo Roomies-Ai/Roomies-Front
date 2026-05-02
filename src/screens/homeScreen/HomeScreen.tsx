@@ -119,7 +119,7 @@ const HomeScreen = () => {
                         </div>
 
                         {/* 2. FIXED FOOTER (Buttons) - Always at the bottom of the content area */}
-                        <div className="mt-auto shrink-0 flex flex-col items-center pb-2 pt-6 bg-white z-20 border-t border-gray-50 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+                        <div className="mt-auto shrink-0 flex flex-col items-center pb-2 pt-6 bg-white z-20 border-t border-gray-50 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] fixed top-[77%] left-0 right-0 z-50">
                             <motion.button 
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
@@ -142,7 +142,7 @@ const HomeScreen = () => {
             </div>
             
             {/* Functional Spacer for Bottom Nav - Prevents overlapping */}
-            <div className="h-[0px] shrink-0 bg-white"></div>
+            <div className="h-[80px] shrink-0 bg-white"></div>
         </div>
     );
 };
