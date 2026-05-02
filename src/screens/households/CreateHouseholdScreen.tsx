@@ -1,4 +1,3 @@
-import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import { useCreateHousehold } from './hooks/useCreateHousehold';

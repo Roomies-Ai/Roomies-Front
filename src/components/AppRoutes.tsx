@@ -4,6 +4,7 @@ import HomeScreen from '../screens/homeScreen/HomeScreen';
 import NewTaskScreen from '../screens/tasks/NewTaskScreen';
 import CreateHouseholdScreen from '../screens/households/CreateHouseholdScreen';
 import JoinHouseholdScreen from '../screens/households/JoinHouseholdScreen';
+import HouseholdDetailScreen from '../screens/households/HouseholdDetailScreen';
 import Layout from './layout/Layout';
 import type { AppRoutesProps } from '../types/AppRoutes.types';
 
@@ -21,6 +22,7 @@ const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => (
                 : <Navigate to="/login" replace />
         }>
             <Route path="/home" element={<HomeScreen />} />
+            <Route path="/households/:id" element={<HouseholdDetailScreen />} />
             <Route path="/households/new" element={<CreateHouseholdScreen />} />
             <Route path="/households/join" element={<JoinHouseholdScreen />} />
             <Route path="/tasks" element={<HomeScreen />} />
