@@ -1,9 +1,7 @@
-import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Home, CheckCircle2, BarChart3, Settings } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-const Layout: React.FC = () => {
+const Layout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
