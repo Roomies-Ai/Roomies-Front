@@ -1,0 +1,89 @@
+export interface HouseholdHeaderProps {
+    currentUser: any;
+    onBack: () => void;
+    searchQuery: string;
+    setSearchQuery: (val: string) => void;
+}
+
+export interface HouseholdInfoProps {
+    name: string;
+    inviteCode: string;
+}
+
+export interface FairnessBalanceProps {
+    members: any[];
+    currentUser: any;
+    getMemberStats: (memberId: string) => { taskCount: number, points: number };
+}
+
+export interface TaskFiltersProps {
+    activeTab: 'OPEN' | 'IN_PROGRESS' | 'DONE';
+    setActiveTab: (tab: 'OPEN' | 'IN_PROGRESS' | 'DONE') => void;
+    counts: {
+        open: number;
+        inProgress: number;
+        done: number;
+    };
+}
+
+export interface TaskCardProps {
+    task: any;
+    currentUser: any;
+    onUpdateStatus: (taskId: string, status: string) => void;
+    onAssignClick: (taskId: string) => void;
+    onPointsClick: (taskId: string, points: number) => void;
+    formatRelativeDate: (date: string) => string;
+    idx: number;
+}
+
+export interface AssignmentModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    household: any;
+    assigningTaskId: string | null;
+    currentUser: any;
+    handleAssignTask: (taskId: string, memberId: string | null) => void;
+    handleGetSuggestion: () => void;
+    isSuggesting: boolean;
+    suggestion: any;
+}
+
+export interface PointsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    taskTitle: string;
+    pointsValue: number;
+    setPointsValue: (val: number | ((prev: number) => number)) => void;
+    onSave: () => void;
+}
+
+export interface TaskIconProps {
+    title: string;
+    size?: number;
+}
+
+export interface MemberAvatarProps {
+    username: string;
+    size?: string;
+    border?: boolean;
+}
+
+export interface PointsBadgeProps {
+    points: number;
+    onClick?: () => void;
+    interactive?: boolean;
+}
+
+export interface AISuggestionCardProps {
+    suggestion: {
+        username: string;
+        reason: string;
+    };
+}
+
+export interface MemberAssignmentItemProps {
+    member: any;
+    isSuggested: boolean;
+    isMe: boolean;
+    onClick: () => void;
+}
