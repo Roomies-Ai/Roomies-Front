@@ -8,6 +8,14 @@ export interface HouseholdHeaderProps {
 export interface HouseholdInfoProps {
     name: string;
     inviteCode: string;
+    onLeave?: () => void;
+}
+
+export interface LeaveHouseholdModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    householdName: string;
 }
 
 export interface FairnessBalanceProps {
@@ -32,6 +40,7 @@ export interface TaskCardProps {
     onUpdateStatus: (taskId: string, status: string) => void;
     onAssignClick: (taskId: string) => void;
     onPointsClick: (taskId: string, points: number) => void;
+    onEdit?: (task: any) => void;
     formatRelativeDate: (date: string) => string;
     idx: number;
 }
@@ -70,7 +79,7 @@ export interface MemberAvatarProps {
 
 export interface PointsBadgeProps {
     points: number;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent) => void;
     interactive?: boolean;
 }
 
