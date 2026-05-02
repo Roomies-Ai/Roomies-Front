@@ -11,7 +11,7 @@ const AddTaskButton: React.FC<AddTaskButtonProps> = ({ onClick }) => {
             <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-accent group-hover:text-white transition-all">
                 <Plus size={18} />
             </div>
-            Add Custom Mission
+            Add Custom Task
         </button>
     );
 };
