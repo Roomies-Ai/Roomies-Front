@@ -11,6 +11,8 @@ export interface Household {
 
 export interface CreateHouseholdRequest {
     name: string;
+    houseTypeId?: string;
+    pets?: { name: string; kind: string }[];
 }
 
 export interface JoinHouseholdRequest {

@@ -17,5 +17,9 @@ export const householdApi = {
     generateInviteCode: async (id: string): Promise<{ inviteCode: string }> => {
         const response = await apiClient.post<{ inviteCode: string }>(`/households/${id}/invites`);
         return response.data;
+    },
+    addPet: async (id: string, data: { name: string; kind: string }): Promise<any> => {
+        const response = await apiClient.post(`/households/${id}/pets`, data);
+        return response.data;
     }
 };
