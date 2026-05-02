@@ -20,16 +20,17 @@ export const useLoginScreen = () => {
 
         try {
             const data = { email, password };
-            const response = authType === 'login' 
+            const response = authType === 'login'
                 ? await authApi.login(data)
                 : await authApi.register(data);
 
-            dispatch(setCredentials({ 
-                user: response.user, 
-                token: response.accessToken 
+            dispatch(setCredentials({
+                user: response.user,
+                token: response.accessToken
             }));
-            
+
             navigate('/home');
+
         } catch (err: any) {
             const message = err.response?.data?.message || err.message || 'Authentication failed';
             dispatch(setError(message));
@@ -51,9 +52,9 @@ export const useLoginScreen = () => {
             dispatch(setLoading(true));
             try {
                 const response = await authApi.googleLogin(tokenResponse.access_token);
-                dispatch(setCredentials({ 
-                    user: response.user, 
-                    token: response.accessToken 
+                dispatch(setCredentials({
+                    user: response.user,
+                    token: response.accessToken
                 }));
                 navigate('/home');
             } catch (err: any) {
