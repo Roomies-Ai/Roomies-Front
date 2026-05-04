@@ -6,6 +6,10 @@ export const householdApi = {
         const response = await apiClient.get<Household[]>('/households/me');
         return response.data;
     },
+    getHouseholdById: async (id: string): Promise<Household> => {
+        const response = await apiClient.get<Household>(`/households/${id}`);
+        return response.data;
+    },
     createHousehold: async (data: CreateHouseholdRequest): Promise<Household> => {
         const response = await apiClient.post<Household>('/households', data);
         return response.data;

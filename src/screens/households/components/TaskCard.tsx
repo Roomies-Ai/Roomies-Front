@@ -1,0 +1,82 @@
+import { motion } from 'framer-motion';
+import type { TaskCardProps } from '../HouseholdDetail.types';
+import TaskIcon from './ui/TaskIcon';
+import MemberAvatar from './ui/MemberAvatar';
+import PointsBadge from './ui/PointsBadge';
+
+const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsClick, formatRelativeDate, idx }: TaskCardProps) => {
+    const isMyTask = String(task.assignee?.id) === String(currentUser?.id || currentUser?.userId);
+    const isPending = task.status?.toLowerCase() === 'pending';
+    const isCompleted = task.status?.toLowerCase() === 'completed';
+    
+    return (
+        <motion.div 
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ delay: idx * 0.05 }}
+            className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col gap-6"
+        >
+            <div className="flex justify-between items-start">
+                <div className="flex gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-[#3B95EA]">
+                        <TaskIcon title={task.title} size={24} />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-black text-slate-900 mb-1">{task.title}</h3>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                                {task.taskType?.name || 'General'}
+                            </span>
+                            <span className="text-slate-300">•</span>
+                            <span className={`text-[10px] font-black uppercase tracking-wider ${
+                                isCompleted ? 'text-green-500' : 'text-orange-500'
+                            }`}>
+                                {isCompleted ? 'Completed' : formatRelativeDate(task.createdAt)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <PointsBadge 
+                    points={task.points || 0} 
+                    onClick={() => onPointsClick(task.id, task.points || 0)}
+                    interactive={isPending}
+                />
+            </div>
+
+            <div className="flex justify-between items-center">
+                <button 
+                    onClick={() => onAssignClick(task.id)}
+                    className="flex items-center gap-3 hover:bg-slate-50 p-2 -ml-2 rounded-2xl transition-colors"
+                >
+                    <MemberAvatar username={task.assignee?.username} />
+                    <span className="text-sm font-bold text-slate-500">
+                        {task.assignee ? `Assigned to ${isMyTask ? 'You' : task.assignee.username}` : 'Unassigned'}
+                    </span>
+                </button>
+                
+                {(task.assignee || isCompleted) && (
+                    <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onUpdateStatus(task.id, task.status);
+                        }}
+                        className={`px-6 py-2.5 rounded-2xl font-black text-sm transition-all ${
+                            isCompleted 
+                            ? 'bg-slate-100 text-[#3B95EA] border border-[#3B95EA]/20' 
+                            : 'bg-[#3B95EA] text-white shadow-lg shadow-[#3B95EA]/20'
+                        }`}
+                    >
+                        {isCompleted ? 'Reopen' : 'Mark Done'}
+                    </motion.button>
+                )}
+            </div>
+        </motion.div>
+    );
+};
+
+export default TaskCard;

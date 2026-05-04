@@ -12,5 +12,13 @@ export const taskApi = {
             tasks 
         });
         return response.data;
+    },
+    updateTask: async (id: string, data: any): Promise<any> => {
+        const response = await apiClient.patch(`/tasks/${id}`, data);
+        return response.data;
+    },
+    getFairnessSuggestions: async (taskId: string): Promise<any[]> => {
+        const response = await apiClient.get(`/tasks/${taskId}/fairness-suggestions`);
+        return response.data;
     }
 };
