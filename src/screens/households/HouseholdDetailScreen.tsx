@@ -10,6 +10,8 @@ import TaskFilters from './components/TaskFilters';
 import TaskCard from './components/TaskCard';
 import AssignmentModal from './components/AssignmentModal';
 import PointsModal from './components/PointsModal';
+import LeaveHouseholdModal from './components/LeaveHouseholdModal';
+import AddTaskModal from '../tasks/components/AddTaskModal';
 
 const HouseholdDetailScreen = () => {
     const {
@@ -31,10 +33,23 @@ const HouseholdDetailScreen = () => {
         isSuggesting,
         suggestion,
         setSuggestion,
+        isLeaveModalOpen,
+        setIsLeaveModalOpen,
         handleGetSuggestion,
         handleUpdatePoints,
         handleUpdateTaskStatus,
         handleAssignTask,
+        handleLeaveHousehold,
+        handleConfirmLeave,
+        handleAddTask,
+        handleUpdateTask,
+        handleDeleteTask,
+        isAddTaskModalOpen,
+        setIsAddTaskModalOpen,
+        taskToEdit,
+        setTaskToEdit,
+        allHouseholds,
+        refresh,
         formatRelativeDate,
         getMemberStats,
         filteredTasks,
@@ -73,6 +88,7 @@ const HouseholdDetailScreen = () => {
                 <HouseholdInfo 
                     name={household.name} 
                     inviteCode={household.inviteCode} 
+                    onLeave={handleLeaveHousehold}
                 />
 
                 <FairnessBalance 
@@ -101,6 +117,7 @@ const HouseholdDetailScreen = () => {
                                 onUpdateStatus={handleUpdateTaskStatus} 
                                 onAssignClick={(tid) => { setAssigningTaskId(tid); setSuggestion(null); }}
                                 onPointsClick={(tid, pts) => { setEditingPointsTaskId(tid); setPointsValue(pts); }}
+                                onEdit={(t) => { setTaskToEdit(t); setIsAddTaskModalOpen(true); }}
                                 formatRelativeDate={formatRelativeDate}
                                 idx={idx}
                             />
@@ -139,10 +156,29 @@ const HouseholdDetailScreen = () => {
                 onSave={() => handleUpdatePoints(editingPointsTaskId!, pointsValue)} 
             />
 
+            <LeaveHouseholdModal 
+                isOpen={isLeaveModalOpen}
+                onClose={() => setIsLeaveModalOpen(false)}
+                onConfirm={handleConfirmLeave}
+                householdName={household.name}
+            />
+
+            <AddTaskModal 
+                isOpen={isAddTaskModalOpen}
+                onClose={() => { setIsAddTaskModalOpen(false); setTaskToEdit(null); }}
+                households={allHouseholds}
+                onAdd={handleAddTask}
+                onUpdate={handleUpdateTask}
+                onDelete={handleDeleteTask}
+                onRefresh={refresh}
+                taskToEdit={taskToEdit}
+                lockedHouseholdId={household.id}
+            />
+
             <motion.button 
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => navigate('/tasks/new')}
+                onClick={() => setIsAddTaskModalOpen(true)}
                 className="fixed bottom-32 right-6 w-16 h-16 bg-[#3B95EA] text-white rounded-full shadow-lg shadow-[#3B95EA]/40 flex items-center justify-center z-50 border-4 border-white"
             >
                 <Plus size={32} strokeWidth={3} />

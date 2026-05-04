@@ -67,10 +67,24 @@ export const useCreateHousehold = () => {
             const suggestions = await taskApi.generateSuggestions({
                 name,
                 houseType: selectedType,
-                pets
+                pets,
+                taskTypes: [
+                    { name: 'General' },
+                    { name: 'Cooking' },
+                    { name: 'Cleaning' },
+                    { name: 'Groceries' },
+                    { name: 'Maintenance' },
+                    { name: 'Trash/Recycling' },
+                    { name: 'Laundry' }
+                ]
             });
 
-            setSuggestedTasks(suggestions.map(t => ({ ...t, approved: true })));
+            const today = new Date().toISOString().split('T')[0];
+            setSuggestedTasks(suggestions.map(t => ({ 
+                ...t, 
+                approved: true,
+                dueDate: t.dueDate || today
+            })));
         } catch (err: any) {
             setError('Failed to generate suggestions. You can still add tasks manually.');
             setStep(4); // Still move forward so they can add manual tasks
@@ -100,6 +114,8 @@ export const useCreateHousehold = () => {
                 description: 'Describe what needs to be done',
                 points: 3,
                 status: 'pending',
+                taskType: 'General',
+                dueDate: new Date().toISOString().split('T')[0],
                 approved: true,
                 isCustom: true
             }
@@ -123,7 +139,14 @@ export const useCreateHousehold = () => {
             });
 
             // 2. Bulk create approved tasks for the new household
-            const approvedTasks = suggestedTasks.filter(t => t.approved);
+            const today = new Date().toISOString().split('T')[0];
+            const approvedTasks = suggestedTasks
+                .filter(t => t.approved)
+                .map(t => ({
+                    ...t,
+                    dueDate: t.dueDate || today
+                }));
+
             if (approvedTasks.length > 0) {
                 await taskApi.bulkCreate(household.id, approvedTasks);
             }

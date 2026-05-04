@@ -1,5 +1,6 @@
 import apiClient from './Axios';
 import type { SuggestedTask } from '../types/task';
+export type { SuggestedTask };
 
 export const taskApi = {
     generateSuggestions: async (household: any): Promise<SuggestedTask[]> => {

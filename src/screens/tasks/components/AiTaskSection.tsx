@@ -7,7 +7,8 @@ const AiTaskSection = ({
     isParsing, handleAiParse,
     suggestions, setSuggestions,
     handleToggleSuggestion,
-    handleConfirmAi
+    handleConfirmAi,
+    activeHousehold
 }: AiTaskSectionProps) => {
     return (
         <div className="space-y-4">
@@ -25,6 +26,7 @@ const AiTaskSection = ({
                     setSuggestions={setSuggestions}
                     setAiMessage={setAiMessage}
                     handleConfirmAi={handleConfirmAi}
+                    activeHousehold={activeHousehold}
                 />
             )}
         </div>

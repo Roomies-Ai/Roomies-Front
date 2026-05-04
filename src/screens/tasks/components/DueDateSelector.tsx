@@ -9,10 +9,22 @@ const DueDateSelector = ({ dueDate, setDueDate }: DueDateSelectorProps) => (
             </div>
             <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Due Date</p>
-                <p className="text-xs font-bold text-slate-900">Completion deadline</p>
+                <p className="text-xs font-bold text-slate-900">
+                    {dueDate 
+                        ? new Date(dueDate).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                        : 'Completion deadline'
+                    }
+                </p>
             </div>
         </div>
-        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required className="font-black text-slate-900 bg-white px-3 py-2 rounded-xl shadow-sm border border-slate-100 outline-none text-xs" />
+        <input 
+            type="date" 
+            value={dueDate} 
+            onChange={(e) => setDueDate(e.target.value)} 
+            required 
+            min={new Date().toISOString().split('T')[0]}
+            className="font-black text-slate-900 bg-white px-3 py-2 rounded-xl shadow-sm border border-slate-100 outline-none text-xs" 
+        />
     </div>
 );
 

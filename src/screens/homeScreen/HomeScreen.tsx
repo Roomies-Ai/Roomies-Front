@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Header from '../../components/layout/Header';
 import { Plus, PlusCircle, Home, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -89,7 +89,6 @@ const HomeScreen = () => {
                                                         <p className="text-medium-gray text-sm font-bold">Roomies Member</p>
                                                     </div>
                                                 </div>
-                                                <Plus size={20} className="text-gray-300 rotate-45" />
                                             </motion.div>
                                         ))}
                                     </div>

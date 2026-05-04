@@ -9,6 +9,7 @@ export interface AddTaskModalProps {
     onDelete?: (taskId: string) => void;
     onRefresh?: () => void;
     taskToEdit?: Task;
+    lockedHouseholdId?: string;
 }
 
 export interface ManualTaskFormProps {
@@ -45,6 +46,7 @@ export interface AiTaskSectionProps {
     setSuggestions: (val: any[] | ((prev: any[]) => any[])) => void;
     handleToggleSuggestion: (index: number) => void;
     handleConfirmAi: () => void;
+    activeHousehold?: any;
 }
 
 export interface HouseholdSelectorProps {
@@ -99,4 +101,37 @@ export interface AiTaskSuggestionsListProps {
     setSuggestions: (val: any[] | ((prev: any[]) => any[])) => void;
     setAiMessage: (val: string) => void;
     handleConfirmAi: () => void;
+    activeHousehold?: any;
+}
+
+export interface SuggestionItemProps {
+    s: any;
+    i: number;
+    suggestions: any[];
+    setSuggestions: (val: any[] | ((prev: any[]) => any[])) => void;
+    handleToggleSuggestion: (index: number) => void;
+    activeHousehold?: any;
+}
+
+export interface AiTaskAssigneeDropdownProps {
+    suggestion: any;
+    index: number;
+    suggestions: any[];
+    setSuggestions: (val: any[] | ((prev: any[]) => any[])) => void;
+    activeHousehold?: any;
+}
+
+export interface AiTaskTypeDropdownProps {
+    suggestion: any;
+    index: number;
+    suggestions: any[];
+    setSuggestions: (val: any[] | ((prev: any[]) => any[])) => void;
+    activeHousehold?: any;
+}
+
+export interface AiTaskDateDropdownProps {
+    suggestion: any;
+    index: number;
+    suggestions: any[];
+    setSuggestions: (val: any[] | ((prev: any[]) => any[])) => void;
 }
