@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Search, X } from 'lucide-react';
+import { Bell, Search, X, Send } from 'lucide-react';
 import { useAppSelector } from '../../store/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -12,6 +12,15 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good Morning';
+        if (hour < 15) return 'Good Noon';
+        if (hour < 18) return 'Good Afternoon';
+        if (hour < 21) return 'Good Evening';
+        return 'Good Night';
+    };
+
     return (
         <header className="px-6 pt-10 pb-4 fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md">
             <div className="flex justify-between items-center bg-transparent max-w-4xl mx-auto">
@@ -22,19 +31,19 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
-                            className="flex items-center justify-between w-full"
+                            className="flex items-center gap-4 w-full"
                         >
-                            <div>
-                                <p className="text-medium-gray text-sm font-medium">Good Morning,</p>
-                                <h1 className="text-charcoal text-2xl font-black tracking-tight">Welcome, {user?.username || 'Guest'}!</h1>
-                            </div>
                             <div className="relative">
                                 <img 
                                     src={user?.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
                                     alt="Profile" 
-                                    className="w-14 h-14 rounded-full object-cover ring-4 ring-white shadow-premium-sm"
+                                    className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-premium-sm"
                                 />
-                                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-4 border-white rounded-full"></div>
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                            </div>
+                            <div>
+                                <p className="text-medium-gray text-[10px] font-bold uppercase tracking-wider">{getGreeting()},</p>
+                                <h1 className="text-charcoal text-xl font-black tracking-tight">{user?.username || 'Guest'}!</h1>
                             </div>
                         </motion.div>
                     ) : (
@@ -73,6 +82,16 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                                 <Search size={20} />
                             </button>
                         )}
+                        <a 
+                            href="https://t.me/RoomiesUserNameBot" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="p-3 bg-white rounded-2xl text-[#229ED9] hover:bg-gray-50 transition-all shadow-premium-sm active:scale-95 flex items-center justify-center"
+                            title="Telegram Bot"
+                        >
+                            <Send size={20} />
+                        </a>
+
                         <div className="relative">
                             <button 
                                 onClick={() => setShowNotifications(!showNotifications)}

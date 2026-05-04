@@ -43,8 +43,7 @@ const TasksScreen = () => {
     };
 
     return (
-        <div className="bg-[#F8FAFC] min-h-screen flex flex-col pt-24 pb-32">
-            <Header showActions={false} />
+        <div className="bg-[#F8FAFC] min-h-screen flex flex-col pt-0 pb-32">
 
             <main className="flex-1 px-8 py-6 w-full max-w-4xl mx-auto">
                 <div className="flex flex-col gap-8 mb-10">

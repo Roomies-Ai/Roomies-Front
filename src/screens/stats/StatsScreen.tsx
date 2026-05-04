@@ -171,21 +171,19 @@ const StatsScreen = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
-            {/* Header */}
-            <div className="p-8 bg-white border-b border-slate-100 rounded-b-[3rem] shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Analytics</h1>
-                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Household Insights</p>
-                    </div>
-                    <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-primary">
-                        <BarChart3 size={28} strokeWidth={2.5} />
-                    </div>
+        <div className="flex flex-col bg-[#F8FAFC] pb-24 px-6">
+            <div className="py-6 flex items-center justify-between">
+                <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Analytics</h2>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Household Insights</p>
                 </div>
+                <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-primary">
+                    <BarChart3 size={24} strokeWidth={2.5} />
+                </div>
+            </div>
 
-                {households.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            {households.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-6 no-scrollbar">
                         {households.map(h => (
                             <button
                                 key={h.id}
@@ -201,9 +199,7 @@ const StatsScreen = () => {
                         ))}
                     </div>
                 )}
-            </div>
-
-            <div className="p-6 flex flex-col gap-6">
+            <div className="flex flex-col gap-6">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                         <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />

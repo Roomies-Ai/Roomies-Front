@@ -30,9 +30,7 @@ const HomeScreen = () => {
     }, []);
 
     return (
-        <div className="bg-white h-[100vh] flex flex-col pt-24 overflow-hidden relative">
-            <Header showActions={false} />
-
+        <div className="bg-white h-[100vh] flex flex-col pt-0 overflow-hidden relative">
             {/* MAIN CONTENT AREA */}
             <div className="flex-1 flex flex-col overflow-hidden px-8 w-full max-w-4xl mx-auto">
                 {loading ? (
