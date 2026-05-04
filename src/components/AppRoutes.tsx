@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginScreen from '../screens/login/LoginScreen';
 import HomeScreen from '../screens/homeScreen/HomeScreen';
 import NewTaskScreen from '../screens/tasks/NewTaskScreen';
+import TasksScreen from '../screens/tasks/TasksScreen';
 import CreateHouseholdScreen from '../screens/households/CreateHouseholdScreen';
 import JoinHouseholdScreen from '../screens/households/JoinHouseholdScreen';
 import HouseholdDetailScreen from '../screens/households/HouseholdDetailScreen';
@@ -25,7 +26,7 @@ const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => (
             <Route path="/households/:id" element={<HouseholdDetailScreen />} />
             <Route path="/households/new" element={<CreateHouseholdScreen />} />
             <Route path="/households/join" element={<JoinHouseholdScreen />} />
-            <Route path="/tasks" element={<HomeScreen />} />
+            <Route path="/tasks" element={<TasksScreen />} />
             <Route path="/tasks/new" element={<NewTaskScreen />} />
             <Route path="/ai" element={<HomeScreen />} />
             <Route path="/roomies" element={<HomeScreen />} />

@@ -25,5 +25,12 @@ export const householdApi = {
     addPet: async (id: string, data: { name: string; kind: string }): Promise<any> => {
         const response = await apiClient.post(`/households/${id}/pets`, data);
         return response.data;
+    },
+    addTaskType: async (id: string, name: string): Promise<any> => {
+        const response = await apiClient.post(`/households/${id}/task-types`, { name });
+        return response.data;
+    },
+    leaveHousehold: async (householdId: string, userId: string): Promise<void> => {
+        await apiClient.delete(`/households/${householdId}/users/${userId}`);
     }
 };
