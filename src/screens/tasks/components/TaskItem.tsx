@@ -1,9 +1,10 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import type { TaskItemProps } from './TaskItem.types';
 import TaskItemHeader from './TaskItemHeader';
 import TaskItemFooter from './TaskItemFooter';
 
-const TaskItem = ({ task, onToggle, onEdit, showComplete = true }: TaskItemProps) => {
+const TaskItem = React.memo(({ task, onToggle, onEdit, showComplete = true }: TaskItemProps) => {
     const isCompleted = task.status?.toLowerCase() === 'completed';
     const isProgress = task.status?.toLowerCase() === 'in-progress';
 
@@ -30,7 +31,7 @@ const TaskItem = ({ task, onToggle, onEdit, showComplete = true }: TaskItemProps
             <TaskItemFooter task={task} />
         </motion.div>
     );
-};
+});
 
 export default TaskItem;
 

@@ -1,4 +1,4 @@
-import type { Task } from "./TaskItem.types";
+import type { Task } from '../types/tasks.types';
 
 export interface AddTaskModalProps {
     isOpen: boolean;

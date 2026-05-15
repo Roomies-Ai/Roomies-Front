@@ -1,20 +1,4 @@
-export interface Task {
-    id: string;
-    title: string;
-    description?: string;
-    status: string;
-    points: number;
-    dueDate?: string;
-    createdAt: string;
-    assignee?: {
-        id: string | number;
-        username: string;
-    };
-    taskType?: {
-        id: string | number;
-        name: string;
-    };
-}
+import type { Task } from '../types/tasks.types';
 
 export interface TaskItemProps {
     task: Task;
