@@ -4,6 +4,8 @@ export interface Household {
     inviteCode?: string;
     members?: any[];
     tasks?: any[];
+    taskTypes?: any[];
+    pets?: any[];
     houseType?: any;
     createdAt: string;
     updatedAt: string;
