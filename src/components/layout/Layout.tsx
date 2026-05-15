@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, CheckCircle2, BarChart3, Settings } from 'lucide-react';
+import { Home, CheckCircle2, BarChart3, User } from 'lucide-react';
 import Header from './Header';
 
 const Layout = () => {
@@ -10,7 +10,7 @@ const Layout = () => {
         { icon: Home, path: '/home', label: 'Home' },
         { icon: CheckCircle2, path: '/tasks', label: 'Tasks' },
         { icon: BarChart3, path: '/stats', label: 'Stats' },
-        { icon: Settings, path: '/settings', label: 'Settings' },
+        { icon: User, path: '/profile', label: 'Profile' },
     ];
 
     return (
