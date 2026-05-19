@@ -14,6 +14,10 @@ export const taskApi = {
         });
         return response.data;
     },
+    getMyTasks: async (): Promise<any[]> => {
+        const response = await apiClient.get('/tasks/me');
+        return response.data;
+    },
     updateTask: async (id: string, data: any): Promise<any> => {
         const response = await apiClient.patch(`/tasks/${id}`, data);
         return response.data;

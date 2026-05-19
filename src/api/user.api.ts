@@ -8,5 +8,17 @@ export const userApi = {
     updateMe: async (data: any) => {
         const response = await apiClient.patch('/users/me', data);
         return response.data;
+    },
+    changePassword: async (passwords: any) => {
+        const response = await apiClient.patch('/users/me/password', passwords);
+        return response.data;
+    },
+    updatePreferredTasks: async (taskTypeIds: string[]) => {
+        const response = await apiClient.patch('/users/me/preferred-tasks', { taskTypeIds });
+        return response.data;
+    },
+    getAvailableTaskTypes: async () => {
+        const response = await apiClient.get('/users/me/available-tasks');
+        return response.data;
     }
 };

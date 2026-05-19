@@ -1,153 +1,89 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAppSelector } from '../../../store/hooks';
 import { householdApi } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
+import { useTaskActions } from './useTaskActions';
+import type { HouseholdTasks, TaskFilter } from '../types/tasks.types';
 
 export const useTasks = () => {
     const currentUser = useAppSelector((state) => state.auth.user);
-    const [households, setHouseholds] = useState<any[]>([]);
+    const [households, setHouseholds] = useState<HouseholdTasks[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [filter, setFilter] = useState<'ME' | 'ALL'>('ME');
+    const [filter, setFilter] = useState<TaskFilter>('ME');
 
-    const fetchData = async (isSilent = false) => {
+    const [loadingHouseholds, setLoadingHouseholds] = useState<Record<string, boolean>>({});
+
+    const fetchData = useCallback(async (isSilent = false) => {
         try {
             if (!isSilent) setLoading(true);
-            const data = await householdApi.getMyHouseholds();
-            setHouseholds(data);
+            
+            if (filter === 'ME') {
+                // Optimized: Fetch ONLY tasks assigned to ME across all households
+                const [householdsList, myTasks] = await Promise.all([
+                    householdApi.getMyHouseholds(false), // Just names and IDs
+                    taskApi.getMyTasks()
+                ]);
+
+                // Map tasks to their respective households
+                const householdsWithMyTasks = householdsList.map(h => {
+                    const filteredTasks = myTasks.filter(t => t.household?.id === h.id);
+                    return {
+                        ...h,
+                        tasks: filteredTasks,
+                        taskCount: filteredTasks.length, // Show count of MY tasks in this mode
+                        members: h.members || [], 
+                        taskTypes: h.taskTypes || []
+                    };
+                }).filter(h => h.tasks.length > 0);
+
+                setHouseholds(householdsWithMyTasks);
+            } else {
+                // ALL Tasks: Load household list first, tasks will be lazy-loaded on expansion
+                const list = await householdApi.getMyHouseholds(false);
+                setHouseholds(list.map(h => ({ ...h, tasks: h.tasks || [] })));
+            }
         } catch (err: any) {
             setError(err.message || 'Failed to fetch tasks');
         } finally {
             setLoading(false);
         }
+    }, [filter]);
+
+    const fetchHouseholdTasks = async (householdId: string) => {
+        try {
+            // Check if already loaded to avoid redundant calls
+            const current = households.find(h => h.id === householdId);
+            if (current && ((current.members?.length ?? 0) > 0 || (current.taskTypes?.length ?? 0) > 0)) return;
+
+            setLoadingHouseholds(prev => ({ ...prev, [householdId]: true }));
+            const full = await householdApi.getHouseholdById(householdId);
+            setHouseholds(prev => prev.map(h => 
+                h.id === householdId ? { ...h, ...full } : h
+            ));
+        } catch (err) {
+            console.error(`Failed to lazy load tasks for household ${householdId}:`, err);
+        } finally {
+            setLoadingHouseholds(prev => ({ ...prev, [householdId]: false }));
+        }
     };
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [fetchData]);
 
     const filteredHouseholds = useMemo(() => {
-        return households.map(h => ({
-            ...h,
-            tasks: h.tasks?.filter((t: any) => {
-                if (filter === 'ALL') return true;
-                return String(t.assignee?.id) === String(currentUser?.id || currentUser?.userId);
-            }) || []
-        })).filter(h => h.tasks.length > 0);
-    }, [households, currentUser, filter]);
+        if (filter === 'ME') return households; 
+        return households; 
+    }, [households, filter]);
 
-    const handleUpdateTaskStatus = async (taskId: string, currentStatus: string) => {
-        const nextStatus = currentStatus?.toLowerCase() === 'completed' ? 'in-progress' : 'completed';
-        
-        // Optimistic Update
-        setHouseholds(prev => prev.map(h => ({
-            ...h,
-            tasks: h.tasks?.map((t: any) => 
-                t.id === taskId ? { ...t, status: nextStatus } : t
-            )
-        })));
-
-        try {
-            await taskApi.updateTask(taskId, { status: nextStatus });
-        } catch (err) {
-            console.error('Failed to update task:', err);
-            await fetchData(true);
-        }
-    };
-
-    const handleUpdateTask = async (taskId: string, updates: any) => {
-        // If assignee is being changed, and it's not null, auto-set to in-progress
-        if ('assignee' in updates && updates.assignee && !updates.status) {
-            updates.status = 'in-progress';
-        }
-
-        // Optimistic Update
-        setHouseholds(prev => prev.map(h => ({
-            ...h,
-            tasks: h.tasks?.map((t: any) => {
-                if (t.id === taskId) {
-                    // Resolve assignee object if it's a string ID/username
-                    let resolvedAssignee = t.assignee;
-                    if (updates.assignee !== undefined) {
-                        resolvedAssignee = h.members?.find((m: any) => m.username === updates.assignee || m.id === updates.assignee) || null;
-                    }
-
-                    // Resolve taskType object if it's a string ID
-                    let resolvedTaskType = t.taskType;
-                    if (updates.taskType !== undefined) {
-                        resolvedTaskType = h.taskTypes?.find((tt: any) => tt.id === updates.taskType || tt.name === updates.taskType) || t.taskType;
-                    }
-
-                    return { 
-                        ...t, 
-                        ...updates, 
-                        assignee: resolvedAssignee,
-                        taskType: resolvedTaskType 
-                    };
-                }
-                return t;
-            })
-        })));
-
-        try {
-            await taskApi.updateTask(taskId, updates);
-            await fetchData(true); // Get fresh data from server
-        } catch (err) {
-            console.error('Failed to update task:', err);
-            await fetchData(true);
-        }
-    };
-
-    const handleAddTask = async (householdId: string, taskData: any) => {
-        // Optimistic Update
-        const tempTasks = Array.isArray(taskData) ? taskData : [taskData];
-        const optimisticTasks = tempTasks.map(t => ({
-            ...t,
-            id: `temp-${Math.random()}`,
-            status: t.status || 'pending',
-            assignee: typeof t.assignee === 'string' 
-                ? households.find(h => h.id === householdId)?.members?.find((m: any) => m.username === t.assignee) 
-                : t.assignee
-        }));
-
-        setHouseholds(prev => prev.map(h => {
-            if (h.id === householdId) {
-                return {
-                    ...h,
-                    tasks: [...(h.tasks || []), ...optimisticTasks]
-                };
-            }
-            return h;
-        }));
-
-        try {
-            if (Array.isArray(taskData)) {
-                await taskApi.bulkCreate(householdId, taskData);
-            } else {
-                await taskApi.bulkCreate(householdId, [taskData]);
-            }
-            await fetchData(true); // Silent refresh to get real IDs
-        } catch (err) {
-            console.error('Failed to add task:', err);
-            fetchData(true); // Rollback on error
-        }
-    };
-
-    const handleDeleteTask = async (taskId: string) => {
-        // Optimistic Update
-        setHouseholds(prev => prev.map(h => ({
-            ...h,
-            tasks: h.tasks?.filter((t: any) => t.id !== taskId)
-        })));
-
-        try {
-            await taskApi.deleteTask(taskId);
-            await fetchData(true);
-        } catch (err) {
-            console.error('Failed to delete task:', err);
-            await fetchData(true);
-        }
-    };
+    // Hook separation: Actions are managed in a dedicated sub-hook
+    const {
+        handleUpdateTaskStatus,
+        handleUpdateTask,
+        handleAddTask,
+        handleDeleteTask
+    } = useTaskActions({ setHouseholds, refresh: fetchData });
 
     return {
         currentUser,
@@ -155,11 +91,13 @@ export const useTasks = () => {
         filter,
         setFilter,
         loading,
+        loadingHouseholds,
         error,
         handleUpdateTaskStatus,
         handleUpdateTask,
         handleAddTask,
         handleDeleteTask,
+        fetchHouseholdTasks,
         refresh: fetchData,
         allHouseholds: households
     };

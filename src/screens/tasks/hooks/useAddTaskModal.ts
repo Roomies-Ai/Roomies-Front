@@ -28,8 +28,7 @@ export const useAddTaskModal = ({
     const [aiMessage, setAiMessage] = useState('');
     const [isParsing, setIsParsing] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
-
-    const activeHousehold = households.find(h => h.id === selectedHousehold);
+    const [activeHouseholdDetail, setActiveHouseholdDetail] = useState<any>(null);
 
     useEffect(() => {
         if (lockedHouseholdId) {
@@ -40,6 +39,31 @@ export const useAddTaskModal = ({
             setSelectedHousehold(households[0].id);
         }
     }, [households, selectedHousehold, lockedHouseholdId]);
+
+    useEffect(() => {
+        const fetchActiveDetail = async () => {
+            if (!selectedHousehold) return;
+            const inList = households.find(h => h.id === selectedHousehold);
+            
+            // If we have full data in the list, use it
+            if (inList && inList.members && inList.taskTypes) {
+                setActiveHouseholdDetail(inList);
+                return;
+            }
+
+            // Otherwise fetch it
+            try {
+                const full = await householdApi.getHouseholdById(selectedHousehold);
+                setActiveHouseholdDetail(full);
+            } catch (err) {
+                console.error('Failed to fetch active household detail', err);
+            }
+        };
+
+        fetchActiveDetail();
+    }, [selectedHousehold, households]);
+
+    const activeHousehold = activeHouseholdDetail;
 
     useEffect(() => {
         if (taskToEdit && isOpen) {
@@ -74,7 +98,8 @@ export const useAddTaskModal = ({
                 setSelectedAssignee(null);
                 const generalType = activeHousehold?.taskTypes?.find((tt: any) => tt.name.toLowerCase() === 'general');
                 setSelectedTaskType(generalType?.id || null);
-                setDueDate('');
+                const today = new Date().toISOString().split('T')[0];
+                setDueDate(today);
                 setIsAddingType(false);
                 setNewTypeName('');
             }

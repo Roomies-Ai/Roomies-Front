@@ -7,6 +7,7 @@ import CreateHouseholdScreen from '../screens/households/CreateHouseholdScreen';
 import JoinHouseholdScreen from '../screens/households/JoinHouseholdScreen';
 import StatsScreen from '../screens/stats/StatsScreen';
 import HouseholdDetailScreen from '../screens/households/HouseholdDetailScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 import Layout from './layout/Layout';
 import type { AppRoutesProps } from '../types/AppRoutes.types';
 
@@ -32,7 +33,7 @@ const AppRoutes = ({ isAuthenticated }: AppRoutesProps) => (
             <Route path="/stats" element={<StatsScreen />} />
             <Route path="/ai" element={<HomeScreen />} />
             <Route path="/roomies" element={<HomeScreen />} />
-            <Route path="/profile" element={<HomeScreen />} />
+            <Route path="/profile" element={<ProfileScreen />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/home" />} />

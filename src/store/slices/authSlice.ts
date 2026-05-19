@@ -32,12 +32,22 @@ const authSlice = createSlice({
       action: PayloadAction<{ user: any; token: string }>
     ) => {
       const { user, token } = action.payload;
-      state.user = user;
+      
+      // Cleanup circular refs
+      const cleanUser = { ...user };
+      if (cleanUser.preferredTaskTypes) {
+        cleanUser.preferredTaskTypes = cleanUser.preferredTaskTypes.map((t: any) => ({
+          id: t.id,
+          name: t.name
+        }));
+      }
+      
+      state.user = cleanUser;
       state.token = token;
       state.isAuthenticated = true;
       state.error = null;
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(cleanUser));
     },
     logout: (state) => {
       state.user = null;
@@ -46,6 +56,25 @@ const authSlice = createSlice({
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     },
+    setUser: (state, action: PayloadAction<any>) => {
+      // Create a clean copy to avoid circular references (User -> TaskType -> User)
+      const cleanUser = { ...action.payload };
+      if (cleanUser.preferredTaskTypes) {
+        cleanUser.preferredTaskTypes = cleanUser.preferredTaskTypes.map((t: any) => ({
+          id: t.id,
+          name: t.name
+        }));
+      }
+      if (cleanUser.households) {
+        cleanUser.households = cleanUser.households.map((h: any) => ({
+            id: h.id,
+            name: h.name
+        }));
+      }
+      
+      state.user = cleanUser;
+      localStorage.setItem('user', JSON.stringify(cleanUser));
+    },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
       state.loading = false;
@@ -53,6 +82,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoading, setCredentials, logout, setError } = authSlice.actions;
+export const { setLoading, setCredentials, logout, setUser, setError } = authSlice.actions;
 
 export default authSlice.reducer;

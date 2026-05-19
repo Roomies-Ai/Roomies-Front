@@ -2,8 +2,8 @@ import apiClient from './Axios';
 import type { Household, CreateHouseholdRequest, JoinHouseholdRequest } from '../types/household';
 
 export const householdApi = {
-    getMyHouseholds: async (): Promise<Household[]> => {
-        const response = await apiClient.get<Household[]>('/households/me');
+    getMyHouseholds: async (full = false): Promise<Household[]> => {
+        const response = await apiClient.get<Household[]>(`/households/me${full ? '?full=true' : ''}`);
         return response.data;
     },
     getHouseholdById: async (id: string): Promise<Household> => {
