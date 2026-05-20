@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { statsApi } from '../../../api/stats.api';
 import { householdApi } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
@@ -16,7 +16,7 @@ export const useStats = () => {
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [selectedEntity, setSelectedEntity] = useState<SelectedEntity | null>(null);
 
-    const loadStats = async (isBackground = false) => {
+    const loadStats = useCallback(async (isBackground = false) => {
         if (!selectedHousehold) return;
         if (!isBackground) setLoading(true);
 
@@ -32,7 +32,7 @@ export const useStats = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedHousehold]);
 
     useEffect(() => {
         const loadHouseholds = async () => {
@@ -49,7 +49,7 @@ export const useStats = () => {
 
     useEffect(() => {
         loadStats();
-    }, [selectedHousehold]);
+    }, [loadStats]);
 
     const activeHousehold = activeHouseholdDetail;
 
@@ -171,7 +171,7 @@ export const useStats = () => {
         return { statusData: mStatusData, distributionData: mDistributionData };
     };
 
-    return {
+    return useMemo(() => ({
         households,
         selectedHousehold,
         setSelectedHousehold,
@@ -187,5 +187,7 @@ export const useStats = () => {
         statusData,
         memberDistributionData,
         getModalChartData
-    };
+    }), [households, selectedHousehold, setSelectedHousehold, stats, loading, selectedStatus,
+        setSelectedStatus, selectedEntity, setSelectedEntity, activeHousehold, filteredTasks,
+        handleTakeTask, statusData, memberDistributionData, getModalChartData]);
 };
