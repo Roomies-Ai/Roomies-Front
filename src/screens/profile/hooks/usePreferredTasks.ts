@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { userApi } from '../../../api/user.api';
 import type { TaskTypeOption } from '../types/preferredTasks.types';
 
@@ -9,14 +9,7 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
     const [fetching, setFetching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-        if (isOpen) {
-            setSelectedIds(user?.preferredTaskTypes?.map((t: any) => t.id) || []);
-            fetchAvailableTypes();
-        }
-    }, [isOpen, user]);
-
-    const fetchAvailableTypes = async () => {
+    const fetchAvailableTypes = useCallback(async () => {
         setFetching(true);
         try {
             const data = await userApi.getAvailableTaskTypes();
@@ -26,7 +19,14 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
         } finally {
             setFetching(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            setSelectedIds(user?.preferredTaskTypes?.map((t: any) => t.id) || []);
+            fetchAvailableTypes();
+        }
+    }, [isOpen, user, fetchAvailableTypes]);
 
     const filteredTypes = useMemo(() => {
         return allTaskTypes.filter(t => 
@@ -35,13 +35,13 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
         );
     }, [allTaskTypes, searchQuery]);
 
-    const toggleType = (id: string) => {
+    const toggleType = useCallback((id: string) => {
         setSelectedIds(prev => 
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         );
-    };
+    }, []);
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         setLoading(true);
         try {
             const updated = await userApi.updatePreferredTasks(selectedIds);
@@ -52,9 +52,9 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedIds, onUpdate, onClose]);
 
-    return {
+    return useMemo(() => ({
         selectedIds,
         loading,
         fetching,
@@ -63,5 +63,6 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
         filteredTypes,
         toggleType,
         handleSave
-    };
+    }), [selectedIds, loading, fetching, searchQuery, setSearchQuery, filteredTypes,
+        toggleType, handleSave]);
 };

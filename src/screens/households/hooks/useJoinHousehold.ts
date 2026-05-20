@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { householdApi } from '../../../api/household.api';
 
@@ -8,7 +8,7 @@ export const useJoinHousehold = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleJoin = async (e: React.FormEvent) => {
+    const handleJoin = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         if (!inviteCode.trim()) return;
 
@@ -23,9 +23,9 @@ export const useJoinHousehold = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [inviteCode, navigate]);
 
-    const handleBack = () => navigate(-1);
+    const handleBack = useCallback(() => navigate(-1), [navigate]);
 
     return {
         inviteCode,

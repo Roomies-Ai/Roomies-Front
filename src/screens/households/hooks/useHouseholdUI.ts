@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 export const useHouseholdUI = (household: any) => {
     const [activeTab, setActiveTab] = useState<'OPEN' | 'IN_PROGRESS' | 'DONE'>('OPEN');
@@ -16,7 +16,7 @@ export const useHouseholdUI = (household: any) => {
         }) || [];
     }, [household?.tasks, activeTab, searchQuery]);
 
-    const formatRelativeDate = (dateString: string) => {
+    const formatRelativeDate = useCallback((dateString: string) => {
         if (!dateString) return 'Today';
         const date = new Date(dateString);
         const now = new Date();
@@ -27,22 +27,23 @@ export const useHouseholdUI = (household: any) => {
         if (diffInDays === 1) return 'Yesterday';
         if (diffInDays < 7) return `${diffInDays} days ago`;
         return date.toLocaleDateString();
-    };
+    }, []);
 
-    const getMemberStats = (memberId: string) => {
+    const getMemberStats = useCallback((memberId: string) => {
         if (!household) return { taskCount: 0, points: 0 };
         const memberTasks = household.tasks.filter((t: any) => t.assignee?.id === memberId);
         const points = memberTasks
             .filter((t: any) => t.status?.toLowerCase() === 'completed')
             .reduce((sum: number, t: any) => sum + (t.points || 0), 0);
         return { taskCount: memberTasks.length, points };
-    };
+    }, [household]);
 
-    return {
+    return useMemo(() => ({
         activeTab, setActiveTab,
         searchQuery, setSearchQuery,
         filteredTasks,
         formatRelativeDate,
         getMemberStats
-    };
+    }), [activeTab, setActiveTab, searchQuery, setSearchQuery, filteredTasks,
+        formatRelativeDate, getMemberStats]);
 };

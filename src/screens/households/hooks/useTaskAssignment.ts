@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { taskApi } from '../../../api/task.api';
 
 export const useTaskAssignment = (household: any, setHousehold: any, refresh: (silent?: boolean) => void) => {
@@ -6,7 +6,7 @@ export const useTaskAssignment = (household: any, setHousehold: any, refresh: (s
     const [isSuggesting, setIsSuggesting] = useState(false);
     const [suggestion, setSuggestion] = useState<any>(null);
 
-    const handleGetSuggestion = async () => {
+    const handleGetSuggestion = useCallback(async () => {
         if (!assigningTaskId) return;
         setIsSuggesting(true);
         try {
@@ -18,9 +18,9 @@ export const useTaskAssignment = (household: any, setHousehold: any, refresh: (s
         } finally {
             setIsSuggesting(false);
         }
-    };
+    }, [assigningTaskId]);
 
-    const handleAssignTask = async (taskId: string, memberId: string | null) => {
+    const handleAssignTask = useCallback(async (taskId: string, memberId: string | null) => {
         try {
             const task = household.tasks.find((t: any) => t.id === taskId);
             const member = household.members.find((m: any) => m.id === memberId);
@@ -53,13 +53,14 @@ export const useTaskAssignment = (household: any, setHousehold: any, refresh: (s
             console.error('Failed to assign task:', err);
             refresh(true);
         }
-    };
+    }, [household, setHousehold, refresh]);
 
-    return {
+    return useMemo(() => ({
         assigningTaskId, setAssigningTaskId,
         isSuggesting,
         suggestion, setSuggestion,
         handleGetSuggestion,
         handleAssignTask
-    };
+    }), [assigningTaskId, setAssigningTaskId, isSuggesting, suggestion, setSuggestion,
+        handleGetSuggestion, handleAssignTask]);
 };

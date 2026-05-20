@@ -35,21 +35,26 @@ export const useStats = () => {
     }, [selectedHousehold]);
 
     useEffect(() => {
-        const loadHouseholds = async () => {
+        const init = async () => {
             try {
                 const data = await householdApi.getMyHouseholds();
                 setHouseholds(data);
-                if (data.length > 0) setSelectedHousehold(data[0].id);
+                const firstId = data.length > 0 ? data[0].id : '';
+                setSelectedHousehold(firstId);
+                if (firstId) {
+                    const [statsData, householdData] = await Promise.all([
+                        statsApi.getFairnessStats(firstId),
+                        householdApi.getHouseholdById(firstId)
+                    ]);
+                    setStats(statsData);
+                    setActiveHouseholdDetail(householdData);
+                }
             } catch (err) {
-                console.error('Failed to load households', err);
+                console.error('Failed to load initial data', err);
             }
         };
-        loadHouseholds();
+        init();
     }, []);
-
-    useEffect(() => {
-        loadStats();
-    }, [loadStats]);
 
     const activeHousehold = activeHouseholdDetail;
 

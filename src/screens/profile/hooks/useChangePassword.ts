@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { userApi } from '../../../api/user.api';
 
 export const useChangePassword = (onClose: () => void) => {
@@ -9,7 +9,7 @@ export const useChangePassword = (onClose: () => void) => {
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
             setStatus('error');
@@ -34,9 +34,9 @@ export const useChangePassword = (onClose: () => void) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [oldPassword, newPassword, confirmPassword, onClose]);
 
-    return {
+    return useMemo(() => ({
         oldPassword,
         setOldPassword,
         newPassword,
@@ -47,5 +47,6 @@ export const useChangePassword = (onClose: () => void) => {
         status,
         errorMessage,
         handleSubmit
-    };
+    }), [oldPassword, setOldPassword, newPassword, setNewPassword, confirmPassword,
+        setConfirmPassword, loading, status, errorMessage, handleSubmit]);
 };
