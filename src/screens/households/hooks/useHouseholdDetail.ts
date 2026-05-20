@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useHouseholdBase } from './useHouseholdBase';
 import { useHouseholdTasks } from './useHouseholdTasks';
 import { useHouseholdUI } from './useHouseholdUI';
@@ -22,10 +22,10 @@ export const useHouseholdDetail = () => {
         };
     }, [tasks.assigningTaskId, tasks.editingPointsTaskId, tasks.isAddTaskModalOpen, actions.isLeaveModalOpen]);
 
-    return {
+    return useMemo(() => ({
         ...base,
         ...tasks,
         ...ui,
         ...actions
-    };
+    }), [base, tasks, ui, actions]);
 };

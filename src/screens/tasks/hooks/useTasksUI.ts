@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { Task } from '../types/tasks.types';
 
 export const useTasksUI = () => {
@@ -6,22 +6,22 @@ export const useTasksUI = () => {
     const [taskToEdit, setTaskToEdit] = useState<Task | undefined>(undefined);
     const [expandedHouseholds, setExpandedHouseholds] = useState<Record<string, boolean>>({});
 
-    const openEditModal = (task: Task) => {
+    const openEditModal = useCallback((task: Task) => {
         setTaskToEdit(task);
         setIsAddModalOpen(true);
-    };
+    }, []);
 
-    const handleCloseModal = () => {
+    const handleCloseModal = useCallback(() => {
         setIsAddModalOpen(false);
         setTaskToEdit(undefined);
-    };
+    }, []);
 
-    const toggleHousehold = (id: string) => {
+    const toggleHousehold = useCallback((id: string) => {
         setExpandedHouseholds(prev => ({
             ...prev,
             [id]: !prev[id]
         }));
-    };
+    }, []);
 
     return {
         isAddModalOpen,

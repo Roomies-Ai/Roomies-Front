@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { householdApi } from '../../../api/household.api';
 import { type HouseType, houseTypeApi } from '../../../api/houseType.api';
@@ -42,17 +42,17 @@ export const useCreateHousehold = () => {
         fetchTypes();
     }, []);
 
-    const handleAddPet = () => {
+    const handleAddPet = useCallback(() => {
         if (newPetName.trim()) {
             setPets([...pets, { name: newPetName.trim(), kind: newPetKind.trim() || 'Pet' }]);
             setNewPetName('');
             setNewPetKind('');
         }
-    };
+    }, [newPetName, newPetKind, pets]);
 
-    const handleRemovePet = (index: number) => {
+    const handleRemovePet = useCallback((index: number) => {
         setPets(pets.filter((_, i) => i !== index));
-    };
+    }, [pets]);
 
     const handleGenerateSuggestions = async () => {
         setIsLoading(true);
@@ -94,19 +94,19 @@ export const useCreateHousehold = () => {
         }
     };
 
-    const handleToggleTask = (index: number) => {
+    const handleToggleTask = useCallback((index: number) => {
         setSuggestedTasks(prev => prev.map((t, i) => 
             i === index ? { ...t, approved: !t.approved } : t
         ));
-    };
+    }, []);
 
-    const handleUpdateTask = (index: number, updates: Partial<SuggestedTask>) => {
+    const handleUpdateTask = useCallback((index: number, updates: Partial<SuggestedTask>) => {
         setSuggestedTasks(prev => prev.map((t, i) => 
             i === index ? { ...t, ...updates } : t
         ));
-    };
+    }, []);
 
-    const handleAddManualTask = () => {
+    const handleAddManualTask = useCallback(() => {
         setSuggestedTasks(prev => [
             ...prev,
             {
@@ -120,25 +120,23 @@ export const useCreateHousehold = () => {
                 isCustom: true
             }
         ]);
-    };
+    }, []);
 
-    const handleRemoveTask = (index: number) => {
+    const handleRemoveTask = useCallback((index: number) => {
         setSuggestedTasks(prev => prev.filter((_, i) => i !== index));
-    };
+    }, []);
 
-    const handleFinish = async () => {
+    const handleFinish = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         
         try {
-            // 1. Create the household first
             const household = await householdApi.createHousehold({ 
                 name, 
                 houseTypeId: selectedTypeId || undefined,
                 pets: pets.length > 0 ? pets : undefined,
             });
 
-            // 2. Bulk create approved tasks for the new household
             const today = new Date().toISOString().split('T')[0];
             const approvedTasks = suggestedTasks
                 .filter(t => t.approved)
@@ -157,22 +155,20 @@ export const useCreateHousehold = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [name, selectedTypeId, pets, suggestedTasks, navigate]);
 
-    const nextStep = () => {
+    const nextStep = useCallback(() => {
         if (step === 3) handleGenerateSuggestions();
         else setStep(s => s + 1);
-    };
+    }, [step, handleGenerateSuggestions]);
 
-    const prevStep = () => {
+    const prevStep = useCallback(() => {
         if (step === 1) navigate(-1);
         else if (step === 4) {
-            // Cannot easily go back after household is created without more logic
-            // For now, let's just allow it but maybe warn
             setStep(3);
         }
         else setStep(s => s - 1);
-    };
+    }, [step, navigate]);
 
     return {
         step,

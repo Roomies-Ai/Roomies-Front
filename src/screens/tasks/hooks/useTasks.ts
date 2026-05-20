@@ -50,9 +50,8 @@ export const useTasks = () => {
         }
     }, [filter]);
 
-    const fetchHouseholdTasks = async (householdId: string) => {
+    const fetchHouseholdTasks = useCallback(async (householdId: string) => {
         try {
-            // Check if already loaded to avoid redundant calls
             const current = households.find(h => h.id === householdId);
             if (current && ((current.members?.length ?? 0) > 0 || (current.taskTypes?.length ?? 0) > 0)) return;
 
@@ -66,18 +65,12 @@ export const useTasks = () => {
         } finally {
             setLoadingHouseholds(prev => ({ ...prev, [householdId]: false }));
         }
-    };
+    }, [households]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    const filteredHouseholds = useMemo(() => {
-        if (filter === 'ME') return households; 
-        return households; 
-    }, [households, filter]);
-
-    // Hook separation: Actions are managed in a dedicated sub-hook
     const {
         handleUpdateTaskStatus,
         handleUpdateTask,
@@ -85,9 +78,9 @@ export const useTasks = () => {
         handleDeleteTask
     } = useTaskActions({ setHouseholds, refresh: fetchData });
 
-    return {
+    return useMemo(() => ({
         currentUser,
-        filteredHouseholds,
+        filteredHouseholds: households,
         filter,
         setFilter,
         loading,
@@ -100,5 +93,7 @@ export const useTasks = () => {
         fetchHouseholdTasks,
         refresh: fetchData,
         allHouseholds: households
-    };
+    }), [currentUser, households, filter, setFilter, loading, loadingHouseholds, error,
+        handleUpdateTaskStatus, handleUpdateTask, handleAddTask, handleDeleteTask,
+        fetchHouseholdTasks, fetchData]);
 };

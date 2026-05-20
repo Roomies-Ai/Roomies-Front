@@ -79,7 +79,7 @@ const LoginScreen: React.FC = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`mt-4 flex w-full h-14 rounded-full items-center justify-center text-white text-base font-semibold shadow-[0px_10px_30px_rgba(59,149,234,0.15)] transition-all duration-200 ease-in-out ${
+                            className={`mt-4 flex w-full h-14 rounded-full items-center justify-center text-white text-base font-semibold shadow-[0px_10px_30px_rgba(59,149,234,0.15)] transition-[transform,opacity] duration-200 ease-in-out ${
                                 loading 
                                 ? 'bg-primary/70 cursor-not-allowed' 
                                 : 'bg-primary hover:scale-[0.99] active:scale-[0.98]'
