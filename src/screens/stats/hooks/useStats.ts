@@ -39,22 +39,24 @@ export const useStats = () => {
             try {
                 const data = await householdApi.getMyHouseholds();
                 setHouseholds(data);
-                const firstId = data.length > 0 ? data[0].id : '';
-                setSelectedHousehold(firstId);
-                if (firstId) {
-                    const [statsData, householdData] = await Promise.all([
-                        statsApi.getFairnessStats(firstId),
-                        householdApi.getHouseholdById(firstId)
-                    ]);
-                    setStats(statsData);
-                    setActiveHouseholdDetail(householdData);
+                if (data.length > 0) {
+                    setSelectedHousehold(data[0].id);
+                } else {
+                    setLoading(false);
                 }
             } catch (err) {
                 console.error('Failed to load initial data', err);
+                setLoading(false);
             }
         };
         init();
     }, []);
+
+    useEffect(() => {
+        if (selectedHousehold) {
+            loadStats();
+        }
+    }, [selectedHousehold, loadStats]);
 
     const activeHousehold = activeHouseholdDetail;
 
