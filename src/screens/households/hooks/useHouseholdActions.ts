@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { householdApi } from '../../../api/household.api';
 import { useAppDispatch } from '../../../store/hooks';
 import { setUser } from '../../../store/slices/authSlice';
@@ -7,11 +7,11 @@ export const useHouseholdActions = (id: string | undefined, currentUser: any, na
     const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
     const dispatch = useAppDispatch();
 
-    const handleLeaveHousehold = () => {
+    const handleLeaveHousehold = useCallback(() => {
         setIsLeaveModalOpen(true);
-    };
+    }, []);
 
-    const handleConfirmLeave = async () => {
+    const handleConfirmLeave = useCallback(async () => {
         if (!id || !currentUser) return;
         
         try {
@@ -20,7 +20,6 @@ export const useHouseholdActions = (id: string | undefined, currentUser: any, na
             const userId = currentUser.id || currentUser.userId;
             await householdApi.leaveHousehold(id, userId);
             
-            // Update local user state to reflect they left this household
             const updatedUser = { ...currentUser };
             if (updatedUser.households) {
                 updatedUser.households = updatedUser.households.filter((h: any) => h.id !== id);
@@ -33,12 +32,12 @@ export const useHouseholdActions = (id: string | undefined, currentUser: any, na
             setError(err.message || 'Failed to leave household');
             setLoading(false);
         }
-    };
+    }, [id, currentUser, dispatch, navigate, setLoading, setError]);
 
-    return {
+    return useMemo(() => ({
         isLeaveModalOpen,
         setIsLeaveModalOpen,
         handleLeaveHousehold,
         handleConfirmLeave
-    };
+    }), [isLeaveModalOpen, setIsLeaveModalOpen, handleLeaveHousehold, handleConfirmLeave]);
 };

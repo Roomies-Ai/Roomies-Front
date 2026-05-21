@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAppSelector } from '../../../store/hooks';
 import { householdApi } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
@@ -13,25 +13,25 @@ export const useTasks = () => {
     const [filter, setFilter] = useState<TaskFilter>('ME');
 
     const [loadingHouseholds, setLoadingHouseholds] = useState<Record<string, boolean>>({});
+    const loadedHouseholdIds = useRef<Set<string>>(new Set());
 
     const fetchData = useCallback(async (isSilent = false) => {
+        loadedHouseholdIds.current = new Set();
         try {
             if (!isSilent) setLoading(true);
             
             if (filter === 'ME') {
-                // Optimized: Fetch ONLY tasks assigned to ME across all households
                 const [householdsList, myTasks] = await Promise.all([
-                    householdApi.getMyHouseholds(false), // Just names and IDs
+                    householdApi.getMyHouseholds(false),
                     taskApi.getMyTasks()
                 ]);
 
-                // Map tasks to their respective households
                 const householdsWithMyTasks = householdsList.map(h => {
                     const filteredTasks = myTasks.filter(t => t.household?.id === h.id);
                     return {
                         ...h,
                         tasks: filteredTasks,
-                        taskCount: filteredTasks.length, // Show count of MY tasks in this mode
+                        taskCount: filteredTasks.length,
                         members: h.members || [], 
                         taskTypes: h.taskTypes || []
                     };
@@ -39,7 +39,6 @@ export const useTasks = () => {
 
                 setHouseholds(householdsWithMyTasks);
             } else {
-                // ALL Tasks: Load household list first, tasks will be lazy-loaded on expansion
                 const list = await householdApi.getMyHouseholds(false);
                 setHouseholds(list.map(h => ({ ...h, tasks: h.tasks || [] })));
             }
@@ -50,14 +49,13 @@ export const useTasks = () => {
         }
     }, [filter]);
 
-    const fetchHouseholdTasks = async (householdId: string) => {
-        try {
-            // Check if already loaded to avoid redundant calls
-            const current = households.find(h => h.id === householdId);
-            if (current && ((current.members?.length ?? 0) > 0 || (current.taskTypes?.length ?? 0) > 0)) return;
+    const fetchHouseholdTasks = useCallback(async (householdId: string) => {
+        if (loadedHouseholdIds.current.has(householdId)) return;
 
-            setLoadingHouseholds(prev => ({ ...prev, [householdId]: true }));
+        setLoadingHouseholds(prev => ({ ...prev, [householdId]: true }));
+        try {
             const full = await householdApi.getHouseholdById(householdId);
+            loadedHouseholdIds.current.add(householdId);
             setHouseholds(prev => prev.map(h => 
                 h.id === householdId ? { ...h, ...full } : h
             ));
@@ -66,18 +64,12 @@ export const useTasks = () => {
         } finally {
             setLoadingHouseholds(prev => ({ ...prev, [householdId]: false }));
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    const filteredHouseholds = useMemo(() => {
-        if (filter === 'ME') return households; 
-        return households; 
-    }, [households, filter]);
-
-    // Hook separation: Actions are managed in a dedicated sub-hook
     const {
         handleUpdateTaskStatus,
         handleUpdateTask,
@@ -85,9 +77,9 @@ export const useTasks = () => {
         handleDeleteTask
     } = useTaskActions({ setHouseholds, refresh: fetchData });
 
-    return {
+    return useMemo(() => ({
         currentUser,
-        filteredHouseholds,
+        filteredHouseholds: households,
         filter,
         setFilter,
         loading,
@@ -100,5 +92,7 @@ export const useTasks = () => {
         fetchHouseholdTasks,
         refresh: fetchData,
         allHouseholds: households
-    };
+    }), [currentUser, households, filter, setFilter, loading, loadingHouseholds, error,
+        handleUpdateTaskStatus, handleUpdateTask, handleAddTask, handleDeleteTask,
+        fetchHouseholdTasks, fetchData]);
 };

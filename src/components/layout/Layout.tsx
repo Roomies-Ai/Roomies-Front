@@ -33,17 +33,17 @@ const Layout = () => {
                         <button
                             key={item.path}
                             onClick={() => navigate(item.path)}
-                            className={`flex flex-col items-center gap-1.5 transition-all duration-300 relative group`}
+                            className={`flex flex-col items-center gap-1.5 transition-[transform,opacity,color] duration-300 relative group`}
                             style={{ background: 'none', boxShadow: 'none', padding: 0, transform: 'none' }}
                         >
-                            <div className={`transition-all duration-300 ${
+                            <div className={`transition-[transform,opacity,color] duration-300 ${
                                 isActive 
                                     ? 'text-primary scale-110' 
                                     : 'text-[#94A3B8] hover:text-primary/70'
                             }`}>
                                 <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                             </div>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${
+                            <span className={`text-[10px] font-bold uppercase tracking-wider transition-[color,opacity] duration-300 ${
                                 isActive ? 'text-primary' : 'text-[#94A3B8]'
                             }`}>
                                 {item.label}

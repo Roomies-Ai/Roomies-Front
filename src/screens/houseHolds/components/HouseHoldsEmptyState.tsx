@@ -42,7 +42,7 @@ export const HouseHoldsEmptyState: React.FC<Props> = ({ onCreateOrJoin, onInvite
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={onCreateOrJoin}
-        className="flex w-full items-center justify-center gap-3 rounded-full bg-sky-500 hover:bg-sky-600 dark:bg-sky-600 dark:hover:bg-sky-500 text-white p-5 shadow-lg transition-all duration-200"
+        className="flex w-full items-center justify-center gap-3 rounded-full bg-sky-500 hover:bg-sky-600 dark:bg-sky-600 dark:hover:bg-sky-500 text-white p-5 shadow-lg transition-[transform,opacity] duration-200"
       >
         <PlusCircle size={24} />
         <span className="text-lg font-bold tracking-wide pb-1 pt-1">Create or Join a Household</span>

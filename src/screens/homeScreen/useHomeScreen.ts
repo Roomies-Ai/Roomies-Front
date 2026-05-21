@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { householdApi } from '../../api/household.api';
 import type { Household } from '../../types/household';
 
@@ -7,7 +7,7 @@ export const useHomeScreen = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchHouseholds = async () => {
+    const fetchHouseholds = useCallback(async () => {
         try {
             setLoading(true);
             const data = await householdApi.getMyHouseholds();
@@ -17,16 +17,16 @@ export const useHomeScreen = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchHouseholds();
-    }, []);
+    }, [fetchHouseholds]);
 
-    return {
+    return useMemo(() => ({
         households,
         loading,
         error,
         refresh: fetchHouseholds
-    };
+    }), [households, loading, error, fetchHouseholds]);
 };

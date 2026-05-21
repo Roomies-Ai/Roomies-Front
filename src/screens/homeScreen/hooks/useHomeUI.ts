@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setUser } from '../../../store/slices/authSlice';
@@ -25,16 +25,16 @@ export const useHomeUI = (onRefresh?: () => void) => {
         };
     }, [isLeaveModalOpen]);
 
-    const handleCreateJoin = () => navigate('/households/new');
-    const handleJoinWithCode = () => navigate('/households/join');
-    const handleNavigateToHousehold = (id: string) => navigate(`/households/${id}`);
+    const handleCreateJoin = useCallback(() => navigate('/households/new'), [navigate]);
+    const handleJoinWithCode = useCallback(() => navigate('/households/join'), [navigate]);
+    const handleNavigateToHousehold = useCallback((id: string) => navigate(`/households/${id}`), [navigate]);
 
-    const handleLeaveHousehold = (household: Household) => {
+    const handleLeaveHousehold = useCallback((household: Household) => {
         setHouseholdToLeave(household);
         setIsLeaveModalOpen(true);
-    };
+    }, []);
 
-    const handleConfirmLeave = async () => {
+    const handleConfirmLeave = useCallback(async () => {
         if (!householdToLeave || !currentUser) return;
         
         try {
@@ -57,7 +57,7 @@ export const useHomeUI = (onRefresh?: () => void) => {
         } finally {
             setIsLeaving(false);
         }
-    };
+    }, [householdToLeave, currentUser, dispatch, onRefresh]);
 
     return {
         handleCreateJoin,

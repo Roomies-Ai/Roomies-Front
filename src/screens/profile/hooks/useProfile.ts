@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '../../../api/user.api';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
@@ -45,7 +45,7 @@ export const useProfile = () => {
         fetchUser();
     }, [dispatch]);
 
-    const handleUpdateProfile = async () => {
+    const handleUpdateProfile = useCallback(async () => {
         setLoading(true);
         try {
             const updated = await userApi.updateMe(editForm);
@@ -57,9 +57,9 @@ export const useProfile = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [editForm, dispatch]);
 
-    const togglePreference = (key: string) => {
+    const togglePreference = useCallback((key: string) => {
         setEditForm(prev => ({
             ...prev,
             preferences: {
@@ -67,24 +67,27 @@ export const useProfile = () => {
                 [key]: !prev.preferences[key]
             }
         }));
-    };
+    }, []);
 
-    const addVibe = () => {
-        const vibe = prompt('Enter a new vibe (e.g. Night Owl, Clean Freak)');
-        if (vibe && !editForm.vibes.includes(vibe)) {
-            setEditForm(prev => ({ ...prev, vibes: [...prev.vibes, vibe] }));
-        }
-    };
+    const addVibe = useCallback(() => {
+        setEditForm(prev => {
+            const vibe = prompt('Enter a new vibe (e.g. Night Owl, Clean Freak)');
+            if (vibe && !prev.vibes.includes(vibe)) {
+                return { ...prev, vibes: [...prev.vibes, vibe] };
+            }
+            return prev;
+        });
+    }, []);
 
-    const removeVibe = (vibe: string) => {
+    const removeVibe = useCallback((vibe: string) => {
         setEditForm(prev => ({ ...prev, vibes: prev.vibes.filter((v: string) => v !== vibe) }));
-    };
+    }, []);
 
-    const setEditFormField = (field: keyof ProfileFormState, value: any) => {
+    const setEditFormField = useCallback((field: keyof ProfileFormState, value: any) => {
         setEditForm(prev => ({ ...prev, [field]: value }));
-    };
+    }, []);
 
-    return {
+    return useMemo(() => ({
         user,
         setUser,
         isEditing,
@@ -101,5 +104,7 @@ export const useProfile = () => {
         addVibe,
         removeVibe,
         navigate
-    };
+    }), [user, setUser, isEditing, setIsEditing, isPasswordModalOpen, setIsPasswordModalOpen,
+        isTasksModalOpen, setIsTasksModalOpen, loading, editForm, setEditFormField,
+        handleUpdateProfile, togglePreference, addVibe, removeVibe, navigate]);
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../store/hooks';
 import { setCredentials, setLoading, setError } from '../../store/slices/authSlice';
@@ -13,7 +13,7 @@ export const useLoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         dispatch(setLoading(true));
         dispatch(setError(null));
@@ -37,35 +37,39 @@ export const useLoginScreen = () => {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    }, [email, password, authType, dispatch, navigate]);
 
-    const toggleAuthType = (type: 'login' | 'signup') => {
+    const toggleAuthType = useCallback((type: 'login' | 'signup') => {
         setAuthType(type);
-    };
+    }, []);
 
-    const toggleShowPassword = () => {
+    const toggleShowPassword = useCallback(() => {
         setShowPassword(prev => !prev);
-    };
+    }, []);
+
+    const onGoogleSuccess = useCallback(async (tokenResponse: any) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await authApi.googleLogin(tokenResponse.access_token);
+            dispatch(setCredentials({
+                user: response.user,
+                token: response.accessToken
+            }));
+            navigate('/home');
+        } catch (err: any) {
+            dispatch(setError(err.response?.data?.message || err.message || 'Google login failed'));
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }, [dispatch, navigate]);
+
+    const onGoogleError = useCallback(() => {
+        dispatch(setError('Google login failed'));
+    }, [dispatch]);
 
     const handleGoogleLogin = useReactGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            dispatch(setLoading(true));
-            try {
-                const response = await authApi.googleLogin(tokenResponse.access_token);
-                dispatch(setCredentials({
-                    user: response.user,
-                    token: response.accessToken
-                }));
-                navigate('/home');
-            } catch (err: any) {
-                dispatch(setError(err.response?.data?.message || err.message || 'Google login failed'));
-            } finally {
-                dispatch(setLoading(false));
-            }
-        },
-        onError: () => {
-            dispatch(setError('Google login failed'));
-        }
+        onSuccess: onGoogleSuccess,
+        onError: onGoogleError
     });
 
     return {

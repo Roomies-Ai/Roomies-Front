@@ -21,7 +21,7 @@ const HouseholdList: React.FC<HouseholdListProps> = ({ households, onNavigate, o
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                         onClick={() => onNavigate(household.id)}
-                        className="bg-white p-6 rounded-[2.5rem] shadow-premium-sm hover:shadow-premium transition-all cursor-pointer border border-gray-50 flex items-center justify-between group relative"
+                        className="bg-white p-6 rounded-[2.5rem] shadow-premium-sm hover:shadow-premium transition-[transform,opacity,box-shadow] cursor-pointer border border-gray-50 flex items-center justify-between group relative"
                     >
                         <div className="flex items-center gap-5">
                             <div className="w-16 h-16 bg-primary/5 rounded-3xl flex items-center justify-center text-primary transition-colors group-hover:bg-primary group-hover:text-white">

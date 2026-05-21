@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTaskAssignment } from './useTaskAssignment';
 import { useTaskUpdates } from './useTaskUpdates';
 import { useTaskLifecycle } from './useTaskLifecycle';
@@ -7,9 +8,9 @@ export const useHouseholdTasks = (household: any, setHousehold: any, refresh: (s
     const updates = useTaskUpdates(setHousehold, refresh);
     const lifecycle = useTaskLifecycle(household, setHousehold, refresh);
 
-    return {
+    return useMemo(() => ({
         ...assignment,
         ...updates,
         ...lifecycle
-    };
+    }), [assignment, updates, lifecycle]);
 };

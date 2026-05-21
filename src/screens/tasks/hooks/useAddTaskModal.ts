@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '../../../api/task.api';
 import { householdApi } from '../../../api/household.api';
 import type { AddTaskModalProps } from '../components/AddTaskModal.types';
@@ -29,6 +29,7 @@ export const useAddTaskModal = ({
     const [isParsing, setIsParsing] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [activeHouseholdDetail, setActiveHouseholdDetail] = useState<any>(null);
+    const householdDetailCache = useRef<Record<string, any>>({});
 
     useEffect(() => {
         if (lockedHouseholdId) {
@@ -43,17 +44,22 @@ export const useAddTaskModal = ({
     useEffect(() => {
         const fetchActiveDetail = async () => {
             if (!selectedHousehold) return;
+
+            if (householdDetailCache.current[selectedHousehold]) {
+                setActiveHouseholdDetail(householdDetailCache.current[selectedHousehold]);
+                return;
+            }
+
             const inList = households.find(h => h.id === selectedHousehold);
-            
-            // If we have full data in the list, use it
             if (inList && inList.members && inList.taskTypes) {
+                householdDetailCache.current[selectedHousehold] = inList;
                 setActiveHouseholdDetail(inList);
                 return;
             }
 
-            // Otherwise fetch it
             try {
                 const full = await householdApi.getHouseholdById(selectedHousehold);
+                householdDetailCache.current[selectedHousehold] = full;
                 setActiveHouseholdDetail(full);
             } catch (err) {
                 console.error('Failed to fetch active household detail', err);
@@ -61,7 +67,7 @@ export const useAddTaskModal = ({
         };
 
         fetchActiveDetail();
-    }, [selectedHousehold, households]);
+    }, [selectedHousehold]);
 
     const activeHousehold = activeHouseholdDetail;
 

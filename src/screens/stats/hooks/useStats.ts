@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { statsApi } from '../../../api/stats.api';
 import { householdApi } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
@@ -16,7 +16,7 @@ export const useStats = () => {
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [selectedEntity, setSelectedEntity] = useState<SelectedEntity | null>(null);
 
-    const loadStats = async (isBackground = false) => {
+    const loadStats = useCallback(async (isBackground = false) => {
         if (!selectedHousehold) return;
         if (!isBackground) setLoading(true);
 
@@ -32,24 +32,31 @@ export const useStats = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedHousehold]);
 
     useEffect(() => {
-        const loadHouseholds = async () => {
+        const init = async () => {
             try {
                 const data = await householdApi.getMyHouseholds();
                 setHouseholds(data);
-                if (data.length > 0) setSelectedHousehold(data[0].id);
+                if (data.length > 0) {
+                    setSelectedHousehold(data[0].id);
+                } else {
+                    setLoading(false);
+                }
             } catch (err) {
-                console.error('Failed to load households', err);
+                console.error('Failed to load initial data', err);
+                setLoading(false);
             }
         };
-        loadHouseholds();
+        init();
     }, []);
 
     useEffect(() => {
-        loadStats();
-    }, [selectedHousehold]);
+        if (selectedHousehold) {
+            loadStats();
+        }
+    }, [selectedHousehold, loadStats]);
 
     const activeHousehold = activeHouseholdDetail;
 
@@ -171,7 +178,7 @@ export const useStats = () => {
         return { statusData: mStatusData, distributionData: mDistributionData };
     };
 
-    return {
+    return useMemo(() => ({
         households,
         selectedHousehold,
         setSelectedHousehold,
@@ -187,5 +194,7 @@ export const useStats = () => {
         statusData,
         memberDistributionData,
         getModalChartData
-    };
+    }), [households, selectedHousehold, setSelectedHousehold, stats, loading, selectedStatus,
+        setSelectedStatus, selectedEntity, setSelectedEntity, activeHousehold, filteredTasks,
+        handleTakeTask, statusData, memberDistributionData, getModalChartData]);
 };

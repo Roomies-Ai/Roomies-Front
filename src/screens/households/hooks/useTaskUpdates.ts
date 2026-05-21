@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { taskApi } from '../../../api/task.api';
 
 export const useTaskUpdates = (setHousehold: any, refresh: (silent?: boolean) => void) => {
     const [editingPointsTaskId, setEditingPointsTaskId] = useState<string | null>(null);
     const [pointsValue, setPointsValue] = useState(5);
 
-    const handleUpdatePoints = async (taskId: string, points: number) => {
+    const handleUpdatePoints = useCallback(async (taskId: string, points: number) => {
         try {
             setHousehold((prev: any) => ({
                 ...prev,
@@ -20,9 +20,9 @@ export const useTaskUpdates = (setHousehold: any, refresh: (silent?: boolean) =>
             console.error('Failed to update points:', err);
             refresh(true);
         }
-    };
+    }, [setHousehold, refresh]);
 
-    const handleUpdateTaskStatus = async (taskId: string, currentStatus: string) => {
+    const handleUpdateTaskStatus = useCallback(async (taskId: string, currentStatus: string) => {
         const nextStatus = currentStatus?.toLowerCase() === 'completed' ? 'in-progress' : 'completed';
         setHousehold((prev: any) => ({
             ...prev,
@@ -38,12 +38,13 @@ export const useTaskUpdates = (setHousehold: any, refresh: (silent?: boolean) =>
             console.error('Failed to update status:', err);
             refresh(true);
         }
-    };
+    }, [setHousehold, refresh]);
 
-    return {
+    return useMemo(() => ({
         editingPointsTaskId, setEditingPointsTaskId,
         pointsValue, setPointsValue,
         handleUpdatePoints,
         handleUpdateTaskStatus
-    };
+    }), [editingPointsTaskId, setEditingPointsTaskId, pointsValue, setPointsValue,
+        handleUpdatePoints, handleUpdateTaskStatus]);
 };

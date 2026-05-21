@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { taskApi } from '../../../api/task.api';
 
 export const useTaskLifecycle = (household: any, setHousehold: any, refresh: (silent?: boolean) => void) => {
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const [taskToEdit, setTaskToEdit] = useState<any>(null);
 
-    const handleAddTask = async (householdId: string, taskData: any) => {
+    const handleAddTask = useCallback(async (householdId: string, taskData: any) => {
         const tempTasks = Array.isArray(taskData) ? taskData : [taskData];
         const optimisticTasks = tempTasks.map(t => ({
             ...t,
@@ -32,9 +32,9 @@ export const useTaskLifecycle = (household: any, setHousehold: any, refresh: (si
             console.error('Failed to add task:', err);
             refresh(true);
         }
-    };
+    }, [household, setHousehold, refresh]);
 
-    const handleUpdateTask = async (taskId: string, updates: any) => {
+    const handleUpdateTask = useCallback(async (taskId: string, updates: any) => {
         if ('assignee' in updates && updates.assignee && !updates.status) {
             updates.status = 'in-progress';
         }
@@ -64,9 +64,9 @@ export const useTaskLifecycle = (household: any, setHousehold: any, refresh: (si
             console.error('Failed to update task:', err);
             refresh(true);
         }
-    };
+    }, [setHousehold, refresh]);
 
-    const handleDeleteTask = async (taskId: string) => {
+    const handleDeleteTask = useCallback(async (taskId: string) => {
         setHousehold((prev: any) => ({
             ...prev,
             tasks: prev.tasks.filter((t: any) => t.id !== taskId)
@@ -79,13 +79,14 @@ export const useTaskLifecycle = (household: any, setHousehold: any, refresh: (si
             console.error('Failed to delete task:', err);
             refresh(true);
         }
-    };
+    }, [setHousehold, refresh]);
 
-    return {
+    return useMemo(() => ({
         isAddTaskModalOpen, setIsAddTaskModalOpen,
         taskToEdit, setTaskToEdit,
         handleAddTask,
         handleUpdateTask,
         handleDeleteTask
-    };
+    }), [isAddTaskModalOpen, setIsAddTaskModalOpen, taskToEdit, setTaskToEdit,
+        handleAddTask, handleUpdateTask, handleDeleteTask]);
 };
