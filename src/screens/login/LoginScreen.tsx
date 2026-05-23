@@ -21,8 +21,9 @@ const LoginScreen: React.FC = () => {
     const { loading, error } = useAppSelector((state) => state.auth);
 
     return (
-        <div className="w-100 max-w-md mx-auto bg-background-light dark:bg-background-dark text-charcoal dark:text-white overflow-x-hidden min-h-screen transition-colors duration-200">
-            <div className="relative flex h-full min-h-screen w-full flex-col group/design-root">
+        <div className="w-full min-h-screen overflow-x-hidden bg-background-light dark:bg-background-dark text-charcoal dark:text-white transition-colors duration-200 md:h-screen md:overflow-hidden md:flex md:items-center md:justify-center md:bg-gradient-to-br md:from-blue-50 md:to-slate-100 dark:md:from-gray-900 dark:md:to-gray-800">
+            <div className="w-full max-w-md md:max-w-xl mx-auto md:shadow-2xl md:rounded-xl md:overflow-hidden">
+            <div className="relative flex flex-col group/design-root md:max-h-[90vh] md:overflow-y-auto">
                 <LoginHeader />
 
                 {/* Main Card Section (Overlapping the header) */}
@@ -119,6 +120,7 @@ const LoginScreen: React.FC = () => {
                     {/* Safe area spacer for scroll */}
                     <div className="h-6 w-full"></div>
                 </div>
+            </div>
             </div>
         </div>
     );

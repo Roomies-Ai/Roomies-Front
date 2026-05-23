@@ -5,7 +5,7 @@ import type { HomeActionButtonsProps } from '../types/home.types';
 
 const HomeActionButtons: React.FC<HomeActionButtonsProps> = ({ onCreateJoin, onHaveInviteCode }) => {
     return (
-        <div className="mt-auto shrink-0 flex flex-col items-center pb-2 pt-6 bg-white z-20 border-t border-gray-50 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] fixed top-[77%] left-0 right-0 z-50">
+        <div className="flex flex-col items-center pb-2 pt-6 bg-white border-t border-gray-50 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] fixed bottom-24 left-0 right-0 z-50">
             <motion.button 
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
