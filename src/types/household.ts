@@ -6,14 +6,14 @@ export interface Household {
     tasks?: any[];
     taskTypes?: any[];
     pets?: any[];
-    houseType?: any;
+    houseType?: string;
     createdAt: string;
     updatedAt: string;
 }
 
 export interface CreateHouseholdRequest {
     name: string;
-    houseTypeId?: string;
+    houseType?: string;
     pets?: { name: string; kind: string }[];
 }
 
