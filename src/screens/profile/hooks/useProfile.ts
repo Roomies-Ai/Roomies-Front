@@ -15,6 +15,8 @@ export const useProfile = () => {
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isTasksModalOpen, setIsTasksModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [telegramToken, setTelegramToken] = useState<string | null>(null);
+    const [telegramLoading, setTelegramLoading] = useState(false);
     
     // Form State
     const [editForm, setEditForm] = useState<ProfileFormState>({
@@ -43,6 +45,48 @@ export const useProfile = () => {
             }
         };
         fetchUser();
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (user && !user.telegramChatId) {
+            userApi.getTelegramToken()
+                .then(({ telegramToken }) => setTelegramToken(telegramToken))
+                .catch(console.error);
+        }
+    }, [user?.telegramChatId]);
+
+    // Poll for telegramChatId while not yet connected
+    useEffect(() => {
+        if (!user || user.telegramChatId) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const data = await userApi.getMe();
+                if (data.telegramChatId) {
+                    setUser(data);
+                    dispatch(setReduxUser(data));
+                }
+            } catch {
+                // silent — keep polling
+            }
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [user?.telegramChatId, dispatch]);
+
+    const handleUnlinkTelegram = useCallback(async () => {
+        setTelegramLoading(true);
+        try {
+            await userApi.unlinkTelegram();
+            const data = await userApi.getMe();
+            setUser(data);
+            dispatch(setReduxUser(data));
+            setTelegramToken(null);
+        } catch (err) {
+            console.error('Unlink failed', err);
+        } finally {
+            setTelegramLoading(false);
+        }
     }, [dispatch]);
 
     const handleUpdateProfile = useCallback(async () => {
@@ -103,8 +147,12 @@ export const useProfile = () => {
         togglePreference,
         addVibe,
         removeVibe,
-        navigate
+        navigate,
+        telegramToken,
+        telegramLoading,
+        handleUnlinkTelegram,
     }), [user, setUser, isEditing, setIsEditing, isPasswordModalOpen, setIsPasswordModalOpen,
         isTasksModalOpen, setIsTasksModalOpen, loading, editForm, setEditFormField,
-        handleUpdateProfile, togglePreference, addVibe, removeVibe, navigate]);
+        handleUpdateProfile, togglePreference, addVibe, removeVibe, navigate,
+        telegramToken, telegramLoading, handleUnlinkTelegram]);
 };
