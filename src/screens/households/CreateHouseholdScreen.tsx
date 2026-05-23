@@ -14,8 +14,8 @@ const CreateHouseholdScreen: React.FC = () => {
         name,
         setName,
         houseTypes,
-        selectedTypeId,
-        setSelectedTypeId,
+        selectedType,
+        setSelectedType,
         pets,
         newPetName,
         setNewPetName,
@@ -24,7 +24,6 @@ const CreateHouseholdScreen: React.FC = () => {
         suggestedTasks,
         isGeneratingTasks,
         isLoading,
-        isFetchingTypes,
         error,
         handleAddPet,
         handleRemovePet,
@@ -68,11 +67,10 @@ const CreateHouseholdScreen: React.FC = () => {
                     />
                 )}
                 {step === 2 && (
-                    <Step2Type 
+                    <Step2Type
                         houseTypes={houseTypes}
-                        selectedTypeId={selectedTypeId}
-                        setSelectedTypeId={setSelectedTypeId}
-                        isFetchingTypes={isFetchingTypes}
+                        selectedType={selectedType}
+                        setSelectedType={setSelectedType}
                         onNext={nextStep}
                     />
                 )}
