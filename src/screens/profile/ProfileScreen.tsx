@@ -50,7 +50,7 @@ const ProfileScreen = () => {
                     variants={CONTAINER_VARIANTS}
                     initial="hidden"
                     animate="visible"
-                    className="px-6 py-8 flex flex-col gap-8 max-w-lg mx-auto"
+                    className="px-6 py-8 flex flex-col gap-8 max-w-lg md:max-w-2xl mx-auto"
                 >
                     <ProfileBanner user={user} />
 

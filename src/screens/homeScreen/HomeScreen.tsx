@@ -24,7 +24,7 @@ const HomeScreen = () => {
     } = useHomeUI(refresh);
 
     return (
-        <div className="bg-white h-[100vh] flex flex-col pt-0 overflow-hidden relative">
+        <div className="bg-white flex-1 flex flex-col relative">
             {/* MAIN CONTENT AREA */}
             <div className="flex-1 flex flex-col overflow-hidden px-8 w-full max-w-4xl mx-auto">
                 {loading ? (
@@ -34,7 +34,7 @@ const HomeScreen = () => {
                 ) : (
                     <div className="flex-1 flex flex-col overflow-hidden">
                         {/* 1. SCROLLABLE CONTENT (List or Empty State) */}
-                        <div className="flex-1 overflow-y-auto scrollbar-hide py-4">
+                        <div className="flex-1 overflow-y-auto scrollbar-hide py-4 pb-28">
                             {households.length > 0 ? (
                                 <HouseholdList 
                                     households={households} 
@@ -55,9 +55,6 @@ const HomeScreen = () => {
                 )}
             </div>
             
-            {/* Functional Spacer for Bottom Nav - Prevents overlapping */}
-            <div className="h-[80px] shrink-0 bg-white"></div>
-
             <LeaveHouseholdModal 
                 isOpen={isLeaveModalOpen}
                 onClose={() => setIsLeaveModalOpen(false)}

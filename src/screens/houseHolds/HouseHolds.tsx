@@ -12,7 +12,8 @@ const HouseHolds: React.FC = () => {
     const { user, handleCreateOrJoin, handleInviteCode } = useHouseHolds();
 
     return (
-        <div className="flex flex-col w-100 max-w-md mx-auto bg-background-light dark:bg-background-dark text-charcoal dark:text-white overflow-x-hidden min-h-screen transition-colors duration-200">
+        <div className="w-full min-h-screen bg-background-light dark:bg-background-dark text-charcoal dark:text-white transition-colors duration-200 md:flex md:flex-col md:items-center md:justify-center md:bg-gradient-to-br md:from-blue-50 md:to-slate-100 dark:md:from-gray-900 dark:md:to-gray-800 md:py-8">
+            <div className="w-full max-w-md mx-auto md:shadow-2xl md:rounded-3xl md:overflow-hidden flex flex-col">
             {/* Header Section */}
             <HouseHoldsHeader
                 userName={user.name || 'Alex'}
@@ -25,6 +26,7 @@ const HouseHolds: React.FC = () => {
                 onCreateOrJoin={handleCreateOrJoin}
                 onInviteCode={handleInviteCode}
             />
+            </div>
         </div>
     );
 };
