@@ -7,6 +7,7 @@ import ProfileHeader from './components/ProfileHeader';
 import ProfileBanner from './components/ProfileBanner';
 import ProfileDetailsCard from './components/ProfileDetailsCard';
 import ProfileSecurityCard from './components/ProfileSecurityCard';
+import ProfileTelegramCard from './components/ProfileTelegramCard';
 import ProfileVibesCard from './components/ProfileVibesCard';
 import ProfileTasksCard from './components/ProfileTasksCard';
 import ChangePasswordModal from './components/ChangePasswordModal';
@@ -36,7 +37,10 @@ const ProfileScreen = () => {
         handleUpdateProfile,
         togglePreference,
         addVibe,
-        removeVibe
+        removeVibe,
+        telegramToken,
+        telegramLoading,
+        handleUnlinkTelegram,
     } = useProfile();
 
     return (
@@ -64,8 +68,16 @@ const ProfileScreen = () => {
                         variants={ITEM_VARIANTS}
                     />
 
-                    <ProfileSecurityCard 
+                    <ProfileSecurityCard
                         setIsPasswordModalOpen={setIsPasswordModalOpen}
+                        variants={ITEM_VARIANTS}
+                    />
+
+                    <ProfileTelegramCard
+                        user={user}
+                        telegramToken={telegramToken}
+                        telegramLoading={telegramLoading}
+                        onUnlink={handleUnlinkTelegram}
                         variants={ITEM_VARIANTS}
                     />
 

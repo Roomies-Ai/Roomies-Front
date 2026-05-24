@@ -15,6 +15,7 @@ export interface ProfileUser {
         id: string;
         name: string;
     }[];
+    telegramChatId?: string | null;
 }
 
 export interface ProfileFormState {
