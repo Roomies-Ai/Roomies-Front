@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, Search, X, Send } from 'lucide-react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
+import { fetchMyNotifications, clearUnread } from '../../store/slices/notificationsSlice';
 
 interface HeaderProps {
     showActions?: boolean;
@@ -9,8 +10,16 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     const { user } = useAppSelector((state) => state.auth);
+    const { items: notifications, unreadCount } = useAppSelector((state) => state.notifications);
+    const dispatch = useAppDispatch();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            dispatch(fetchMyNotifications());
+        }
+    }, [user, dispatch]);
 
     const getGreeting = () => {
         const hour = new Date().getHours();
@@ -21,12 +30,29 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
         return 'Good Night';
     };
 
+    const handleBellClick = () => {
+        setShowNotifications(!showNotifications);
+        if (!showNotifications) {
+            dispatch(clearUnread());
+        }
+    };
+
+    const formatDueDate = (dueDate: string) => {
+        const due = new Date(dueDate);
+        const now = new Date();
+        const diffMs = due.getTime() - now.getTime();
+        const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+        if (diffHours <= 0) return 'Due now';
+        if (diffHours < 24) return `Due in ${diffHours}h`;
+        return 'Due today';
+    };
+
     return (
         <header className="px-6 pt-6 md:pt-4 pb-4 fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md">
             <div className="flex justify-between items-center bg-transparent max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
                     {!isSearchOpen ? (
-                        <motion.div 
+                        <motion.div
                             key="user-info"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -34,9 +60,9 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                             className="flex items-center gap-4 w-full"
                         >
                             <div className="relative">
-                                <img 
-                                    src={user?.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
-                                    alt="Profile" 
+                                <img
+                                    src={user?.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'}
+                                    alt="Profile"
                                     className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-premium-sm"
                                 />
                                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
@@ -47,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                             </div>
                         </motion.div>
                     ) : (
-                        <motion.div 
+                        <motion.div
                             key="search-input"
                             initial={{ opacity: 0, width: 0 }}
                             animate={{ opacity: 1, width: '100%' }}
@@ -61,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                                     className="w-full py-3 pl-4 pr-12 bg-white rounded-2xl border-none shadow-premium-sm focus:ring-2 focus:ring-primary/20 outline-none text-charcoal font-medium placeholder:text-medium-gray"
                                     autoFocus
                                 />
-                                <button 
+                                <button
                                     onClick={() => setIsSearchOpen(false)}
                                     className="absolute right-3 p-1 text-medium-gray hover:text-charcoal transition-colors"
                                 >
@@ -75,16 +101,16 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                 {showActions && (
                     <div className="flex gap-2">
                         {!isSearchOpen && (
-                            <button 
+                            <button
                                 onClick={() => setIsSearchOpen(true)}
                                 className="p-3 bg-white rounded-2xl text-charcoal hover:bg-gray-50 transition-all shadow-premium-sm active:scale-95 flex items-center justify-center"
                             >
                                 <Search size={20} />
                             </button>
                         )}
-                        <a 
-                            href="https://t.me/RoomiesUserNameBot" 
-                            target="_blank" 
+                        <a
+                            href="https://t.me/RoomiesUserNameBot"
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="p-3 bg-white rounded-2xl text-[#229ED9] hover:bg-gray-50 transition-all shadow-premium-sm active:scale-95 flex items-center justify-center"
                             title="Telegram Bot"
@@ -93,44 +119,48 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                         </a>
 
                         <div className="relative">
-                            <button 
-                                onClick={() => setShowNotifications(!showNotifications)}
+                            <button
+                                onClick={handleBellClick}
                                 className={`p-3 bg-white rounded-2xl transition-all shadow-premium-sm active:scale-95 flex items-center justify-center ${
                                     showNotifications ? 'text-primary ring-2 ring-primary/20' : 'text-charcoal hover:bg-gray-50'
                                 }`}
                             >
                                 <Bell size={20} />
-                                <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-accent rounded-full border-2 border-white"></span>
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-2 right-2 min-w-[16px] h-4 bg-accent rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-white px-0.5">
+                                        {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                )}
                             </button>
 
                             <AnimatePresence>
                                 {showNotifications && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-premium p-4 z-50 border border-gray-100"
                                     >
-                                        <h3 className="text-sm font-bold text-charcoal mb-3">Notifications</h3>
-                                        <div className="space-y-3">
-                                            <div className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
-                                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">JD</div>
-                                                <div>
-                                                    <p className="text-xs font-bold text-charcoal">John Doe finished "Wash Dishes"</p>
-                                                    <p className="text-[10px] text-medium-gray">2 minutes ago</p>
-                                                </div>
+                                        <h3 className="text-sm font-bold text-charcoal mb-3">Tasks Due Today</h3>
+                                        {notifications.length === 0 ? (
+                                            <p className="text-xs text-medium-gray text-center py-4">No tasks due today</p>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                {notifications.map((task) => (
+                                                    <div key={task.id} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+                                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
+                                                            {task.taskType?.name?.[0]?.toUpperCase() || '📋'}
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-xs font-bold text-charcoal truncate">{task.title}</p>
+                                                            <p className="text-[10px] text-medium-gray">
+                                                                {task.dueDate ? formatDueDate(task.dueDate) : 'Due today'} · {task.household?.name}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
-                                                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold">AI</div>
-                                                <div>
-                                                    <p className="text-xs font-bold text-charcoal">AI Suggestion: New task pattern detected</p>
-                                                    <p className="text-[10px] text-medium-gray">1 hour ago</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button className="w-full mt-4 py-2 text-[10px] font-bold text-primary uppercase tracking-wider hover:bg-primary/5 rounded-xl transition-colors">
-                                            View all notifications
-                                        </button>
+                                        )}
                                     </motion.div>
                                 )}
                             </AnimatePresence>
