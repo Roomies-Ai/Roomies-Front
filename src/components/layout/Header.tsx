@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     };
 
     return (
-        <header className="px-6 pt-10 pb-4 fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md">
+        <header className="px-6 pt-6 md:pt-4 pb-4 fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md">
             <div className="flex justify-between items-center bg-transparent max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
                     {!isSearchOpen ? (
@@ -84,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                                 <input
                                     type="text"
                                     placeholder="Search tasks, roomies..."
-                                    className="w-100 py-3 pl-4 pr-12 bg-white rounded-2xl border-none shadow-premium-sm focus:ring-2 focus:ring-primary/20 outline-none text-charcoal font-medium placeholder:text-medium-gray"
+                                    className="w-full py-3 pl-4 pr-12 bg-white rounded-2xl border-none shadow-premium-sm focus:ring-2 focus:ring-primary/20 outline-none text-charcoal font-medium placeholder:text-medium-gray"
                                     autoFocus
                                 />
                                 <button

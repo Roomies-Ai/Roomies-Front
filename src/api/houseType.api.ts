@@ -1,13 +1,3 @@
-import apiClient from './Axios';
+export const HOUSE_TYPES = ['Apartment', 'Villa', 'Bungalow', 'Cottage', 'Townhouse', 'Chalet', 'Loft', 'Mansion', 'Duplex', 'Triplex', 'Quadplex', 'Studio', 'Other'] as const;
 
-export interface HouseType {
-    id: string;
-    name: string;
-}
-
-export const houseTypeApi = {
-    getAll: async (): Promise<HouseType[]> => {
-        const response = await apiClient.get<HouseType[]>('/house-types');
-        return response.data;
-    }
-};
+export type HouseType = typeof HOUSE_TYPES[number];

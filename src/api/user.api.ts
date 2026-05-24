@@ -20,5 +20,12 @@ export const userApi = {
     getAvailableTaskTypes: async () => {
         const response = await apiClient.get('/users/me/available-tasks');
         return response.data;
-    }
+    },
+    getTelegramToken: async (): Promise<{ telegramToken: string }> => {
+        const response = await apiClient.get('/users/me/telegram-token');
+        return response.data;
+    },
+    unlinkTelegram: async (): Promise<void> => {
+        await apiClient.delete('/users/me/telegram');
+    },
 };
