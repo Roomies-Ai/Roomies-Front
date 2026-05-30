@@ -77,6 +77,57 @@ export const useProfile = () => {
         return () => clearInterval(interval);
     }, [user?.telegramChatId, dispatch]);
 
+    // Fetch Google Calendar connection status on mount
+    useEffect(() => {
+        calendarApi.getStatus()
+            .then(setCalendarStatus)
+            .catch(console.error);
+    }, []);
+
+    // Detect OAuth callback redirect (?calendar=connected) and refresh status
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('calendar') === 'connected') {
+            calendarApi.getStatus().then(setCalendarStatus).catch(console.error);
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }, []);
+
+    const handleConnectCalendar = useCallback(async () => {
+        setCalendarLoading(true);
+        try {
+            const { url } = await calendarApi.getConnectUrl();
+            window.location.href = url;
+        } catch (err) {
+            console.error('Calendar connect failed', err);
+            setCalendarLoading(false);
+        }
+    }, []);
+
+    const handleToggleCalendar = useCallback(async () => {
+        setCalendarLoading(true);
+        try {
+            const result = await calendarApi.toggleSync();
+            setCalendarStatus(prev => prev ? { ...prev, calendarSyncEnabled: result.calendarSyncEnabled } : null);
+        } catch (err) {
+            console.error('Calendar toggle failed', err);
+        } finally {
+            setCalendarLoading(false);
+        }
+    }, []);
+
+    const handleDisconnectCalendar = useCallback(async () => {
+        setCalendarLoading(true);
+        try {
+            await calendarApi.disconnect();
+            setCalendarStatus({ connected: false, calendarSyncEnabled: false });
+        } catch (err) {
+            console.error('Calendar disconnect failed', err);
+        } finally {
+            setCalendarLoading(false);
+        }
+    }, []);
+
     const handleUnlinkTelegram = useCallback(async () => {
         setTelegramLoading(true);
         try {
