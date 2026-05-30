@@ -205,8 +205,14 @@ export const useProfile = () => {
         telegramToken,
         telegramLoading,
         handleUnlinkTelegram,
+        calendarStatus,
+        calendarLoading,
+        handleConnectCalendar,
+        handleToggleCalendar,
+        handleDisconnectCalendar,
     }), [user, setUser, isEditing, setIsEditing, isPasswordModalOpen, setIsPasswordModalOpen,
         isTasksModalOpen, setIsTasksModalOpen, loading, editForm, setEditFormField,
         handleUpdateProfile, togglePreference, addVibe, removeVibe, navigate,
-        telegramToken, telegramLoading, handleUnlinkTelegram]);
+        telegramToken, telegramLoading, handleUnlinkTelegram,
+        calendarStatus, calendarLoading, handleConnectCalendar, handleToggleCalendar, handleDisconnectCalendar]);
 };
