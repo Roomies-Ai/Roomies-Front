@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '../../../api/user.api';
+import { calendarApi } from '../../../api/calendar.api';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 import { setUser as setReduxUser } from '../../../store/slices/authSlice';
 import type { ProfileUser, ProfileFormState } from '../types/profile.types';
@@ -17,6 +18,8 @@ export const useProfile = () => {
     const [loading, setLoading] = useState(false);
     const [telegramToken, setTelegramToken] = useState<string | null>(null);
     const [telegramLoading, setTelegramLoading] = useState(false);
+    const [calendarStatus, setCalendarStatus] = useState<{ connected: boolean; calendarSyncEnabled: boolean } | null>(null);
+    const [calendarLoading, setCalendarLoading] = useState(false);
     
     // Form State
     const [editForm, setEditForm] = useState<ProfileFormState>({
