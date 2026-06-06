@@ -50,6 +50,7 @@ export const useTasks = () => {
     }, [filter]);
 
     const fetchHouseholdTasks = useCallback(async (householdId: string) => {
+        if (filter === 'ME') return;
         if (loadedHouseholdIds.current.has(householdId)) return;
 
         setLoadingHouseholds(prev => ({ ...prev, [householdId]: true }));
@@ -64,7 +65,7 @@ export const useTasks = () => {
         } finally {
             setLoadingHouseholds(prev => ({ ...prev, [householdId]: false }));
         }
-    }, []);
+    }, [filter]);
 
     useEffect(() => {
         fetchData();
