@@ -8,6 +8,7 @@ import ProfileBanner from './components/ProfileBanner';
 import ProfileDetailsCard from './components/ProfileDetailsCard';
 import ProfileSecurityCard from './components/ProfileSecurityCard';
 import ProfileTelegramCard from './components/ProfileTelegramCard';
+import ProfileGoogleCalendarCard from './components/ProfileGoogleCalendarCard';
 import ProfileVibesCard from './components/ProfileVibesCard';
 import ProfileTasksCard from './components/ProfileTasksCard';
 import ChangePasswordModal from './components/ChangePasswordModal';
@@ -41,6 +42,11 @@ const ProfileScreen = () => {
         telegramToken,
         telegramLoading,
         handleUnlinkTelegram,
+        calendarStatus,
+        calendarLoading,
+        handleConnectCalendar,
+        handleToggleCalendar,
+        handleDisconnectCalendar,
     } = useProfile();
 
     return (
@@ -81,7 +87,16 @@ const ProfileScreen = () => {
                         variants={ITEM_VARIANTS}
                     />
 
-                    <ProfileVibesCard 
+                    <ProfileGoogleCalendarCard
+                        calendarStatus={calendarStatus}
+                        calendarLoading={calendarLoading}
+                        onConnect={handleConnectCalendar}
+                        onToggle={handleToggleCalendar}
+                        onDisconnect={handleDisconnectCalendar}
+                        variants={ITEM_VARIANTS}
+                    />
+
+                    <ProfileVibesCard
                         editForm={editForm}
                         isEditing={isEditing}
                         addVibe={addVibe}
