@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../../../api/user.api";
-import { calendarApi } from "../../../api/calendar.api";
+import {
+  useGetCalendarStatusQuery,
+  useLazyGetConnectUrlQuery,
+  useToggleSyncMutation,
+  useDisconnectCalendarMutation,
+} from "../../../api/calendar.api";
 import { useAppSelector, useAppDispatch } from "../../../store/hooks";
 import { setUser as setReduxUser } from "../../../store/slices/authSlice";
 import type { ProfileUser, ProfileFormState } from "../types/profile.types";
@@ -20,11 +25,14 @@ export const useProfile = () => {
   const [loading, setLoading] = useState(false);
   const [telegramToken, setTelegramToken] = useState<string | null>(null);
   const [telegramLoading, setTelegramLoading] = useState(false);
-  const [calendarStatus, setCalendarStatus] = useState<{
-    connected: boolean;
-    calendarSyncEnabled: boolean;
-  } | null>(null);
-  const [calendarLoading, setCalendarLoading] = useState(false);
+
+  // RTK Query hooks
+  const { data: calendarStatus, refetch: refetchCalendarStatus } = useGetCalendarStatusQuery();
+  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] = useLazyGetConnectUrlQuery();
+  const [toggleSync, { isLoading: toggleSyncLoading }] = useToggleSyncMutation();
+  const [disconnectCalendar, { isLoading: disconnectLoading }] = useDisconnectCalendarMutation();
+
+  const calendarLoading = connectUrlLoading || toggleSyncLoading || disconnectLoading;
 
   // Form State
   const [editForm, setEditForm] = useState<ProfileFormState>({
@@ -83,57 +91,41 @@ export const useProfile = () => {
     return () => clearInterval(interval);
   }, [user?.telegramChatId, dispatch]);
 
-  useEffect(() => {
-    calendarApi.getStatus().then(setCalendarStatus).catch(console.error);
-  }, []);
-
   // Detect OAuth callback redirect (?calendar=connected) and refresh status
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("calendar") === "connected") {
-      calendarApi.getStatus().then(setCalendarStatus).catch(console.error);
+      refetchCalendarStatus();
       window.history.replaceState({}, "", window.location.pathname);
     }
-  }, []);
+  }, [refetchCalendarStatus]);
 
   const handleConnectCalendar = useCallback(async () => {
-    setCalendarLoading(true);
     try {
-      const { url } = await calendarApi.getConnectUrl();
-      window.location.href = url;
+      const result = await triggerGetConnectUrl().unwrap();
+      if (result?.url) {
+        window.location.href = result.url;
+      }
     } catch (err) {
       console.error("Calendar connect failed", err);
-      setCalendarLoading(false);
     }
-  }, []);
+  }, [triggerGetConnectUrl]);
 
   const handleToggleCalendar = useCallback(async () => {
-    setCalendarLoading(true);
     try {
-      const result = await calendarApi.toggleSync();
-      setCalendarStatus((prev) =>
-        prev
-          ? { ...prev, calendarSyncEnabled: result.calendarSyncEnabled }
-          : null,
-      );
+      await toggleSync().unwrap();
     } catch (err) {
       console.error("Calendar toggle failed", err);
-    } finally {
-      setCalendarLoading(false);
     }
-  }, []);
+  }, [toggleSync]);
 
   const handleDisconnectCalendar = useCallback(async () => {
-    setCalendarLoading(true);
     try {
-      await calendarApi.disconnect();
-      setCalendarStatus({ connected: false, calendarSyncEnabled: false });
+      await disconnectCalendar().unwrap();
     } catch (err) {
       console.error("Calendar disconnect failed", err);
-    } finally {
-      setCalendarLoading(false);
     }
-  }, []);
+  }, [disconnectCalendar]);
 
   const handleUnlinkTelegram = useCallback(async () => {
     setTelegramLoading(true);
