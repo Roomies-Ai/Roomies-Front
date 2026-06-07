@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { notificationsApi } from '../../api/notifications.api';
 
@@ -14,11 +14,6 @@ const initialState: NotificationsState = {
     loading: false,
 };
 
-export const fetchMyNotifications = createAsyncThunk(
-    'notifications/fetchMy',
-    async () => notificationsApi.getMyNotifications()
-);
-
 const notificationsSlice = createSlice({
     name: 'notifications',
     initialState,
@@ -29,15 +24,15 @@ const notificationsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchMyNotifications.pending, (state) => {
+            .addMatcher(notificationsApi.endpoints.getMyNotifications.matchPending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchMyNotifications.fulfilled, (state, action: PayloadAction<any[]>) => {
+            .addMatcher(notificationsApi.endpoints.getMyNotifications.matchFulfilled, (state, action: PayloadAction<any[]>) => {
                 state.items = action.payload;
                 state.unreadCount = action.payload.length;
                 state.loading = false;
             })
-            .addCase(fetchMyNotifications.rejected, (state) => {
+            .addMatcher(notificationsApi.endpoints.getMyNotifications.matchRejected, (state) => {
                 state.loading = false;
             });
     },
