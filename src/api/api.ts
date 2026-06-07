@@ -6,6 +6,10 @@ export const api = createApi({
         baseUrl: `${import.meta.env.VITE_SERVER_URL}` || "http://localhost:3000",
         credentials: "include",
         prepareHeaders: (headers) => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+            }
             if (!headers.has("Content-Type")) {
                 headers.set("Content-Type", "application/json");
             }

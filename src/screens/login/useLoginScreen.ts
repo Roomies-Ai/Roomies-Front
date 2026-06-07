@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../store/hooks';
 import { setCredentials, setLoading, setError } from '../../store/slices/authSlice';
-import { authApi } from '../../api/auth.api';
+import { authApi, useGoogleLoginMutation } from '../../api/auth.api';
 import { useGoogleLogin as useReactGoogleLogin } from '@react-oauth/google';
 
 export const useLoginScreen = () => {
@@ -12,6 +12,7 @@ export const useLoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [googleLogin, { isLoading: googleIsLoading, data: googleData }] = useGoogleLoginMutation()
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,12 +49,13 @@ export const useLoginScreen = () => {
     }, []);
 
     const onGoogleSuccess = useCallback(async (tokenResponse: any) => {
-        dispatch(setLoading(true));
+        dispatch(setLoading(googleIsLoading));
+        dispatch(setError(null));
         try {
-            const response = await authApi.googleLogin(tokenResponse.access_token);
+            await googleLogin({ token: tokenResponse.access_token }).unwrap();
             dispatch(setCredentials({
-                user: response.user,
-                token: response.accessToken
+                user: googleData?.user,
+                token: googleData?.accessToken
             }));
             navigate('/home');
         } catch (err: any) {
@@ -61,7 +63,7 @@ export const useLoginScreen = () => {
         } finally {
             dispatch(setLoading(false));
         }
-    }, [dispatch, navigate]);
+    }, [dispatch, navigate, googleData]);
 
     const onGoogleError = useCallback(() => {
         dispatch(setError('Google login failed'));

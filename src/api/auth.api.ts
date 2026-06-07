@@ -15,3 +15,38 @@ export const authApi = {
         return response.data;
     },
 };
+
+
+import { api } from "./api";
+
+export const authApiRtk = api.injectEndpoints({
+    endpoints: (builder) => ({
+        googleLogin: builder.mutation<any, { token: string }>({
+            query: (body) => ({
+                url: "/auth/google",
+                method: "POST",
+                body,
+            }),
+        }),
+        register: builder.mutation<AuthResponse, any>({
+            query: (body) => ({
+                url: "/auth/register",
+                method: "POST",
+                body,
+            }),
+        }),
+        login: builder.mutation<AuthResponse, any>({
+            query: (body) => ({
+                url: "/auth/login",
+                method: "POST",
+                body,
+            }),
+        }),
+    }),
+});
+
+export const {
+    useGoogleLoginMutation,
+    useRegisterMutation,
+    useLoginMutation
+} = authApiRtk;
