@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { statsApi } from '../../../api/stats.api';
-import { householdApi } from '../../../api/household.api';
+import { useGetMyHouseholdsQuery, useLazyGetHouseholdByIdQuery } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
 import { useAppSelector } from '../../../store/hooks';
 import type { Household } from '../../../types/household';
@@ -8,6 +8,8 @@ import type { SelectedEntity, AggregatedStats } from '../StatsScreen.types';
 
 export const useStats = () => {
     const { user: currentUser } = useAppSelector(state => state.auth);
+    const { data: householdsList = [], isLoading: loadingHouseholds } = useGetMyHouseholdsQuery();
+    const [getHouseholdById] = useLazyGetHouseholdByIdQuery();
     const [households, setHouseholds] = useState<Household[]>([]);
     const [selectedHousehold, setSelectedHousehold] = useState<string>('');
     const [activeHouseholdDetail, setActiveHouseholdDetail] = useState<Household | null>(null);
@@ -23,7 +25,7 @@ export const useStats = () => {
         try {
             const [statsData, householdData] = await Promise.all([
                 statsApi.getFairnessStats(selectedHousehold),
-                householdApi.getHouseholdById(selectedHousehold)
+                getHouseholdById(selectedHousehold).unwrap()
             ]);
             setStats(statsData);
             setActiveHouseholdDetail(householdData);
@@ -32,25 +34,22 @@ export const useStats = () => {
         } finally {
             setLoading(false);
         }
-    }, [selectedHousehold]);
+    }, [selectedHousehold, getHouseholdById]);
 
     useEffect(() => {
-        const init = async () => {
-            try {
-                const data = await householdApi.getMyHouseholds();
-                setHouseholds(data);
-                if (data.length > 0) {
-                    setSelectedHousehold(data[0].id);
-                } else {
-                    setLoading(false);
-                }
-            } catch (err) {
-                console.error('Failed to load initial data', err);
-                setLoading(false);
+        if (householdsList) {
+            setHouseholds(householdsList);
+            if (householdsList.length > 0 && !selectedHousehold) {
+                setSelectedHousehold(householdsList[0].id);
             }
-        };
-        init();
-    }, []);
+        }
+    }, [householdsList, selectedHousehold]);
+
+    useEffect(() => {
+        if (!loadingHouseholds && householdsList.length === 0) {
+            setLoading(false);
+        }
+    }, [loadingHouseholds, householdsList]);
 
     useEffect(() => {
         if (selectedHousehold) {
