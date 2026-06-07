@@ -21,21 +21,21 @@ import { api } from "./api";
 
 export const authApiRtk = api.injectEndpoints({
     endpoints: (builder) => ({
-        googleLogin: builder.mutation<any, { token: string }>({
+        googleLogin: builder.mutation<AuthResponse, { token: string }>({
             query: (body) => ({
                 url: "/auth/google",
                 method: "POST",
                 body,
             }),
         }),
-        register: builder.mutation<AuthResponse, any>({
+        register: builder.mutation<AuthResponse, RegisterRequest>({
             query: (body) => ({
                 url: "/auth/register",
                 method: "POST",
                 body,
             }),
         }),
-        login: builder.mutation<AuthResponse, any>({
+        login: builder.mutation<AuthResponse, RegisterRequest>({
             query: (body) => ({
                 url: "/auth/login",
                 method: "POST",
