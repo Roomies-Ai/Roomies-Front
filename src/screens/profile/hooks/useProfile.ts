@@ -43,12 +43,17 @@ export const useProfile = () => {
     preferences: reduxUser?.preferences || { loudMusic: false },
   });
 
+  // Initial fetch — only if user data isn't already in Redux
   useEffect(() => {
+    if (reduxUser?.id) {
+      setUser(reduxUser as ProfileUser);
+      return;
+    }
     const fetchUser = async () => {
       try {
         const data = await userApi.getMe();
         setUser(data);
-        dispatch(setReduxUser(data)); // Sync with Redux & LocalStorage
+        dispatch(setReduxUser(data));
         setEditForm({
           username: data.username,
           email: data.email,
@@ -61,7 +66,7 @@ export const useProfile = () => {
       }
     };
     fetchUser();
-  }, [dispatch]);
+  }, [dispatch, reduxUser?.id]);
 
   useEffect(() => {
     if (user && !user.telegramChatId) {
