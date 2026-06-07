@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../store/hooks';
 import { setCredentials, setLoading, setError } from '../../store/slices/authSlice';
-import { authApi } from '../../api/auth.api';
+import { useGoogleLoginMutation, useRegisterMutation, useLoginMutation } from '../../api/auth.api';
 import { useGoogleLogin as useReactGoogleLogin } from '@react-oauth/google';
 
 export const useLoginScreen = () => {
@@ -12,17 +12,20 @@ export const useLoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [googleLogin, { isLoading: googleIsLoading }] = useGoogleLoginMutation()
+    const [register, { isLoading: registerIsLoading }] = useRegisterMutation()
+    const [login, { isLoading: loginIsLoading }] = useLoginMutation()
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(setLoading(true));
+        dispatch(setLoading(registerIsLoading || loginIsLoading));
         dispatch(setError(null));
 
         try {
             const data = { email, password };
             const response = authType === 'login'
-                ? await authApi.login(data)
-                : await authApi.register(data);
+                ? await login(data).unwrap()
+                : await register(data).unwrap();
 
             dispatch(setCredentials({
                 user: response.user,
@@ -48,9 +51,10 @@ export const useLoginScreen = () => {
     }, []);
 
     const onGoogleSuccess = useCallback(async (tokenResponse: any) => {
-        dispatch(setLoading(true));
+        dispatch(setLoading(googleIsLoading));
+        dispatch(setError(null));
         try {
-            const response = await authApi.googleLogin(tokenResponse.access_token);
+            const response = await googleLogin({ token: tokenResponse.access_token }).unwrap();
             dispatch(setCredentials({
                 user: response.user,
                 token: response.accessToken

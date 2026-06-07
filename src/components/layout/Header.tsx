@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Bell, Search, X, Send } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchMyNotifications, clearUnread } from '../../store/slices/notificationsSlice';
+import { clearUnread } from '../../store/slices/notificationsSlice';
+import { useGetMyNotificationsQuery } from '../../api/notifications.api';
 
 interface HeaderProps {
     showActions?: boolean;
@@ -15,11 +16,8 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
-    useEffect(() => {
-        if (user) {
-            dispatch(fetchMyNotifications());
-        }
-    }, [user, dispatch]);
+    // Call RTK Query hook, which automatically fetches when user is logged in
+    useGetMyNotificationsQuery(undefined, { skip: !user });
 
     const getGreeting = () => {
         const hour = new Date().getHours();

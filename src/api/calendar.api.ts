@@ -1,22 +1,34 @@
-import apiClient from './Axios';
+import { api } from './api';
 
-export const calendarApi = {
-    getStatus: async (): Promise<{ connected: boolean; calendarSyncEnabled: boolean }> => {
-        const response = await apiClient.get('/google-calendar/status');
-        return response.data;
-    },
+export const calendarApi = api.injectEndpoints({
+    endpoints: (builder) => ({
+        getCalendarStatus: builder.query<{ connected: boolean; calendarSyncEnabled: boolean }, void>({
+            query: () => '/google-calendar/status',
+            providesTags: ['CalendarStatus'],
+        }),
+        getConnectUrl: builder.query<{ url: string }, void>({
+            query: () => '/google-calendar/connect',
+        }),
+        toggleSync: builder.mutation<{ calendarSyncEnabled: boolean }, void>({
+            query: () => ({
+                url: '/google-calendar/toggle',
+                method: 'PATCH',
+            }),
+            invalidatesTags: ['CalendarStatus'],
+        }),
+        disconnectCalendar: builder.mutation<void, void>({
+            query: () => ({
+                url: '/google-calendar/disconnect',
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['CalendarStatus'],
+        }),
+    }),
+});
 
-    getConnectUrl: async (): Promise<{ url: string }> => {
-        const response = await apiClient.get('/google-calendar/connect');
-        return response.data;
-    },
-
-    toggleSync: async (): Promise<{ calendarSyncEnabled: boolean }> => {
-        const response = await apiClient.patch('/google-calendar/toggle');
-        return response.data;
-    },
-
-    disconnect: async (): Promise<void> => {
-        await apiClient.delete('/google-calendar/disconnect');
-    },
-};
+export const {
+    useGetCalendarStatusQuery,
+    useLazyGetConnectUrlQuery,
+    useToggleSyncMutation,
+    useDisconnectCalendarMutation,
+} = calendarApi;

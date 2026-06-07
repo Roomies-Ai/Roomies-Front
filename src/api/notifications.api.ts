@@ -1,8 +1,11 @@
-import apiClient from './Axios';
+import { api } from "./api";
 
-export const notificationsApi = {
-    getMyNotifications: async (): Promise<any[]> => {
-        const response = await apiClient.get('/notifications/my');
-        return response.data;
-    },
-};
+export const notificationsApi = api.injectEndpoints({
+    endpoints: (builder) => ({
+        getMyNotifications: builder.query<any[], void>({
+            query: () => '/notifications/my',
+        }),
+    }),
+});
+
+export const { useGetMyNotificationsQuery } = notificationsApi;
