@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAppSelector } from '../../../store/hooks';
-import { householdApi } from '../../../api/household.api';
+import { useLazyGetMyHouseholdsQuery, useLazyGetHouseholdByIdQuery } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
 import { useTaskActions } from './useTaskActions';
 import type { HouseholdTasks, TaskFilter } from '../types/tasks.types';
 
 export const useTasks = () => {
     const currentUser = useAppSelector((state) => state.auth.user);
+    const [getMyHouseholds] = useLazyGetMyHouseholdsQuery();
+    const [getHouseholdById] = useLazyGetHouseholdByIdQuery();
     const [households, setHouseholds] = useState<HouseholdTasks[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -22,7 +24,7 @@ export const useTasks = () => {
             
             if (filter === 'ME') {
                 const [householdsList, myTasks] = await Promise.all([
-                    householdApi.getMyHouseholds(false),
+                    getMyHouseholds(false).unwrap(),
                     taskApi.getMyTasks()
                 ]);
 
@@ -39,15 +41,15 @@ export const useTasks = () => {
 
                 setHouseholds(householdsWithMyTasks);
             } else {
-                const list = await householdApi.getMyHouseholds(false);
+                const list = await getMyHouseholds(false).unwrap();
                 setHouseholds(list.map(h => ({ ...h, tasks: h.tasks || [] })));
             }
         } catch (err: any) {
-            setError(err.message || 'Failed to fetch tasks');
+            setError(err.data?.message || err.message || 'Failed to fetch tasks');
         } finally {
             setLoading(false);
         }
-    }, [filter]);
+    }, [filter, getMyHouseholds]);
 
     const fetchHouseholdTasks = useCallback(async (householdId: string) => {
         if (filter === 'ME') return;
@@ -55,7 +57,7 @@ export const useTasks = () => {
 
         setLoadingHouseholds(prev => ({ ...prev, [householdId]: true }));
         try {
-            const full = await householdApi.getHouseholdById(householdId);
+            const full = await getHouseholdById(householdId).unwrap();
             loadedHouseholdIds.current.add(householdId);
             setHouseholds(prev => prev.map(h => 
                 h.id === householdId ? { ...h, ...full } : h
@@ -65,7 +67,7 @@ export const useTasks = () => {
         } finally {
             setLoadingHouseholds(prev => ({ ...prev, [householdId]: false }));
         }
-    }, [filter]);
+    }, [filter, getHouseholdById]);
 
     useEffect(() => {
         fetchData();

@@ -16,6 +16,6 @@ export const api = createApi({
             return headers;
         },
     }),
-    tagTypes: ["CalendarStatus"],
+    tagTypes: ["CalendarStatus", "Household"],
     endpoints: () => ({}),
 });
