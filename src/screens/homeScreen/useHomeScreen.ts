@@ -1,32 +1,17 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { householdApi } from '../../api/household.api';
-import type { Household } from '../../types/household';
+import { useMemo } from 'react';
+import { useGetMyHouseholdsQuery } from '../../api/household.api';
 
 export const useHomeScreen = () => {
-    const [households, setHouseholds] = useState<Household[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data: households = [], isLoading: loading, error, refetch: refresh } = useGetMyHouseholdsQuery();
 
-    const fetchHouseholds = useCallback(async () => {
-        try {
-            setLoading(true);
-            const data = await householdApi.getMyHouseholds();
-            setHouseholds(data);
-        } catch (err: any) {
-            setError(err.message || 'Failed to fetch households');
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchHouseholds();
-    }, [fetchHouseholds]);
+    const errorMsg = error 
+        ? ('data' in error ? (error.data as any)?.message : 'message' in error ? error.message : 'Failed to fetch households')
+        : null;
 
     return useMemo(() => ({
         households,
         loading,
-        error,
-        refresh: fetchHouseholds
-    }), [households, loading, error, fetchHouseholds]);
+        error: errorMsg,
+        refresh
+    }), [households, loading, errorMsg, refresh]);
 };

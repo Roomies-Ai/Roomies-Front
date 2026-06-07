@@ -2,13 +2,14 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setUser } from '../../../store/slices/authSlice';
-import { householdApi } from '../../../api/household.api';
+import { useLeaveHouseholdMutation } from '../../../api/household.api';
 import type { Household } from '../../../types/household';
 
 export const useHomeUI = (onRefresh?: () => void) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const currentUser = useAppSelector((state) => state.auth.user);
+    const [leaveHousehold] = useLeaveHouseholdMutation();
     
     const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
     const [householdToLeave, setHouseholdToLeave] = useState<Household | null>(null);
@@ -40,7 +41,7 @@ export const useHomeUI = (onRefresh?: () => void) => {
         try {
             setIsLeaving(true);
             const userId = currentUser.id || currentUser.userId;
-            await householdApi.leaveHousehold(householdToLeave.id, userId);
+            await leaveHousehold({ householdId: householdToLeave.id, userId }).unwrap();
             
             // Update local user state
             const updatedUser = { ...currentUser };
@@ -57,7 +58,7 @@ export const useHomeUI = (onRefresh?: () => void) => {
         } finally {
             setIsLeaving(false);
         }
-    }, [householdToLeave, currentUser, dispatch, onRefresh]);
+    }, [householdToLeave, currentUser, dispatch, leaveHousehold, onRefresh]);
 
     return {
         handleCreateJoin,
