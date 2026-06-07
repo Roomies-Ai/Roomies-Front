@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { householdApi } from '../../../api/household.api';
+import { useJoinHouseholdMutation } from '../../../api/household.api';
 
 export const useJoinHousehold = () => {
     const navigate = useNavigate();
+    const [joinHousehold] = useJoinHouseholdMutation();
     const [inviteCode, setInviteCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -16,14 +17,14 @@ export const useJoinHousehold = () => {
         setError(null);
 
         try {
-            await householdApi.joinHousehold({ inviteCode: inviteCode.trim() });
+            await joinHousehold({ inviteCode: inviteCode.trim() }).unwrap();
             navigate('/home');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Invalid invite code or already a member');
+            setError(err.data?.message || err.message || 'Invalid invite code or already a member');
         } finally {
             setIsLoading(false);
         }
-    }, [inviteCode, navigate]);
+    }, [inviteCode, joinHousehold, navigate]);
 
     const handleBack = useCallback(() => navigate(-1), [navigate]);
 
