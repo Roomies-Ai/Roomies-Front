@@ -35,7 +35,11 @@ export interface ManualTaskFormProps {
     handleAddType: () => void;
     onSubmit: () => void;
     onDelete?: () => void;
+    onClearRecurrence?: () => void;
     isEdit: boolean;
+    taskToEdit?: Task;
+    recurrenceRule: RecurrenceRule | null;
+    setRecurrenceRule: (rule: RecurrenceRule | null) => void;
 }
 
 export interface AiTaskSectionProps {
