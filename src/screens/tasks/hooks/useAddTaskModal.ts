@@ -2,15 +2,17 @@ import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '../../../api/task.api';
 import { householdApi } from '../../../api/household.api';
 import type { AddTaskModalProps } from '../components/AddTaskModal.types';
+import type { RecurrenceRule } from '../types/tasks.types';
 
-export const useAddTaskModal = ({ 
-    isOpen, 
-    onClose, 
-    households, 
-    onAdd, 
-    onUpdate, 
-    onDelete, 
-    onRefresh, 
+export const useAddTaskModal = ({
+    isOpen,
+    onClose,
+    households,
+    onAdd,
+    onUpdate,
+    onDelete,
+    onClearRecurrence,
+    onRefresh,
     taskToEdit,
     lockedHouseholdId
 }: AddTaskModalProps) => {
@@ -22,6 +24,7 @@ export const useAddTaskModal = ({
     const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
     const [selectedTaskType, setSelectedTaskType] = useState<string | number | null>(null);
     const [dueDate, setDueDate] = useState<string>(new Date().toISOString().split('T')[0]);
+    const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule | null>(null);
     const [isAddingType, setIsAddingType] = useState(false);
     const [newTypeName, setNewTypeName] = useState('');
     const [isCreatingType, setIsCreatingType] = useState(false);
