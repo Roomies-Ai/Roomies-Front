@@ -20,6 +20,7 @@ const AddTaskModal = (props: AddTaskModalProps) => {
         selectedAssignee, setSelectedAssignee,
         selectedTaskType, setSelectedTaskType,
         dueDate, setDueDate,
+        recurrenceRule, setRecurrenceRule,
         isAddingType, setIsAddingType,
         newTypeName, setNewTypeName,
         isCreatingType,
@@ -30,6 +31,7 @@ const AddTaskModal = (props: AddTaskModalProps) => {
         handleAddType,
         handleManualSubmit,
         handleDelete,
+        handleClearRecurrence,
         handleAiParse,
         handleConfirmAi,
         handleToggleSuggestion
@@ -92,7 +94,11 @@ const AddTaskModal = (props: AddTaskModalProps) => {
                                 isCreatingType={isCreatingType} handleAddType={handleAddType}
                                 onSubmit={handleManualSubmit}
                                 onDelete={handleDelete}
+                                onClearRecurrence={handleClearRecurrence}
                                 isEdit={!!taskToEdit}
+                                taskToEdit={taskToEdit}
+                                recurrenceRule={recurrenceRule}
+                                setRecurrenceRule={setRecurrenceRule}
                             />
                         ) : (
                             <AiTaskSection 
