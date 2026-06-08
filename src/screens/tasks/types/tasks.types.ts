@@ -1,3 +1,11 @@
+export interface RecurrenceRule {
+    frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+    interval: number;
+    daysOfWeek?: number[];
+    timeOfDay?: string;
+    endDate?: string;
+}
+
 export interface TaskType {
     id: string | number;
     name: string;
@@ -26,6 +34,8 @@ export interface Task {
         id: string;
         name: string;
     };
+    recurrenceRule?: RecurrenceRule | null;
+    recurrenceParentId?: string | null;
 }
 
 export interface HouseholdTasks {
