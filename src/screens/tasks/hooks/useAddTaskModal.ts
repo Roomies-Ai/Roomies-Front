@@ -90,6 +90,7 @@ export const useAddTaskModal = ({
             } else {
                 setDueDate('');
             }
+            setRecurrenceRule(taskToEdit.recurrenceRule ?? null);
             
             const parentHousehold = households.find(h => 
                 h.tasks?.some((t: any) => t.id === taskToEdit.id)
@@ -111,6 +112,7 @@ export const useAddTaskModal = ({
                 setDueDate(today);
                 setIsAddingType(false);
                 setNewTypeName('');
+                setRecurrenceRule(null);
             }
         }
     }, [taskToEdit, isOpen, households, activeHousehold]);
@@ -133,15 +135,16 @@ export const useAddTaskModal = ({
 
     const handleManualSubmit = () => {
         if (!title.trim() || !description.trim() || !dueDate || !selectedHousehold) return;
-        
-        const taskData = { 
-            title, 
-            description, 
-            status: selectedAssignee ? 'in-progress' : 'pending', 
+
+        const taskData = {
+            title,
+            description,
+            status: selectedAssignee ? 'in-progress' : 'pending',
             points,
             assignee: selectedAssignee,
             taskType: selectedTaskType,
-            dueDate
+            dueDate,
+            recurrenceRule: recurrenceRule ?? null,
         };
 
         if (taskToEdit && onUpdate) {
