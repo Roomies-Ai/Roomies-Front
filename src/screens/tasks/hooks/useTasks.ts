@@ -75,7 +75,8 @@ export const useTasks = () => {
         handleUpdateTaskStatus,
         handleUpdateTask,
         handleAddTask,
-        handleDeleteTask
+        handleDeleteTask,
+        handleClearRecurrence,
     } = useTaskActions({ setHouseholds, refresh: fetchData });
 
     return useMemo(() => ({
@@ -90,10 +91,11 @@ export const useTasks = () => {
         handleUpdateTask,
         handleAddTask,
         handleDeleteTask,
+        handleClearRecurrence,
         fetchHouseholdTasks,
         refresh: fetchData,
         allHouseholds: households
     }), [currentUser, households, filter, setFilter, loading, loadingHouseholds, error,
         handleUpdateTaskStatus, handleUpdateTask, handleAddTask, handleDeleteTask,
-        fetchHouseholdTasks, fetchData]);
+        handleClearRecurrence, fetchHouseholdTasks, fetchData]);
 };
