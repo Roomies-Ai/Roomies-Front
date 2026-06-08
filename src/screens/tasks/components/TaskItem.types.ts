@@ -14,6 +14,8 @@ export interface TaskItemHeaderProps {
     onEdit: () => void;
     onToggle: () => void;
     showComplete: boolean;
+    onToggleExpand?: (e: React.MouseEvent) => void;
+    isExpanded?: boolean;
 }
 
 export interface TaskItemFooterProps {

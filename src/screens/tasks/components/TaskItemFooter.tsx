@@ -1,4 +1,4 @@
-import { User as UserIcon, Calendar } from 'lucide-react';
+import { User as UserIcon, Calendar, RefreshCw } from 'lucide-react';
 import MemberAvatar from '../../households/components/ui/MemberAvatar';
 import type { TaskItemFooterProps } from './TaskItem.types';
 
@@ -28,6 +28,22 @@ const TaskItemFooter = ({ task }: TaskItemFooterProps) => {
                     <div className="flex items-center gap-1.5 bg-blue-50 px-3 py-1.5 rounded-xl text-blue-600 shrink-0">
                         <Calendar size={12} />
                         <span className="text-[10px] font-black">{new Date(task.dueDate).toLocaleDateString('he-IL')}</span>
+                    </div>
+                )}
+
+                {task.recurrenceRule && !task.recurrenceParentId && (
+                    <div className="flex items-center gap-1.5 bg-violet-50 px-3 py-1.5 rounded-xl text-violet-600 shrink-0">
+                        <RefreshCw size={12} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                            {task.recurrenceRule.frequency}
+                        </span>
+                    </div>
+                )}
+
+                {task.recurrenceParentId && (
+                    <div className="flex items-center gap-1.5 bg-violet-50/70 px-3 py-1.5 rounded-xl text-violet-400 shrink-0">
+                        <RefreshCw size={12} />
+                        <span className="text-[10px] font-black">instance</span>
                     </div>
                 )}
             </div>
