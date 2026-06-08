@@ -162,6 +162,13 @@ export const useAddTaskModal = ({
         }
     };
 
+    const handleClearRecurrence = () => {
+        if (taskToEdit && onClearRecurrence) {
+            onClearRecurrence(taskToEdit.id);
+            resetAndClose();
+        }
+    };
+
     const handleAiParse = async () => {
         if (!aiMessage.trim() || !selectedHousehold) return;
         setIsParsing(true);
@@ -202,6 +209,7 @@ export const useAddTaskModal = ({
         setSelectedAssignee(null);
         setSelectedTaskType(null);
         setDueDate(new Date().toISOString().split('T')[0]);
+        setRecurrenceRule(null);
         setAiMessage('');
         setSuggestions([]);
         onClose();
@@ -216,6 +224,7 @@ export const useAddTaskModal = ({
         selectedAssignee, setSelectedAssignee,
         selectedTaskType, setSelectedTaskType,
         dueDate, setDueDate,
+        recurrenceRule, setRecurrenceRule,
         isAddingType, setIsAddingType,
         newTypeName, setNewTypeName,
         isCreatingType,
@@ -226,6 +235,7 @@ export const useAddTaskModal = ({
         handleAddType,
         handleManualSubmit,
         handleDelete,
+        handleClearRecurrence,
         handleAiParse,
         handleConfirmAi,
         handleToggleSuggestion,
