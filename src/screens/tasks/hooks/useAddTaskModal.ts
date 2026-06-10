@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '../../../api/task.api';
-import { householdApi } from '../../../api/household.api';
+import { useLazyGetHouseholdByIdQuery, useAddTaskTypeMutation } from '../../../api/household.api';
 import type { AddTaskModalProps } from '../components/AddTaskModal.types';
 import type { RecurrenceRule } from '../types/tasks.types';
 
@@ -16,6 +16,8 @@ export const useAddTaskModal = ({
     taskToEdit,
     lockedHouseholdId
 }: AddTaskModalProps) => {
+    const [getHouseholdById] = useLazyGetHouseholdByIdQuery();
+    const [addTaskType] = useAddTaskTypeMutation();
     const [selectedHousehold, setSelectedHousehold] = useState(lockedHouseholdId || '');
     const [mode, setMode] = useState<'MANUAL' | 'AI'>('MANUAL');
     const [title, setTitle] = useState('');
@@ -61,7 +63,7 @@ export const useAddTaskModal = ({
             }
 
             try {
-                const full = await householdApi.getHouseholdById(selectedHousehold);
+                const full = await getHouseholdById(selectedHousehold).unwrap();
                 householdDetailCache.current[selectedHousehold] = full;
                 setActiveHouseholdDetail(full);
             } catch (err) {
@@ -70,7 +72,7 @@ export const useAddTaskModal = ({
         };
 
         fetchActiveDetail();
-    }, [selectedHousehold]);
+    }, [selectedHousehold, getHouseholdById, households]);
 
     const activeHousehold = activeHouseholdDetail;
 
@@ -121,7 +123,7 @@ export const useAddTaskModal = ({
         if (!newTypeName.trim() || !selectedHousehold) return;
         setIsCreatingType(true);
         try {
-            const newType = await householdApi.addTaskType(selectedHousehold, newTypeName);
+            const newType = await addTaskType({ id: selectedHousehold, name: newTypeName }).unwrap();
             if (onRefresh) onRefresh();
             setSelectedTaskType(newType.id);
             setIsAddingType(false);

@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { householdApi } from '../../../api/household.api';
+import { useCreateHouseholdMutation } from '../../../api/household.api';
 import { HOUSE_TYPES } from '../../../api/houseType.api';
 import { taskApi, type SuggestedTask } from '../../../api/task.api';
 
 export const useCreateHousehold = () => {
     const navigate = useNavigate();
+    const [createHousehold] = useCreateHouseholdMutation();
     const [step, setStep] = useState(1);
     const [name, setName] = useState('');
     const [selectedType, setSelectedType] = useState<string | null>(HOUSE_TYPES[0]);
@@ -107,11 +108,11 @@ export const useCreateHousehold = () => {
         setError(null);
 
         try {
-            const household = await householdApi.createHousehold({
+            const household = await createHousehold({
                 name,
                 houseType: selectedType || undefined,
                 pets: pets.length > 0 ? pets : undefined,
-            });
+            }).unwrap();
 
             const today = new Date().toISOString().split('T')[0];
             const approvedTasks = suggestedTasks

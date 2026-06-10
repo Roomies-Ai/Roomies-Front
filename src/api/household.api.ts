@@ -1,36 +1,83 @@
-import apiClient from './Axios';
+import { api } from './api';
 import type { Household, CreateHouseholdRequest, JoinHouseholdRequest } from '../types/household';
 
-export const householdApi = {
-    getMyHouseholds: async (full = false): Promise<Household[]> => {
-        const response = await apiClient.get<Household[]>(`/households/me${full ? '?full=true' : ''}`);
-        return response.data;
-    },
-    getHouseholdById: async (id: string): Promise<Household> => {
-        const response = await apiClient.get<Household>(`/households/${id}`);
-        return response.data;
-    },
-    createHousehold: async (data: CreateHouseholdRequest): Promise<Household> => {
-        const response = await apiClient.post<Household>('/households', data);
-        return response.data;
-    },
-    joinHousehold: async (data: JoinHouseholdRequest): Promise<Household> => {
-        const response = await apiClient.post<Household>('/households/join', data);
-        return response.data;
-    },
-    generateInviteCode: async (id: string): Promise<{ inviteCode: string }> => {
-        const response = await apiClient.post<{ inviteCode: string }>(`/households/${id}/invites`);
-        return response.data;
-    },
-    addPet: async (id: string, data: { name: string; kind: string }): Promise<any> => {
-        const response = await apiClient.post(`/households/${id}/pets`, data);
-        return response.data;
-    },
-    addTaskType: async (id: string, name: string): Promise<any> => {
-        const response = await apiClient.post(`/households/${id}/task-types`, { name });
-        return response.data;
-    },
-    leaveHousehold: async (householdId: string, userId: string): Promise<void> => {
-        await apiClient.delete(`/households/${householdId}/users/${userId}`);
-    }
-};
+export const householdApi = api.injectEndpoints({
+    endpoints: (builder) => ({
+        getMyHouseholds: builder.query<Household[], boolean | void>({
+            query: (full = false) => `/households/me${full ? '?full=true' : ''}`,
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map(({ id }) => ({ type: 'Household' as const, id })),
+                          { type: 'Household', id: 'LIST' },
+                      ]
+                    : [{ type: 'Household', id: 'LIST' }],
+        }),
+        getHouseholdById: builder.query<Household, string>({
+            query: (id) => `/households/${id}`,
+            providesTags: (result, error, id) => [{ type: 'Household', id }],
+        }),
+        createHousehold: builder.mutation<Household, CreateHouseholdRequest>({
+            query: (data) => ({
+                url: '/households',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: [{ type: 'Household', id: 'LIST' }],
+        }),
+        joinHousehold: builder.mutation<Household, JoinHouseholdRequest>({
+            query: (data) => ({
+                url: '/households/join',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: [{ type: 'Household', id: 'LIST' }],
+        }),
+        generateInviteCode: builder.mutation<{ inviteCode: string }, string>({
+            query: (id) => ({
+                url: `/households/${id}/invites`,
+                method: 'POST',
+            }),
+            invalidatesTags: (result, error, id) => [{ type: 'Household', id }],
+        }),
+        addPet: builder.mutation<any, { id: string; name: string; kind: string }>({
+            query: ({ id, ...data }) => ({
+                url: `/households/${id}/pets`,
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: (result, error, { id }) => [{ type: 'Household', id }],
+        }),
+        addTaskType: builder.mutation<any, { id: string; name: string }>({
+            query: ({ id, name }) => ({
+                url: `/households/${id}/task-types`,
+                method: 'POST',
+                body: { name },
+            }),
+            invalidatesTags: (result, error, { id }) => [{ type: 'Household', id }],
+        }),
+        leaveHousehold: builder.mutation<void, { householdId: string; userId: string }>({
+            query: ({ householdId, userId }) => ({
+                url: `/households/${householdId}/users/${userId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (result, error, { householdId }) => [
+                { type: 'Household', id: householdId },
+                { type: 'Household', id: 'LIST' },
+            ],
+        }),
+    }),
+});
+
+export const {
+    useGetMyHouseholdsQuery,
+    useLazyGetMyHouseholdsQuery,
+    useGetHouseholdByIdQuery,
+    useLazyGetHouseholdByIdQuery,
+    useCreateHouseholdMutation,
+    useJoinHouseholdMutation,
+    useGenerateInviteCodeMutation,
+    useAddPetMutation,
+    useAddTaskTypeMutation,
+    useLeaveHouseholdMutation,
+} = householdApi;
