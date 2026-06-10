@@ -69,26 +69,29 @@ export const useTaskActions = ({ setHouseholds, refresh }: UseTaskActionsProps) 
 
     const handleAddTask = async (householdId: string, taskData: any) => {
         try {
-            let savedTasks: any[];
             if (Array.isArray(taskData)) {
-                savedTasks = await taskApi.bulkCreate(householdId, taskData);
+                const savedTasks = await taskApi.bulkCreate(householdId, taskData);
+                setHouseholds(prev => prev.map(h =>
+                    h.id === householdId ? { ...h, tasks: [...(h.tasks || []), ...savedTasks] } : h
+                ));
             } else {
-                savedTasks = await taskApi.bulkCreate(householdId, [taskData]);
+                const saved = await taskApi.createTask({ ...taskData, household: { id: householdId } });
+                setHouseholds(prev => prev.map(h =>
+                    h.id === householdId ? { ...h, tasks: [...(h.tasks || []), saved] } : h
+                ));
             }
-            
-            // Add real tasks from server to state (avoiding full refetch)
-            setHouseholds(prev => prev.map(h => {
-                if (h.id === householdId) {
-                    return {
-                        ...h,
-                        tasks: [...(h.tasks || []), ...savedTasks]
-                    };
-                }
-                return h;
-            }));
         } catch (err) {
             console.error('Failed to add task:', err);
             refresh(true);
+        }
+    };
+
+    const handleClearRecurrence = async (taskId: string) => {
+        try {
+            await taskApi.updateTask(taskId, { clearRecurrence: true });
+            await refresh(true);
+        } catch (err) {
+            console.error('Failed to clear recurrence:', err);
         }
     };
 
@@ -111,6 +114,7 @@ export const useTaskActions = ({ setHouseholds, refresh }: UseTaskActionsProps) 
         handleUpdateTaskStatus,
         handleUpdateTask,
         handleAddTask,
-        handleDeleteTask
+        handleDeleteTask,
+        handleClearRecurrence,
     };
 };

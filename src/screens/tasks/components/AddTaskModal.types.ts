@@ -1,4 +1,4 @@
-import type { Task } from '../types/tasks.types';
+import type { Task, RecurrenceRule } from '../types/tasks.types';
 
 export interface AddTaskModalProps {
     isOpen: boolean;
@@ -7,6 +7,7 @@ export interface AddTaskModalProps {
     onAdd: (householdId: string, taskData: any) => void;
     onUpdate?: (taskId: string, updates: any) => void;
     onDelete?: (taskId: string) => void;
+    onClearRecurrence?: (taskId: string) => void;
     onRefresh?: () => void;
     taskToEdit?: Task;
     lockedHouseholdId?: string;
@@ -34,7 +35,11 @@ export interface ManualTaskFormProps {
     handleAddType: () => void;
     onSubmit: () => void;
     onDelete?: () => void;
+    onClearRecurrence?: () => void;
     isEdit: boolean;
+    taskToEdit?: Task;
+    recurrenceRule: RecurrenceRule | null;
+    setRecurrenceRule: (rule: RecurrenceRule | null) => void;
 }
 
 export interface AiTaskSectionProps {

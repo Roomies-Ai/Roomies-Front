@@ -2,15 +2,17 @@ import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '../../../api/task.api';
 import { householdApi } from '../../../api/household.api';
 import type { AddTaskModalProps } from '../components/AddTaskModal.types';
+import type { RecurrenceRule } from '../types/tasks.types';
 
-export const useAddTaskModal = ({ 
-    isOpen, 
-    onClose, 
-    households, 
-    onAdd, 
-    onUpdate, 
-    onDelete, 
-    onRefresh, 
+export const useAddTaskModal = ({
+    isOpen,
+    onClose,
+    households,
+    onAdd,
+    onUpdate,
+    onDelete,
+    onClearRecurrence,
+    onRefresh,
     taskToEdit,
     lockedHouseholdId
 }: AddTaskModalProps) => {
@@ -22,6 +24,7 @@ export const useAddTaskModal = ({
     const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
     const [selectedTaskType, setSelectedTaskType] = useState<string | number | null>(null);
     const [dueDate, setDueDate] = useState<string>(new Date().toISOString().split('T')[0]);
+    const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule | null>(null);
     const [isAddingType, setIsAddingType] = useState(false);
     const [newTypeName, setNewTypeName] = useState('');
     const [isCreatingType, setIsCreatingType] = useState(false);
@@ -87,6 +90,7 @@ export const useAddTaskModal = ({
             } else {
                 setDueDate('');
             }
+            setRecurrenceRule(taskToEdit.recurrenceRule ?? null);
             
             const parentHousehold = households.find(h => 
                 h.tasks?.some((t: any) => t.id === taskToEdit.id)
@@ -108,6 +112,7 @@ export const useAddTaskModal = ({
                 setDueDate(today);
                 setIsAddingType(false);
                 setNewTypeName('');
+                setRecurrenceRule(null);
             }
         }
     }, [taskToEdit, isOpen, households, activeHousehold]);
@@ -130,15 +135,16 @@ export const useAddTaskModal = ({
 
     const handleManualSubmit = () => {
         if (!title.trim() || !description.trim() || !dueDate || !selectedHousehold) return;
-        
-        const taskData = { 
-            title, 
-            description, 
-            status: selectedAssignee ? 'in-progress' : 'pending', 
+
+        const taskData = {
+            title,
+            description,
+            status: selectedAssignee ? 'in-progress' : 'pending',
             points,
             assignee: selectedAssignee,
             taskType: selectedTaskType,
-            dueDate
+            dueDate,
+            recurrenceRule: recurrenceRule ?? null,
         };
 
         if (taskToEdit && onUpdate) {
@@ -152,6 +158,13 @@ export const useAddTaskModal = ({
     const handleDelete = () => {
         if (taskToEdit && onDelete) {
             onDelete(taskToEdit.id);
+            resetAndClose();
+        }
+    };
+
+    const handleClearRecurrence = () => {
+        if (taskToEdit && onClearRecurrence) {
+            onClearRecurrence(taskToEdit.id);
             resetAndClose();
         }
     };
@@ -196,6 +209,7 @@ export const useAddTaskModal = ({
         setSelectedAssignee(null);
         setSelectedTaskType(null);
         setDueDate(new Date().toISOString().split('T')[0]);
+        setRecurrenceRule(null);
         setAiMessage('');
         setSuggestions([]);
         onClose();
@@ -210,6 +224,7 @@ export const useAddTaskModal = ({
         selectedAssignee, setSelectedAssignee,
         selectedTaskType, setSelectedTaskType,
         dueDate, setDueDate,
+        recurrenceRule, setRecurrenceRule,
         isAddingType, setIsAddingType,
         newTypeName, setNewTypeName,
         isCreatingType,
@@ -220,6 +235,7 @@ export const useAddTaskModal = ({
         handleAddType,
         handleManualSubmit,
         handleDelete,
+        handleClearRecurrence,
         handleAiParse,
         handleConfirmAi,
         handleToggleSuggestion,

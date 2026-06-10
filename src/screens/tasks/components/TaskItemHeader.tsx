@@ -1,8 +1,8 @@
-import { CheckCircle2, Circle, Coins, Settings2 } from 'lucide-react';
+import { CheckCircle2, Circle, Coins, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import TaskIcon from '../../households/components/ui/TaskIcon';
 import type { TaskItemHeaderProps } from './TaskItem.types';
 
-const TaskItemHeader = ({ task, isCompleted, isProgress, onEdit, onToggle, showComplete }: TaskItemHeaderProps) => {
+const TaskItemHeader = ({ task, isCompleted, isProgress, onEdit, onToggle, showComplete, onToggleExpand, isExpanded }: TaskItemHeaderProps) => {
     return (
         <div className="flex items-start gap-4">
             <div className={`shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${isCompleted ? 'bg-slate-200 text-slate-400' : 'bg-primary/5 text-primary'}`}>
@@ -47,6 +47,16 @@ const TaskItemHeader = ({ task, isCompleted, isProgress, onEdit, onToggle, showC
                     <Coins size={12} />
                     <span className="text-[10px] font-black">{task.points || 0} pts</span>
                 </div>
+
+                {onToggleExpand && (
+                    <button
+                        onClick={onToggleExpand}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-violet-50 text-violet-500 rounded-xl transition-all hover:bg-violet-100"
+                    >
+                        {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                        <span className="text-[10px] font-black">{isExpanded ? 'Hide' : 'Show'}</span>
+                    </button>
+                )}
             </div>
         </div>
     );

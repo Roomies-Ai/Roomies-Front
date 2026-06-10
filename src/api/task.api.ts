@@ -1,5 +1,6 @@
 import apiClient from './Axios';
 import type { SuggestedTask } from '../types/task';
+import type { Task, RecurrenceRule } from '../screens/tasks/types/tasks.types';
 export type { SuggestedTask };
 
 export const taskApi = {
@@ -32,5 +33,23 @@ export const taskApi = {
     },
     deleteTask: async (id: string): Promise<void> => {
         await apiClient.delete(`/tasks/${id}`);
-    }
+    },
+    createTask: async (payload: {
+        household: { id: string };
+        title: string;
+        description?: string;
+        points?: number;
+        dueDate?: string;
+        assignee?: string | null;
+        taskType?: string | number | null;
+        status?: string;
+        recurrenceRule?: RecurrenceRule | null;
+    }): Promise<Task> => {
+        const { data } = await apiClient.post('/tasks', payload);
+        return data;
+    },
+    getRecurrenceInstances: async (templateId: string): Promise<Task[]> => {
+        const { data } = await apiClient.get(`/tasks/${templateId}/recurrence`);
+        return data;
+    },
 };

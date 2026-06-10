@@ -20,13 +20,14 @@ const TasksScreen = () => {
         loading, 
         loadingHouseholds,
         error, 
-        handleUpdateTaskStatus, 
+        handleUpdateTaskStatus,
         handleUpdateTask,
-        handleAddTask, 
+        handleAddTask,
         handleDeleteTask,
+        handleClearRecurrence,
         fetchHouseholdTasks,
         refresh,
-        allHouseholds 
+        allHouseholds
     } = useTasks();
 
     const {
@@ -92,6 +93,7 @@ const TasksScreen = () => {
                 onAdd={handleAddTask}
                 onUpdate={handleUpdateTask}
                 onDelete={handleDeleteTask}
+                onClearRecurrence={handleClearRecurrence}
                 onRefresh={refresh}
                 taskToEdit={taskToEdit}
             />

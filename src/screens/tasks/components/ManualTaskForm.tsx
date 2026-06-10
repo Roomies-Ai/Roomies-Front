@@ -3,6 +3,7 @@ import PointsSelector from './PointsSelector';
 import DueDateSelector from './DueDateSelector';
 import AssigneeSelector from './AssigneeSelector';
 import TaskTypeSelector from './TaskTypeSelector';
+import RecurrenceSelector from './RecurrenceSelector';
 
 const ManualTaskForm = ({
     title, setTitle,
@@ -15,9 +16,11 @@ const ManualTaskForm = ({
     isAddingType, setIsAddingType,
     newTypeName, setNewTypeName,
     isCreatingType, handleAddType,
-    onSubmit, onDelete,
-    isEdit
+    onSubmit, onDelete, onClearRecurrence,
+    isEdit, taskToEdit,
+    recurrenceRule, setRecurrenceRule,
 }: ManualTaskFormProps) => {
+    const isTemplate = isEdit && !!taskToEdit?.recurrenceRule && !taskToEdit?.recurrenceParentId;
     return (
         <div className="space-y-4">
             <div className="space-y-4">
@@ -38,6 +41,7 @@ const ManualTaskForm = ({
 
                 <PointsSelector points={points} setPoints={setPoints} />
                 <DueDateSelector dueDate={dueDate} setDueDate={setDueDate} />
+                <RecurrenceSelector value={recurrenceRule} onChange={setRecurrenceRule} />
             </div>
 
             <AssigneeSelector 
@@ -62,6 +66,11 @@ const ManualTaskForm = ({
                 {isEdit && onDelete && (
                     <button onClick={onDelete} className="px-5 bg-red-50 text-red-500 rounded-[1.5rem] font-bold transition-all hover:bg-red-100 flex items-center justify-center">
                         <span className="material-symbols-outlined">delete</span>
+                    </button>
+                )}
+                {isTemplate && onClearRecurrence && (
+                    <button onClick={onClearRecurrence} className="px-5 bg-violet-50 text-violet-500 rounded-[1.5rem] font-bold transition-all hover:bg-violet-100 flex items-center justify-center text-sm">
+                        Stop
                     </button>
                 )}
                 <button onClick={onSubmit} disabled={!title.trim() || !description.trim() || !dueDate} className="flex-1 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-lg shadow-xl shadow-slate-200 disabled:opacity-50 transition-all">
