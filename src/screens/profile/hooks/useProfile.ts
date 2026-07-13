@@ -27,12 +27,17 @@ export const useProfile = () => {
   const [telegramLoading, setTelegramLoading] = useState(false);
 
   // RTK Query hooks
-  const { data: calendarStatus, refetch: refetchCalendarStatus } = useGetCalendarStatusQuery();
-  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] = useLazyGetConnectUrlQuery();
-  const [toggleSync, { isLoading: toggleSyncLoading }] = useToggleSyncMutation();
-  const [disconnectCalendar, { isLoading: disconnectLoading }] = useDisconnectCalendarMutation();
+  const { data: calendarStatus, refetch: refetchCalendarStatus } =
+    useGetCalendarStatusQuery();
+  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] =
+    useLazyGetConnectUrlQuery();
+  const [toggleSync, { isLoading: toggleSyncLoading }] =
+    useToggleSyncMutation();
+  const [disconnectCalendar, { isLoading: disconnectLoading }] =
+    useDisconnectCalendarMutation();
 
-  const calendarLoading = connectUrlLoading || toggleSyncLoading || disconnectLoading;
+  const calendarLoading =
+    connectUrlLoading || toggleSyncLoading || disconnectLoading;
 
   // Form State
   const [editForm, setEditForm] = useState<ProfileFormState>({
@@ -171,22 +176,26 @@ export const useProfile = () => {
     }));
   }, []);
 
-  const addVibe = useCallback(() => {
-    setEditForm((prev) => {
-      const vibe = prompt("Enter a new vibe (e.g. Night Owl, Clean Freak)");
-      if (vibe && !prev.vibes.includes(vibe)) {
-        return { ...prev, vibes: [...prev.vibes, vibe] };
-      }
-      return prev;
-    });
-  }, []);
+  const addVibe = useCallback(
+    async (vibe: string) => {
+      const trimmed = vibe.trim();
+      if (!trimmed || editForm.vibes.includes(trimmed)) return;
 
-  const removeVibe = useCallback((vibe: string) => {
-    setEditForm((prev) => ({
-      ...prev,
-      vibes: prev.vibes.filter((v: string) => v !== vibe),
-    }));
-  }, []);
+      const previousVibes = editForm.vibes;
+      const updatedVibes = [...previousVibes, trimmed];
+      setEditForm((prev) => ({ ...prev, vibes: updatedVibes }));
+
+      try {
+        const updated = await userApi.updateMe({ vibes: updatedVibes });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to add vibe", err);
+        setEditForm((prev) => ({ ...prev, vibes: previousVibes }));
+      }
+    },
+    [editForm.vibes, dispatch],
+  );
 
   const setEditFormField = useCallback(
     (field: keyof ProfileFormState, value: any) => {
@@ -237,7 +246,6 @@ export const useProfile = () => {
       handleUpdateProfile,
       togglePreference,
       addVibe,
-      removeVibe,
       navigate,
       telegramToken,
       telegramLoading,
