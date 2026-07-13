@@ -197,6 +197,24 @@ export const useProfile = () => {
     [editForm.vibes, dispatch],
   );
 
+  const removeVibe = useCallback(
+    async (vibe: string) => {
+      const previousVibes = editForm.vibes;
+      const updatedVibes = previousVibes.filter((v: string) => v !== vibe);
+      setEditForm((prev) => ({ ...prev, vibes: updatedVibes }));
+
+      try {
+        const updated = await userApi.updateMe({ vibes: updatedVibes });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to remove vibe", err);
+        setEditForm((prev) => ({ ...prev, vibes: previousVibes }));
+      }
+    },
+    [editForm.vibes, dispatch],
+  );
+
   const setEditFormField = useCallback(
     (field: keyof ProfileFormState, value: any) => {
       setEditForm((prev) => ({ ...prev, [field]: value }));
@@ -246,6 +264,7 @@ export const useProfile = () => {
       handleUpdateProfile,
       togglePreference,
       addVibe,
+      removeVibe,
       navigate,
       telegramToken,
       telegramLoading,
