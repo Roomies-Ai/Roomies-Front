@@ -3,12 +3,7 @@ import { Bell, Home } from "lucide-react";
 
 import type { HouseholdHeaderProps } from "../HouseholdDetail.types";
 
-const HouseholdHeader = ({
-  currentUser,
-  onBack,
-  searchQuery,
-  setSearchQuery,
-}: HouseholdHeaderProps) => {
+const HouseholdHeader = ({ currentUser, onBack }: HouseholdHeaderProps) => {
   return (
     <header className="px-6 pt-12 pb-4 bg-white flex flex-col gap-6 sticky top-0 z-30 shadow-sm border-b border-slate-100">
       <div className="flex justify-between items-center">
