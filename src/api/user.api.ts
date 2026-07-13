@@ -19,6 +19,10 @@ export const userApi = {
         });
         return response.data;
     },
+    deleteProfilePicture: async () => {
+        const response = await apiClient.delete('/users/me/picture');
+        return response.data;
+    },
     changePassword: async (passwords: any) => {
         const response = await apiClient.patch('/users/me/password', passwords);
         return response.data;
