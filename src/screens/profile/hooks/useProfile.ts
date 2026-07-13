@@ -174,6 +174,16 @@ export const useProfile = () => {
     [dispatch],
   );
 
+  const handleDeleteProfilePicture = useCallback(async () => {
+    try {
+      const updated = await userApi.deleteProfilePicture();
+      setUser(updated);
+      dispatch(setReduxUser(updated));
+    } catch (err) {
+      console.error("Profile picture delete failed", err);
+    }
+  }, [dispatch]);
+
   const togglePreference = useCallback((key: string) => {
     setEditForm((prev) => ({
       ...prev,
@@ -223,6 +233,7 @@ export const useProfile = () => {
       setEditFormField,
       handleUpdateProfile,
       handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
@@ -250,6 +261,7 @@ export const useProfile = () => {
       setEditFormField,
       handleUpdateProfile,
       handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,

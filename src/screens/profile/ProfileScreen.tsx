@@ -37,6 +37,7 @@ const ProfileScreen = () => {
         setEditFormField,
         handleUpdateProfile,
         handleUpdateProfilePicture,
+        handleDeleteProfilePicture,
         togglePreference,
         addVibe,
         removeVibe,
@@ -63,7 +64,11 @@ const ProfileScreen = () => {
                     animate="visible"
                     className="px-6 py-8 flex flex-col gap-8 max-w-lg md:max-w-2xl mx-auto"
                 >
-                    <ProfileBanner user={user} onPictureChange={handleUpdateProfilePicture} />
+                    <ProfileBanner
+                        user={user}
+                        onPictureChange={handleUpdateProfilePicture}
+                        onPictureDelete={handleDeleteProfilePicture}
+                    />
 
                     <ProfileDetailsCard 
                         isEditing={isEditing}
