@@ -23,6 +23,8 @@ const ProfileDetailsCard: React.FC<ProfileDetailsCardProps> = ({
   loading,
   variants,
 }) => {
+  const isNameEmpty = !editForm.username.trim();
+
   return (
     <motion.div
       variants={variants}
@@ -47,8 +49,8 @@ const ProfileDetailsCard: React.FC<ProfileDetailsCardProps> = ({
             </button>
             <button
               onClick={handleUpdateProfile}
-              disabled={loading}
-              className="text-primary text-xs font-black uppercase tracking-widest"
+              disabled={loading || isNameEmpty}
+              className="text-primary text-xs font-black uppercase tracking-widest disabled:opacity-40"
             >
               {loading ? "Saving..." : "Save"}
             </button>
