@@ -34,39 +34,5 @@ export const useGlobalSearch = (query: string, { enabled }: { enabled: boolean }
                 });
             }
 
-            for (const task of household.tasks ?? []) {
-                if (task.title?.toLowerCase().includes(trimmed)) {
-                    matchedTasks.push({
-                        id: task.id,
-                        title: task.title,
-                        status: task.status,
-                        dueDate: task.dueDate,
-                        householdId: household.id,
-                        householdName: household.name,
-                    });
-                }
-            }
-
-            for (const member of household.members ?? []) {
-                if (seenMemberIds.has(member.id)) continue;
-                if (member.username?.toLowerCase().includes(trimmed)) {
-                    seenMemberIds.add(member.id);
-                    matchedMembers.push({
-                        id: member.id,
-                        username: member.username,
-                        profilePicture: member.profilePicture,
-                        householdId: household.id,
-                        householdName: household.name,
-                    });
-                }
-            }
-        }
-
-        return {
-            tasks: matchedTasks.slice(0, MAX_RESULTS_PER_GROUP),
-            households: matchedHouseholds.slice(0, MAX_RESULTS_PER_GROUP),
-            members: matchedMembers.slice(0, MAX_RESULTS_PER_GROUP),
-            isLoading: isFetching,
-        };
     }, [households, query, isFetching]);
 };
