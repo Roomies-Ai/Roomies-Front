@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Moon, Plus, X, Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { ProfileFormState } from '../types/profile.types';
@@ -6,7 +6,7 @@ import type { ProfileFormState } from '../types/profile.types';
 interface ProfileVibesCardProps {
     editForm: ProfileFormState;
     isEditing: boolean;
-    addVibe: () => void;
+    addVibe: (vibe: string) => void;
     removeVibe: (vibe: string) => void;
     togglePreference: (key: string) => void;
     variants: any;
@@ -20,6 +20,15 @@ const ProfileVibesCard: React.FC<ProfileVibesCardProps> = ({
     togglePreference,
     variants
 }) => {
+    const [isAddingVibe, setIsAddingVibe] = useState(false);
+    const [newVibe, setNewVibe] = useState('');
+
+    const confirmAddVibe = () => {
+        if (newVibe.trim()) addVibe(newVibe);
+        setNewVibe('');
+        setIsAddingVibe(false);
+    };
+
     return (
         <motion.div variants={variants} className="bg-white p-6 rounded-[2.5rem] shadow-premium-sm border border-slate-50">
             <div className="flex items-center justify-between mb-6">
