@@ -66,5 +66,12 @@ export const useGlobalSearch = (
         }
       }
     }
+
+    return {
+      tasks: matchedTasks.slice(0, MAX_RESULTS_PER_GROUP),
+      households: matchedHouseholds.slice(0, MAX_RESULTS_PER_GROUP),
+      members: matchedMembers.slice(0, MAX_RESULTS_PER_GROUP),
+      isLoading: isFetching,
+    };
   }, [households, query, isFetching]);
 };
