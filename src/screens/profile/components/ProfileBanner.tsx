@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Loader2 } from 'lucide-react';
+import { Camera, Loader2, X } from 'lucide-react';
 import type { ProfileUser } from '../types/profile.types';
 import Avatar from '../../../components/ui/Avatar';
 import { resizeImageFile } from '../../../utils/image';
@@ -7,11 +7,13 @@ import { resizeImageFile } from '../../../utils/image';
 interface ProfileBannerProps {
     user: ProfileUser | null;
     onPictureChange?: (image: Blob) => Promise<void> | void;
+    onPictureDelete?: () => Promise<void> | void;
 }
 
-const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange }) => {
+const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange, onPictureDelete }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -31,6 +33,20 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange }) 
             console.error('Failed to update profile picture', err);
         } finally {
             setIsUploading(false);
+        }
+    };
+
+    const handleDeleteClick = async () => {
+        if (!onPictureDelete) return;
+        if (!confirm('Remove your profile picture?')) return;
+
+        setIsDeleting(true);
+        try {
+            await onPictureDelete();
+        } catch (err) {
+            console.error('Failed to delete profile picture', err);
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -65,6 +81,21 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange }) 
                         <Camera size={18} strokeWidth={2.5} />
                     )}
                 </button>
+                {user?.profilePicture && onPictureDelete && (
+                    <button
+                        type="button"
+                        onClick={handleDeleteClick}
+                        disabled={isDeleting}
+                        className="absolute -top-2 -right-2 w-8 h-8 bg-white text-slate-500 rounded-2xl shadow-lg border-4 border-[#F8FAFC] flex items-center justify-center hover:scale-110 hover:text-red-500 transition-transform disabled:opacity-60 disabled:hover:scale-100"
+                        aria-label="Remove profile picture"
+                    >
+                        {isDeleting ? (
+                            <Loader2 size={14} strokeWidth={2.5} className="animate-spin" />
+                        ) : (
+                            <X size={14} strokeWidth={2.5} />
+                        )}
+                    </button>
+                )}
             </div>
             
             <div className="text-center">
