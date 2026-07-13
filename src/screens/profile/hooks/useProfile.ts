@@ -161,6 +161,19 @@ export const useProfile = () => {
     }
   }, [editForm, dispatch]);
 
+  const handleUpdateProfilePicture = useCallback(
+    async (profilePicture: string) => {
+      try {
+        const updated = await userApi.updateMe({ profilePicture });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Profile picture update failed", err);
+      }
+    },
+    [dispatch],
+  );
+
   const togglePreference = useCallback((key: string) => {
     setEditForm((prev) => ({
       ...prev,
@@ -209,6 +222,7 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
@@ -235,6 +249,7 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,

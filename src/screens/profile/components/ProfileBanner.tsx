@@ -1,13 +1,39 @@
-import React from 'react';
-import { Camera } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Camera, Loader2 } from 'lucide-react';
 import type { ProfileUser } from '../types/profile.types';
 import Avatar from '../../../components/ui/Avatar';
+import { fileToResizedDataUrl } from '../../../utils/image';
 
 interface ProfileBannerProps {
     user: ProfileUser | null;
+    onPictureChange?: (dataUrl: string) => Promise<void> | void;
 }
 
-const ProfileBanner: React.FC<ProfileBannerProps> = ({ user }) => {
+const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file || !onPictureChange) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        setIsUploading(true);
+        try {
+            const dataUrl = await fileToResizedDataUrl(file);
+            await onPictureChange(dataUrl);
+        } catch (err) {
+            console.error('Failed to update profile picture', err);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     return (
         <div className="flex flex-col items-center gap-4 relative">
             <div className="relative">
@@ -19,11 +45,25 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({ user }) => {
                         className="w-full h-full rounded-[2.2rem] text-3xl"
                     />
                 </div>
-                <button 
-                    className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-white rounded-2xl shadow-lg border-4 border-[#F8FAFC] flex items-center justify-center hover:scale-110 transition-transform"
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                />
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-white rounded-2xl shadow-lg border-4 border-[#F8FAFC] flex items-center justify-center hover:scale-110 transition-transform disabled:opacity-60 disabled:hover:scale-100"
                     aria-label="Change profile picture"
                 >
-                    <Camera size={18} strokeWidth={2.5} />
+                    {isUploading ? (
+                        <Loader2 size={18} strokeWidth={2.5} className="animate-spin" />
+                    ) : (
+                        <Camera size={18} strokeWidth={2.5} />
+                    )}
                 </button>
             </div>
             
