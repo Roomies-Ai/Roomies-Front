@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Calendar, Bot, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Avatar from '../../components/ui/Avatar';
 
 const NewTaskScreen: React.FC = () => {
     const navigate = useNavigate();
@@ -10,10 +11,10 @@ const NewTaskScreen: React.FC = () => {
     const [assignedTo, setAssignedTo] = useState('Me');
 
     const roommates = [
-        { name: 'Me', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
-        { name: 'Sarah', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah' },
-        { name: 'David', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David' },
-        { name: 'Maya', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maya' },
+        { name: 'Me' },
+        { name: 'Sarah' },
+        { name: 'David' },
+        { name: 'Maya' },
     ];
 
     return (
@@ -86,7 +87,7 @@ const NewTaskScreen: React.FC = () => {
                                 <div className={`relative w-14 h-14 rounded-2xl overflow-hidden ring-2 transition-all ${
                                     assignedTo === roommate.name ? 'ring-primary ring-offset-2' : 'ring-transparent'
                                 }`}>
-                                    <img src={roommate.avatar} alt={roommate.name} className="w-full h-full object-cover" />
+                                    <Avatar name={roommate.name} alt={roommate.name} className="w-full h-full text-base" />
                                 </div>
                                 <span className={`text-xs font-bold ${
                                     assignedTo === roommate.name ? 'text-primary' : 'text-charcoal'

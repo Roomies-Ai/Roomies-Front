@@ -34,10 +34,11 @@ const FairnessBalance = ({ members, currentUser, getMemberStats }: FairnessBalan
                                 </div>
                             )}
                             <div className={`w-16 h-16 rounded-full p-1 border-2 ${isMe ? 'border-[#3B95EA]' : 'border-[#10B981]'} mb-3 relative`}>
-                                <img 
-                                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.username}`} 
+                                <Avatar
+                                    src={member.profilePicture}
+                                    name={member.username}
                                     alt={member.username}
-                                    className="w-full h-full rounded-full object-cover"
+                                    className="w-full h-full rounded-full text-sm"
                                 />
                             </div>
                             <p className="font-black text-slate-900 text-sm mb-1">{isMe ? 'You' : member.username}</p>
