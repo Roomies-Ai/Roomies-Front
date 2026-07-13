@@ -9,6 +9,12 @@ export const userApi = {
         const response = await apiClient.patch('/users/me', data);
         return response.data;
     },
+    uploadProfilePicture: async (file: Blob) => {
+        const formData = new FormData();
+        formData.append('file', file, 'profile-picture.jpg');
+        const response = await apiClient.post('/users/me/picture', formData);
+        return response.data;
+    },
     changePassword: async (passwords: any) => {
         const response = await apiClient.patch('/users/me/password', passwords);
         return response.data;

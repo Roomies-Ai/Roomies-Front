@@ -2,11 +2,11 @@ import React, { useRef, useState } from 'react';
 import { Camera, Loader2 } from 'lucide-react';
 import type { ProfileUser } from '../types/profile.types';
 import Avatar from '../../../components/ui/Avatar';
-import { fileToResizedDataUrl } from '../../../utils/image';
+import { resizeImageFile } from '../../../utils/image';
 
 interface ProfileBannerProps {
     user: ProfileUser | null;
-    onPictureChange?: (dataUrl: string) => Promise<void> | void;
+    onPictureChange?: (image: Blob) => Promise<void> | void;
 }
 
 const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange }) => {
@@ -25,8 +25,8 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange }) 
 
         setIsUploading(true);
         try {
-            const dataUrl = await fileToResizedDataUrl(file);
-            await onPictureChange(dataUrl);
+            const resized = await resizeImageFile(file);
+            await onPictureChange(resized);
         } catch (err) {
             console.error('Failed to update profile picture', err);
         } finally {

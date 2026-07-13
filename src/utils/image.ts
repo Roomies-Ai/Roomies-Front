@@ -1,8 +1,8 @@
-export const fileToResizedDataUrl = (
+export const resizeImageFile = (
     file: File,
     maxDimension = 320,
     quality = 0.85,
-): Promise<string> => {
+): Promise<Blob> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onerror = () => reject(reader.error);
@@ -23,7 +23,11 @@ export const fileToResizedDataUrl = (
                     return;
                 }
                 ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', quality));
+                canvas.toBlob(
+                    (blob) => (blob ? resolve(blob) : reject(new Error('Failed to encode image'))),
+                    'image/jpeg',
+                    quality,
+                );
             };
             img.src = reader.result as string;
         };

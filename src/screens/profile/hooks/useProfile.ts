@@ -162,9 +162,9 @@ export const useProfile = () => {
   }, [editForm, dispatch]);
 
   const handleUpdateProfilePicture = useCallback(
-    async (profilePicture: string) => {
+    async (image: Blob) => {
       try {
-        const updated = await userApi.updateMe({ profilePicture });
+        const updated = await userApi.uploadProfilePicture(image);
         setUser(updated);
         dispatch(setReduxUser(updated));
       } catch (err) {
