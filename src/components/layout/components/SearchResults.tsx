@@ -95,6 +95,35 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               </div>
             </div>
           )}
+
+          {members.length > 0 && (
+            <div>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-medium-gray mb-2 px-1">
+                Roomies
+              </h3>
+              <div className="space-y-1">
+                {members.map((member) => (
+                  <button
+                    key={member.id}
+                    onClick={() =>
+                      onSelect(`/households/${member.householdId}`)
+                    }
+                    className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                  >
+                    <MemberAvatar username={member.username} size="w-8 h-8" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-charcoal truncate">
+                        {member.username}
+                      </p>
+                      <p className="text-[10px] text-medium-gray truncate">
+                        {member.householdName}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </motion.div>
