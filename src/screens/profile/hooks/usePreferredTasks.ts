@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { userApi } from '../../../api/user.api';
 import type { TaskTypeOption } from '../types/preferredTasks.types';
 
@@ -8,6 +8,11 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Read via a ref (not a hook dependency) so that unrelated updates to `user`
+    // while the modal is open don't reset the selections the user is mid-edit on.
+    const userRef = useRef(user);
+    userRef.current = user;
 
     const fetchAvailableTypes = useCallback(async () => {
         setFetching(true);
@@ -23,10 +28,12 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
 
     useEffect(() => {
         if (isOpen) {
-            setSelectedIds(user?.preferredTaskTypes?.map((t: any) => t.id) || []);
+            const ids = userRef.current?.preferredTaskTypes?.map((t: any) => t.id) || [];
+            setSelectedIds(Array.from(new Set<string>(ids)));
             fetchAvailableTypes();
         }
-    }, [isOpen, user, fetchAvailableTypes]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, fetchAvailableTypes]);
 
     const filteredTypes = useMemo(() => {
         return allTaskTypes.filter(t => 
@@ -44,7 +51,7 @@ export const usePreferredTasks = (isOpen: boolean, user: any, onUpdate: (updated
     const handleSave = useCallback(async () => {
         setLoading(true);
         try {
-            const updated = await userApi.updatePreferredTasks(selectedIds);
+            const updated = await userApi.updatePreferredTasks(Array.from(new Set(selectedIds)));
             onUpdate(updated);
             onClose();
         } catch (err) {
