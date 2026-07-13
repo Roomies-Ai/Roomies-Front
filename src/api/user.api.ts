@@ -12,7 +12,11 @@ export const userApi = {
     uploadProfilePicture: async (file: Blob) => {
         const formData = new FormData();
         formData.append('file', file, 'profile-picture.jpg');
-        const response = await apiClient.post('/users/me/picture', formData);
+        // Clear the client's default JSON header so the browser can set the
+        // multipart Content-Type itself, including the boundary.
+        const response = await apiClient.post('/users/me/picture', formData, {
+            headers: { 'Content-Type': undefined },
+        });
         return response.data;
     },
     changePassword: async (passwords: any) => {
