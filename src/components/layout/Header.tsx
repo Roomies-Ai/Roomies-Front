@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                         >
                             <div className="relative">
                                 <img
-                                    src={user?.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'}
+                                    src={user?.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'Roomie'}`}
                                     alt="Profile"
                                     className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-premium-sm"
                                 />
