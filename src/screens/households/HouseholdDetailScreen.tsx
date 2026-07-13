@@ -22,8 +22,6 @@ const HouseholdDetailScreen = () => {
     error,
     activeTab,
     setActiveTab,
-    searchQuery,
-    setSearchQuery,
     assigningTaskId,
     setAssigningTaskId,
     editingPointsTaskId,
