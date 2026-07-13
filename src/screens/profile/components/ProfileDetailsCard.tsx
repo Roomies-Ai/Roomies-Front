@@ -73,6 +73,9 @@ const ProfileDetailsCard: React.FC<ProfileDetailsCardProps> = ({
           onChange={(val) => setEditFormField("email", val)}
           disabled={!isEditing}
           isEditing={isEditing}
+          placeholder={
+            isEditing ? "Enter email address" : "Email Address Is Missing"
+          }
         />
 
         <DetailInput
