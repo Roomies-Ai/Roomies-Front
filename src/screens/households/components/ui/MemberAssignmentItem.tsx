@@ -15,9 +15,10 @@ const MemberAssignmentItem = ({ member, isSuggested, isMe, onClick }: MemberAssi
         >
             <div className="flex items-center gap-4">
                 <div className={`${isSuggested ? 'scale-110' : ''} transition-transform`}>
-                    <MemberAvatar 
-                        username={member.username} 
-                        size="w-14 h-14" 
+                    <MemberAvatar
+                        username={member.username}
+                        profilePicture={member.profilePicture}
+                        size="w-14 h-14"
                         border={isSuggested}
                     />
                 </div>

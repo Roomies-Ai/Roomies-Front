@@ -51,7 +51,7 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
                     }}
                     className="flex items-center gap-3 hover:bg-slate-50 p-2 -ml-2 rounded-2xl transition-colors"
                 >
-                    <MemberAvatar username={task.assignee?.username} />
+                    <MemberAvatar username={task.assignee?.username} profilePicture={task.assignee?.profilePicture} />
                     <span className="text-sm font-bold text-slate-500">
                         {task.assignee ? `Assigned to ${isMyTask ? 'You' : task.assignee.username}` : 'Unassigned'}
                     </span>

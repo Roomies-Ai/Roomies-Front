@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 
+import Avatar from '../../../components/ui/Avatar';
 import type { FairnessBalanceProps } from '../HouseholdDetail.types';
 
 const FairnessBalance = ({ members, currentUser, getMemberStats }: FairnessBalanceProps) => {
