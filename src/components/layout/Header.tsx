@@ -127,19 +127,28 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
               exit={{ opacity: 0, width: 0 }}
               className="flex-1 mr-4"
             >
-              <div className="relative flex items-center">
+              <div className="relative flex items-center" ref={searchContainerRef}>
                 <input
                   type="text"
                   placeholder="Search tasks, roomies..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   className="w-full py-3 pl-4 pr-12 bg-white rounded-2xl border-none shadow-premium-sm focus:ring-2 focus:ring-primary/20 outline-none text-charcoal font-medium placeholder:text-medium-gray"
                   autoFocus
                 />
                 <button
-                  onClick={() => setIsSearchOpen(false)}
+                  onClick={closeSearch}
                   className="absolute right-3 p-1 text-medium-gray hover:text-charcoal transition-colors"
                 >
                   <X size={20} />
                 </button>
+                {query.trim().length > 0 && (
+                  <SearchResults
+                    query={query}
+                    results={searchResults}
+                    onSelect={handleSelectResult}
+                  />
+                )}
               </div>
             </motion.div>
           )}
