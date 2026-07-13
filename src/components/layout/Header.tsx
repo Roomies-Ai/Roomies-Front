@@ -29,6 +29,16 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
 
   const searchResults = useGlobalSearch(query, { enabled: isSearchOpen });
 
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    setQuery("");
+  };
+
+  const handleSelectResult = (path: string) => {
+    navigate(path);
+    closeSearch();
+  };
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good Morning";
