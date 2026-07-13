@@ -1,5 +1,5 @@
 import { User as UserIcon, Calendar, RefreshCw } from 'lucide-react';
-import MemberAvatar from '../../households/components/ui/MemberAvatar';
+import MemberAvatar from '../../houseHolds/components/ui/MemberAvatar';
 import type { TaskItemFooterProps } from './TaskItem.types';
 
 const TaskItemFooter = ({ task }: TaskItemFooterProps) => {
