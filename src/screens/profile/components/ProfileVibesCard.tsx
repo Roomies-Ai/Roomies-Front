@@ -5,7 +5,6 @@ import type { ProfileFormState } from '../types/profile.types';
 
 interface ProfileVibesCardProps {
     editForm: ProfileFormState;
-    isEditing: boolean;
     addVibe: (vibe: string) => void;
     removeVibe: (vibe: string) => void;
     togglePreference: (key: string) => void;
@@ -14,7 +13,6 @@ interface ProfileVibesCardProps {
 
 const ProfileVibesCard: React.FC<ProfileVibesCardProps> = ({
     editForm,
-    isEditing,
     addVibe,
     removeVibe,
     togglePreference,
@@ -49,11 +47,9 @@ const ProfileVibesCard: React.FC<ProfileVibesCardProps> = ({
                     >
                         {vibe === 'Night Owl' && <Moon size={12} />}
                         {vibe}
-                        {isEditing && (
-                            <button onClick={() => removeVibe(vibe)} className="hover:text-red-500">
-                                <X size={12} />
-                            </button>
-                        )}
+                        <button onClick={() => removeVibe(vibe)} className="hover:text-red-500">
+                            <X size={12} />
+                        </button>
                     </motion.span>
                 ))}
                 {isAddingVibe ? (
