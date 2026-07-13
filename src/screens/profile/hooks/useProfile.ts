@@ -148,6 +148,8 @@ export const useProfile = () => {
   }, [dispatch]);
 
   const handleUpdateProfile = useCallback(async () => {
+    if (!editForm.username.trim()) return;
+
     setLoading(true);
     try {
       const updated = await userApi.updateMe(editForm);

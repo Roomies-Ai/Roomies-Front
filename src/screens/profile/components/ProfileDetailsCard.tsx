@@ -66,6 +66,7 @@ const ProfileDetailsCard: React.FC<ProfileDetailsCardProps> = ({
           onChange={(val) => setEditFormField("username", val)}
           disabled={!isEditing}
           isEditing={isEditing}
+          error={isEditing && isNameEmpty ? "Full name can't be empty" : undefined}
         />
 
         <DetailInput
