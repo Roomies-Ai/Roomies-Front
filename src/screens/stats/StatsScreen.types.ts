@@ -1,7 +1,7 @@
 export interface HouseholdMember {
     id: string;
     username: string;
-    avatarUrl?: string;
+    profilePicture?: string;
 }
 
 export interface StatusCounts {
