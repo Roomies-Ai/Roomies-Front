@@ -56,12 +56,30 @@ const ProfileVibesCard: React.FC<ProfileVibesCardProps> = ({
                         )}
                     </motion.span>
                 ))}
-                <button 
-                    onClick={addVibe}
-                    className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl text-xs font-black flex items-center gap-2 border-2 border-dashed border-slate-200 hover:bg-slate-100 transition-colors"
-                >
-                    <Plus size={12} /> Add Vibe
-                </button>
+                {isAddingVibe ? (
+                    <input
+                        autoFocus
+                        value={newVibe}
+                        onChange={(e) => setNewVibe(e.target.value)}
+                        onBlur={confirmAddVibe}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') confirmAddVibe();
+                            if (e.key === 'Escape') {
+                                setNewVibe('');
+                                setIsAddingVibe(false);
+                            }
+                        }}
+                        placeholder="e.g. Night Owl"
+                        className="px-4 py-2 bg-white text-slate-900 rounded-xl text-xs font-black border-2 border-primary/40 outline-none w-28"
+                    />
+                ) : (
+                    <button
+                        onClick={() => setIsAddingVibe(true)}
+                        className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl text-xs font-black flex items-center gap-2 border-2 border-dashed border-slate-200 hover:bg-slate-100 transition-colors"
+                    >
+                        <Plus size={12} /> Add Vibe
+                    </button>
+                )}
             </div>
 
             {/* Preferences Toggles */}
