@@ -8,7 +8,7 @@ const TaskItemFooter = ({ task }: TaskItemFooterProps) => {
             <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-nowrap pb-1">
                 {task.assignee ? (
                     <div className="flex items-center gap-2 bg-slate-50 pr-3 pl-1 py-1 rounded-xl shrink-0">
-                        <MemberAvatar username={task.assignee.username} size="w-6 h-6" />
+                        <MemberAvatar username={task.assignee.username} profilePicture={task.assignee.profilePicture} size="w-6 h-6" />
                         <span className="text-[10px] font-black text-slate-900">{task.assignee.username}</span>
                     </div>
                 ) : (
