@@ -1,6 +1,7 @@
 import React from 'react';
 import { Camera } from 'lucide-react';
 import type { ProfileUser } from '../types/profile.types';
+import Avatar from '../../../components/ui/Avatar';
 
 interface ProfileBannerProps {
     user: ProfileUser | null;
@@ -11,10 +12,11 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({ user }) => {
         <div className="flex flex-col items-center gap-4 relative">
             <div className="relative">
                 <div className="w-32 h-32 rounded-[2.5rem] bg-white shadow-premium p-1.5 border border-slate-100">
-                    <img 
-                        src={user?.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'Roomie'}`}
-                        alt="Avatar" 
-                        className="w-full h-full rounded-[2.2rem] object-cover"
+                    <Avatar
+                        src={user?.profilePicture}
+                        name={user?.username}
+                        alt="Avatar"
+                        className="w-full h-full rounded-[2.2rem] text-3xl"
                     />
                 </div>
                 <button 
