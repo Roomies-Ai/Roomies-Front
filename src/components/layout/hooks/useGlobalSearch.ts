@@ -34,5 +34,18 @@ export const useGlobalSearch = (query: string, { enabled }: { enabled: boolean }
                 });
             }
 
+            for (const task of household.tasks ?? []) {
+                if (task.title?.toLowerCase().includes(trimmed)) {
+                    matchedTasks.push({
+                        id: task.id,
+                        title: task.title,
+                        status: task.status,
+                        dueDate: task.dueDate,
+                        householdId: household.id,
+                        householdName: household.name,
+                    });
+                }
+            }
+
     }, [households, query, isFetching]);
 };
