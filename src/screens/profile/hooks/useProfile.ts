@@ -161,15 +161,26 @@ export const useProfile = () => {
     }
   }, [editForm, dispatch]);
 
-  const togglePreference = useCallback((key: string) => {
-    setEditForm((prev) => ({
-      ...prev,
-      preferences: {
-        ...prev.preferences,
-        [key]: !prev.preferences[key],
-      },
-    }));
-  }, []);
+  const togglePreference = useCallback(
+    async (key: string) => {
+      const previousPreferences = editForm.preferences;
+      const updatedPreferences = {
+        ...previousPreferences,
+        [key]: !previousPreferences[key],
+      };
+      setEditForm((prev) => ({ ...prev, preferences: updatedPreferences }));
+
+      try {
+        const updated = await userApi.updateMe({ preferences: updatedPreferences });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to update preference", err);
+        setEditForm((prev) => ({ ...prev, preferences: previousPreferences }));
+      }
+    },
+    [editForm.preferences, dispatch],
+  );
 
   const addVibe = useCallback(() => {
     setEditForm((prev) => {
