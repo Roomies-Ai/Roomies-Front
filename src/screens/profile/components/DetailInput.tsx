@@ -22,7 +22,7 @@ const DetailInput: React.FC<DetailInputProps> = ({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="bg-transparent border-none outline-none text-sm font-bold text-slate-900 w-full"
+                className="bg-transparent border-none outline-none text-sm font-bold text-slate-900 w-full placeholder:font-medium placeholder:text-slate-300"
             />
         </div>
     </div>
