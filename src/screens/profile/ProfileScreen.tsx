@@ -104,7 +104,6 @@ const ProfileScreen = () => {
 
                     <ProfileVibesCard
                         editForm={editForm}
-                        isEditing={isEditing}
                         addVibe={addVibe}
                         removeVibe={removeVibe}
                         togglePreference={togglePreference}
