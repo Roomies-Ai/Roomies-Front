@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckSquare, Loader2, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useHouseholdDetail } from "./hooks/useHouseholdDetail";
 
 // Sub-components
@@ -20,6 +21,7 @@ const HouseholdDetailScreen = () => {
     household,
     loading,
     error,
+    targetTaskId,
     activeTab,
     setActiveTab,
     assigningTaskId,
@@ -52,6 +54,25 @@ const HouseholdDetailScreen = () => {
     getMemberStats,
     filteredTasks,
   } = useHouseholdDetail();
+
+  const [highlightedTaskId, setHighlightedTaskId] = useState<string | null>(
+    null,
+  );
+
+  // Scroll to and briefly highlight the task the user arrived for (e.g. via search).
+  useEffect(() => {
+    if (!targetTaskId) return;
+    if (!filteredTasks.some((t: any) => t.id === targetTaskId)) return;
+
+    const el = document.getElementById(`task-${targetTaskId}`);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setHighlightedTaskId(targetTaskId);
+
+    const timeout = setTimeout(() => setHighlightedTaskId(null), 2500);
+    return () => clearTimeout(timeout);
+  }, [targetTaskId, filteredTasks]);
 
   if (loading) {
     return (
