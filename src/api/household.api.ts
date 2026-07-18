@@ -46,7 +46,7 @@ export const householdApi = api.injectEndpoints({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [{ type: 'Household', id }],
+            invalidatesTags: (_result, _error, { id }) => [{ type: 'Household', id }],
         }),
         addTaskType: builder.mutation<any, { id: string; name: string }>({
             query: ({ id, name }) => ({
@@ -54,14 +54,14 @@ export const householdApi = api.injectEndpoints({
                 method: 'POST',
                 body: { name },
             }),
-            invalidatesTags: (result, error, { id }) => [{ type: 'Household', id }],
+            invalidatesTags: (_result, _error, { id }) => [{ type: 'Household', id }],
         }),
         leaveHousehold: builder.mutation<void, { householdId: string; userId: string }>({
             query: ({ householdId, userId }) => ({
                 url: `/households/${householdId}/users/${userId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: (result, error, { householdId }) => [
+            invalidatesTags: (_result, _error, { householdId }) => [
                 { type: 'Household', id: householdId },
                 { type: 'Household', id: 'LIST' },
             ],
