@@ -161,6 +161,29 @@ export const useProfile = () => {
     }
   }, [editForm, dispatch]);
 
+  const handleUpdateProfilePicture = useCallback(
+    async (image: Blob) => {
+      try {
+        const updated = await userApi.uploadProfilePicture(image);
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Profile picture update failed", err);
+      }
+    },
+    [dispatch],
+  );
+
+  const handleDeleteProfilePicture = useCallback(async () => {
+    try {
+      const updated = await userApi.deleteProfilePicture();
+      setUser(updated);
+      dispatch(setReduxUser(updated));
+    } catch (err) {
+      console.error("Profile picture delete failed", err);
+    }
+  }, [dispatch]);
+
   const togglePreference = useCallback((key: string) => {
     setEditForm((prev) => ({
       ...prev,
@@ -209,6 +232,8 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
@@ -235,6 +260,8 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,

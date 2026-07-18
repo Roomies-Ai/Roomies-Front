@@ -1,6 +1,7 @@
 import { Home, Bell, Search, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import Avatar from '../../../components/ui/Avatar';
 import type { HouseholdHeaderProps } from '../HouseholdDetail.types';
 
 const HouseholdHeader = ({ currentUser, onBack, searchQuery, setSearchQuery }: HouseholdHeaderProps) => {
@@ -22,8 +23,13 @@ const HouseholdHeader = ({ currentUser, onBack, searchQuery, setSearchQuery }: H
                         <Bell size={24} />
                         <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></div>
                     </button>
-                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-sm">
-                        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.username || 'user'}`} alt="Avatar" />
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                        <Avatar
+                            src={currentUser?.profilePicture}
+                            name={currentUser?.username}
+                            alt="Avatar"
+                            className="w-full h-full text-xs"
+                        />
                     </div>
                 </div>
             </div>

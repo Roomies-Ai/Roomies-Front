@@ -1,5 +1,5 @@
 import { User as UserIcon } from 'lucide-react';
-import MemberAvatar from '../../households/components/ui/MemberAvatar';
+import MemberAvatar from '../../houseHolds/components/ui/MemberAvatar';
 import type { AssigneeSelectorProps } from './AddTaskModal.types';
 
 const AssigneeSelector = ({ selectedAssignee, setSelectedAssignee, members }: AssigneeSelectorProps) => (
@@ -12,7 +12,7 @@ const AssigneeSelector = ({ selectedAssignee, setSelectedAssignee, members }: As
             </button>
             {members?.map((member: any) => (
                 <button key={member.id} onClick={() => setSelectedAssignee(member.username)} className={`shrink-0 flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${selectedAssignee === member.username ? 'border-primary bg-primary/5' : 'border-slate-50 bg-white'}`}>
-                    <MemberAvatar username={member.username} size="w-12 h-12" border={selectedAssignee === member.username} />
+                    <MemberAvatar username={member.username} profilePicture={member.profilePicture} size="w-12 h-12" border={selectedAssignee === member.username} />
                     <span className={`text-[10px] font-black truncate w-16 text-center ${selectedAssignee === member.username ? 'text-primary' : 'text-slate-400'}`}>{member.username}</span>
                 </button>
             ))}

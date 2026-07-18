@@ -73,6 +73,7 @@ export interface TaskIconProps {
 
 export interface MemberAvatarProps {
     username: string;
+    profilePicture?: string;
     size?: string;
     border?: boolean;
 }
