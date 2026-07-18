@@ -4,7 +4,7 @@ import HomeErrorState from './components/HomeErrorState';
 import HomeEmptyState from './components/HomeEmptyState';
 import HouseholdList from './components/HouseholdList';
 import HomeActionButtons from './components/HomeActionButtons';
-import LeaveHouseholdModal from '../households/components/LeaveHouseholdModal';
+import LeaveHouseholdModal from '../houseHolds/components/LeaveHouseholdModal';
 
 // Hooks
 import { useHomeScreen } from './useHomeScreen';
