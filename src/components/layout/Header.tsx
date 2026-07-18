@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Search, X, Send } from "lucide-react";
@@ -7,6 +8,15 @@ import { clearUnread } from "../../store/slices/notificationsSlice";
 import { useGetMyNotificationsQuery } from "../../api/notifications.api";
 import { useGlobalSearch } from "./hooks/useGlobalSearch";
 import SearchResults from "./components/SearchResults";
+=======
+import React, { useEffect, useState } from 'react';
+import { Bell, Search, X, Send } from 'lucide-react';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { motion, AnimatePresence } from 'framer-motion';
+import { clearUnread } from '../../store/slices/notificationsSlice';
+import { useGetMyNotificationsQuery } from '../../api/notifications.api';
+import Avatar from '../ui/Avatar';
+>>>>>>> 0d97ac3ba5c97fff2ecb553163f0b4c91ae26b46
 
 interface HeaderProps {
   showActions?: boolean;
@@ -61,6 +71,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSearchOpen]);
 
+<<<<<<< HEAD
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good Morning";
@@ -69,6 +80,59 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     if (hour < 21) return "Good Evening";
     return "Good Night";
   };
+=======
+    return (
+        <header className="px-6 pt-6 md:pt-4 pb-4 fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md">
+            <div className="flex justify-between items-center bg-transparent max-w-4xl mx-auto">
+                <AnimatePresence mode="wait">
+                    {!isSearchOpen ? (
+                        <motion.div
+                            key="user-info"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="flex items-center gap-4 w-full"
+                        >
+                            <div className="relative">
+                                <Avatar
+                                    src={user?.profilePicture}
+                                    name={user?.username}
+                                    alt="Profile"
+                                    className="w-10 h-10 rounded-full ring-2 ring-white shadow-premium-sm text-xs"
+                                />
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                            </div>
+                            <div>
+                                <p className="text-medium-gray text-[10px] font-bold uppercase tracking-wider">{getGreeting()},</p>
+                                <h1 className="text-charcoal text-xl font-black tracking-tight">{user?.username || 'Guest'}!</h1>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="search-input"
+                            initial={{ opacity: 0, width: 0 }}
+                            animate={{ opacity: 1, width: '100%' }}
+                            exit={{ opacity: 0, width: 0 }}
+                            className="flex-1 mr-4"
+                        >
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Search tasks, roomies..."
+                                    className="w-full py-3 pl-4 pr-12 bg-white rounded-2xl border-none shadow-premium-sm focus:ring-2 focus:ring-primary/20 outline-none text-charcoal font-medium placeholder:text-medium-gray"
+                                    autoFocus
+                                />
+                                <button
+                                    onClick={() => setIsSearchOpen(false)}
+                                    className="absolute right-3 p-1 text-medium-gray hover:text-charcoal transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+>>>>>>> 0d97ac3ba5c97fff2ecb553163f0b4c91ae26b46
 
   const handleBellClick = () => {
     setShowNotifications(!showNotifications);

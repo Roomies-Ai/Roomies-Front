@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userApi } from "../../../api/user.api";
 import {
+  useDisconnectCalendarMutation,
   useGetCalendarStatusQuery,
   useLazyGetConnectUrlQuery,
   useToggleSyncMutation,
-  useDisconnectCalendarMutation,
 } from "../../../api/calendar.api";
-import { useAppSelector, useAppDispatch } from "../../../store/hooks";
+import { userApi } from "../../../api/user.api";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { setUser as setReduxUser } from "../../../store/slices/authSlice";
-import type { ProfileUser, ProfileFormState } from "../types/profile.types";
+import type { ProfileFormState, ProfileUser } from "../types/profile.types";
 
 export const useProfile = () => {
   const navigate = useNavigate();
@@ -27,12 +27,17 @@ export const useProfile = () => {
   const [telegramLoading, setTelegramLoading] = useState(false);
 
   // RTK Query hooks
-  const { data: calendarStatus, refetch: refetchCalendarStatus } = useGetCalendarStatusQuery();
-  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] = useLazyGetConnectUrlQuery();
-  const [toggleSync, { isLoading: toggleSyncLoading }] = useToggleSyncMutation();
-  const [disconnectCalendar, { isLoading: disconnectLoading }] = useDisconnectCalendarMutation();
+  const { data: calendarStatus, refetch: refetchCalendarStatus } =
+    useGetCalendarStatusQuery();
+  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] =
+    useLazyGetConnectUrlQuery();
+  const [toggleSync, { isLoading: toggleSyncLoading }] =
+    useToggleSyncMutation();
+  const [disconnectCalendar, { isLoading: disconnectLoading }] =
+    useDisconnectCalendarMutation();
 
-  const calendarLoading = connectUrlLoading || toggleSyncLoading || disconnectLoading;
+  const calendarLoading =
+    connectUrlLoading || toggleSyncLoading || disconnectLoading;
 
   // Form State
   const [editForm, setEditForm] = useState<ProfileFormState>({
@@ -148,6 +153,8 @@ export const useProfile = () => {
   }, [dispatch]);
 
   const handleUpdateProfile = useCallback(async () => {
+    if (!editForm.username.trim()) return;
+
     setLoading(true);
     try {
       const updated = await userApi.updateMe(editForm);
@@ -161,32 +168,89 @@ export const useProfile = () => {
     }
   }, [editForm, dispatch]);
 
-  const togglePreference = useCallback((key: string) => {
-    setEditForm((prev) => ({
-      ...prev,
-      preferences: {
-        ...prev.preferences,
-        [key]: !prev.preferences[key],
-      },
-    }));
-  }, []);
+  const togglePreference = useCallback(
+    async (key: string) => {
+      const previousPreferences = editForm.preferences;
+      const updatedPreferences = {
+        ...previousPreferences,
+        [key]: !previousPreferences[key],
+      };
+      setEditForm((prev) => ({ ...prev, preferences: updatedPreferences }));
 
-  const addVibe = useCallback(() => {
-    setEditForm((prev) => {
-      const vibe = prompt("Enter a new vibe (e.g. Night Owl, Clean Freak)");
-      if (vibe && !prev.vibes.includes(vibe)) {
-        return { ...prev, vibes: [...prev.vibes, vibe] };
+      try {
+        const updated = await userApi.updateMe({
+          preferences: updatedPreferences,
+        });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to update preference", err);
+        setEditForm((prev) => ({ ...prev, preferences: previousPreferences }));
       }
-      return prev;
-    });
-  }, []);
+    },
+    [editForm.preferences, dispatch],
+  );
+  const handleUpdateProfilePicture = useCallback(
+    async (image: Blob) => {
+      try {
+        const updated = await userApi.uploadProfilePicture(image);
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Profile picture update failed", err);
+      }
+    },
+    [dispatch],
+  );
 
-  const removeVibe = useCallback((vibe: string) => {
-    setEditForm((prev) => ({
-      ...prev,
-      vibes: prev.vibes.filter((v: string) => v !== vibe),
-    }));
-  }, []);
+  const handleDeleteProfilePicture = useCallback(async () => {
+    try {
+      const updated = await userApi.deleteProfilePicture();
+      setUser(updated);
+      dispatch(setReduxUser(updated));
+    } catch (err) {
+      console.error("Profile picture delete failed", err);
+    }
+  }, [dispatch]);
+
+  const addVibe = useCallback(
+    async (vibe: string) => {
+      const trimmed = vibe.trim();
+      if (!trimmed || editForm.vibes.includes(trimmed)) return;
+
+      const previousVibes = editForm.vibes;
+      const updatedVibes = [...previousVibes, trimmed];
+      setEditForm((prev) => ({ ...prev, vibes: updatedVibes }));
+
+      try {
+        const updated = await userApi.updateMe({ vibes: updatedVibes });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to add vibe", err);
+        setEditForm((prev) => ({ ...prev, vibes: previousVibes }));
+      }
+    },
+    [editForm.vibes, dispatch],
+  );
+
+  const removeVibe = useCallback(
+    async (vibe: string) => {
+      const previousVibes = editForm.vibes;
+      const updatedVibes = previousVibes.filter((v: string) => v !== vibe);
+      setEditForm((prev) => ({ ...prev, vibes: updatedVibes }));
+
+      try {
+        const updated = await userApi.updateMe({ vibes: updatedVibes });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to remove vibe", err);
+        setEditForm((prev) => ({ ...prev, vibes: previousVibes }));
+      }
+    },
+    [editForm.vibes, dispatch],
+  );
 
   const setEditFormField = useCallback(
     (field: keyof ProfileFormState, value: any) => {
@@ -209,6 +273,8 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
@@ -235,6 +301,8 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
