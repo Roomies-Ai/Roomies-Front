@@ -1,28 +1,101 @@
-import React from 'react';
-import { Camera } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Camera, Loader2, X } from 'lucide-react';
 import type { ProfileUser } from '../types/profile.types';
+import Avatar from '../../../components/ui/Avatar';
+import { resizeImageFile } from '../../../utils/image';
 
 interface ProfileBannerProps {
     user: ProfileUser | null;
+    onPictureChange?: (image: Blob) => Promise<void> | void;
+    onPictureDelete?: () => Promise<void> | void;
 }
 
-const ProfileBanner: React.FC<ProfileBannerProps> = ({ user }) => {
+const ProfileBanner: React.FC<ProfileBannerProps> = ({ user, onPictureChange, onPictureDelete }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file || !onPictureChange) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        setIsUploading(true);
+        try {
+            const resized = await resizeImageFile(file);
+            await onPictureChange(resized);
+        } catch (err) {
+            console.error('Failed to update profile picture', err);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const handleDeleteClick = async () => {
+        if (!onPictureDelete) return;
+        if (!confirm('Remove your profile picture?')) return;
+
+        setIsDeleting(true);
+        try {
+            await onPictureDelete();
+        } catch (err) {
+            console.error('Failed to delete profile picture', err);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     return (
         <div className="flex flex-col items-center gap-4 relative">
             <div className="relative">
                 <div className="w-32 h-32 rounded-[2.5rem] bg-white shadow-premium p-1.5 border border-slate-100">
-                    <img 
-                        src={user?.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex'} 
-                        alt="Avatar" 
-                        className="w-full h-full rounded-[2.2rem] object-cover"
+                    <Avatar
+                        src={user?.profilePicture}
+                        name={user?.username}
+                        alt="Avatar"
+                        className="w-full h-full rounded-[2.2rem] text-3xl"
                     />
                 </div>
-                <button 
-                    className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-white rounded-2xl shadow-lg border-4 border-[#F8FAFC] flex items-center justify-center hover:scale-110 transition-transform"
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                />
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-white rounded-2xl shadow-lg border-4 border-[#F8FAFC] flex items-center justify-center hover:scale-110 transition-transform disabled:opacity-60 disabled:hover:scale-100"
                     aria-label="Change profile picture"
                 >
-                    <Camera size={18} strokeWidth={2.5} />
+                    {isUploading ? (
+                        <Loader2 size={18} strokeWidth={2.5} className="animate-spin" />
+                    ) : (
+                        <Camera size={18} strokeWidth={2.5} />
+                    )}
                 </button>
+                {user?.profilePicture && onPictureDelete && (
+                    <button
+                        type="button"
+                        onClick={handleDeleteClick}
+                        disabled={isDeleting}
+                        className="absolute -top-2 -right-2 w-8 h-8 bg-white text-slate-500 rounded-2xl shadow-lg border-4 border-[#F8FAFC] flex items-center justify-center hover:scale-110 hover:text-red-500 transition-transform disabled:opacity-60 disabled:hover:scale-100"
+                        aria-label="Remove profile picture"
+                    >
+                        {isDeleting ? (
+                            <Loader2 size={14} strokeWidth={2.5} className="animate-spin" />
+                        ) : (
+                            <X size={14} strokeWidth={2.5} />
+                        )}
+                    </button>
+                )}
             </div>
             
             <div className="text-center">

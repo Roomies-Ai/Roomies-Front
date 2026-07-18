@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userApi } from "../../../api/user.api";
 import {
+  useDisconnectCalendarMutation,
   useGetCalendarStatusQuery,
   useLazyGetConnectUrlQuery,
   useToggleSyncMutation,
-  useDisconnectCalendarMutation,
 } from "../../../api/calendar.api";
-import { useAppSelector, useAppDispatch } from "../../../store/hooks";
+import { userApi } from "../../../api/user.api";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { setUser as setReduxUser } from "../../../store/slices/authSlice";
-import type { ProfileUser, ProfileFormState } from "../types/profile.types";
+import type { ProfileFormState, ProfileUser } from "../types/profile.types";
 
 export const useProfile = () => {
   const navigate = useNavigate();
@@ -27,12 +27,17 @@ export const useProfile = () => {
   const [telegramLoading, setTelegramLoading] = useState(false);
 
   // RTK Query hooks
-  const { data: calendarStatus, refetch: refetchCalendarStatus } = useGetCalendarStatusQuery();
-  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] = useLazyGetConnectUrlQuery();
-  const [toggleSync, { isLoading: toggleSyncLoading }] = useToggleSyncMutation();
-  const [disconnectCalendar, { isLoading: disconnectLoading }] = useDisconnectCalendarMutation();
+  const { data: calendarStatus, refetch: refetchCalendarStatus } =
+    useGetCalendarStatusQuery();
+  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] =
+    useLazyGetConnectUrlQuery();
+  const [toggleSync, { isLoading: toggleSyncLoading }] =
+    useToggleSyncMutation();
+  const [disconnectCalendar, { isLoading: disconnectLoading }] =
+    useDisconnectCalendarMutation();
 
-  const calendarLoading = connectUrlLoading || toggleSyncLoading || disconnectLoading;
+  const calendarLoading =
+    connectUrlLoading || toggleSyncLoading || disconnectLoading;
 
   // Form State
   const [editForm, setEditForm] = useState<ProfileFormState>({
@@ -148,6 +153,8 @@ export const useProfile = () => {
   }, [dispatch]);
 
   const handleUpdateProfile = useCallback(async () => {
+    if (!editForm.username.trim()) return;
+
     setLoading(true);
     try {
       const updated = await userApi.updateMe(editForm);
@@ -171,7 +178,9 @@ export const useProfile = () => {
       setEditForm((prev) => ({ ...prev, preferences: updatedPreferences }));
 
       try {
-        const updated = await userApi.updateMe({ preferences: updatedPreferences });
+        const updated = await userApi.updateMe({
+          preferences: updatedPreferences,
+        });
         setUser(updated);
         dispatch(setReduxUser(updated));
       } catch (err) {
@@ -181,6 +190,28 @@ export const useProfile = () => {
     },
     [editForm.preferences, dispatch],
   );
+  const handleUpdateProfilePicture = useCallback(
+    async (image: Blob) => {
+      try {
+        const updated = await userApi.uploadProfilePicture(image);
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Profile picture update failed", err);
+      }
+    },
+    [dispatch],
+  );
+
+  const handleDeleteProfilePicture = useCallback(async () => {
+    try {
+      const updated = await userApi.deleteProfilePicture();
+      setUser(updated);
+      dispatch(setReduxUser(updated));
+    } catch (err) {
+      console.error("Profile picture delete failed", err);
+    }
+  }, [dispatch]);
 
   const addVibe = useCallback(() => {
     setEditForm((prev) => {
@@ -220,6 +251,8 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
@@ -246,6 +279,8 @@ export const useProfile = () => {
       editForm,
       setEditFormField,
       handleUpdateProfile,
+      handleUpdateProfilePicture,
+      handleDeleteProfilePicture,
       togglePreference,
       addVibe,
       removeVibe,
