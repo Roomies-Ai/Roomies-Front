@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Plus, Loader2, Check, X } from 'lucide-react';
-import TaskIcon from '../../households/components/ui/TaskIcon';
+import TaskIcon from '../../houseHolds/components/ui/TaskIcon';
 import type { TaskTypeSelectorProps } from './AddTaskModal.types';
 
 const TaskTypeSelector = ({

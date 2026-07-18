@@ -15,7 +15,7 @@ export const householdApi = api.injectEndpoints({
         }),
         getHouseholdById: builder.query<Household, string>({
             query: (id) => `/households/${id}`,
-            providesTags: (result, error, id) => [{ type: 'Household', id }],
+            providesTags: (_result, _error, id) => [{ type: 'Household', id }],
         }),
         createHousehold: builder.mutation<Household, CreateHouseholdRequest>({
             query: (data) => ({
@@ -38,7 +38,7 @@ export const householdApi = api.injectEndpoints({
                 url: `/households/${id}/invites`,
                 method: 'POST',
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Household', id }],
+            invalidatesTags: (_result, _error, id) => [{ type: 'Household', id }],
         }),
         addPet: builder.mutation<any, { id: string; name: string; kind: string }>({
             query: ({ id, ...data }) => ({
@@ -46,7 +46,7 @@ export const householdApi = api.injectEndpoints({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [{ type: 'Household', id }],
+            invalidatesTags: (_result, _error, { id }) => [{ type: 'Household', id }],
         }),
         addTaskType: builder.mutation<any, { id: string; name: string }>({
             query: ({ id, name }) => ({
@@ -54,14 +54,14 @@ export const householdApi = api.injectEndpoints({
                 method: 'POST',
                 body: { name },
             }),
-            invalidatesTags: (result, error, { id }) => [{ type: 'Household', id }],
+            invalidatesTags: (_result, _error, { id }) => [{ type: 'Household', id }],
         }),
         leaveHousehold: builder.mutation<void, { householdId: string; userId: string }>({
             query: ({ householdId, userId }) => ({
                 url: `/households/${householdId}/users/${userId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: (result, error, { householdId }) => [
+            invalidatesTags: (_result, _error, { householdId }) => [
                 { type: 'Household', id: householdId },
                 { type: 'Household', id: 'LIST' },
             ],

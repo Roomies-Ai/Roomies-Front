@@ -1,5 +1,5 @@
 import { CheckCircle2, Circle, Coins, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
-import TaskIcon from '../../households/components/ui/TaskIcon';
+import TaskIcon from '../../houseHolds/components/ui/TaskIcon';
 import type { TaskItemHeaderProps } from './TaskItem.types';
 
 const TaskItemHeader = ({ task, isCompleted, isProgress, onEdit, onToggle, showComplete, onToggleExpand, isExpanded }: TaskItemHeaderProps) => {

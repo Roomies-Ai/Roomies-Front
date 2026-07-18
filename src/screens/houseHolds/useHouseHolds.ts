@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 
 export const useHouseHolds = () => {
   const user = useSelector((state: RootState) => state.auth.user);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const handleCreateOrJoin = useCallback(() => {
     console.log('Navigate to Create or Join');
