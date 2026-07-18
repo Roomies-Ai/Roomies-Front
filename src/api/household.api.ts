@@ -15,7 +15,7 @@ export const householdApi = api.injectEndpoints({
         }),
         getHouseholdById: builder.query<Household, string>({
             query: (id) => `/households/${id}`,
-            providesTags: (result, error, id) => [{ type: 'Household', id }],
+            providesTags: (_result, _error, id) => [{ type: 'Household', id }],
         }),
         createHousehold: builder.mutation<Household, CreateHouseholdRequest>({
             query: (data) => ({
