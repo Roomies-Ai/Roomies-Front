@@ -73,6 +73,7 @@ export const useHouseholdBase = () => {
     return useMemo(() => ({
         id,
         navigate,
+        targetTaskId,
         currentUser,
         household,
         setHousehold,
@@ -82,5 +83,5 @@ export const useHouseholdBase = () => {
         error,
         setError,
         refresh: fetchDetail
-    }), [id, navigate, currentUser, household, setHousehold, allHouseholds, loading, setLoading, error, setError, fetchDetail]);
+    }), [id, navigate, targetTaskId, currentUser, household, setHousehold, allHouseholds, loading, setLoading, error, setError, fetchDetail]);
 };

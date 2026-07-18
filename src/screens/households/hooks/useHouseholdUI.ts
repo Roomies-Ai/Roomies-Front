@@ -1,8 +1,26 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 
-export const useHouseholdUI = (household: any) => {
+const TAB_BY_STATUS: Record<string, 'OPEN' | 'IN_PROGRESS' | 'DONE'> = {
+    'pending': 'OPEN',
+    'in-progress': 'IN_PROGRESS',
+    'completed': 'DONE',
+};
+
+export const useHouseholdUI = (household: any, targetTaskId?: string | null) => {
     const [activeTab, setActiveTab] = useState<'OPEN' | 'IN_PROGRESS' | 'DONE'>('OPEN');
     const [searchQuery, setSearchQuery] = useState('');
+    const appliedTargetRef = useRef<string | null>(null);
+
+    // Jump to whichever tab holds the task the user navigated to (e.g. from search),
+    // so it isn't hidden behind the currently active status filter.
+    useEffect(() => {
+        if (!targetTaskId || appliedTargetRef.current === targetTaskId) return;
+        const targetTask = household?.tasks?.find((t: any) => t.id === targetTaskId);
+        if (!targetTask) return;
+        const tab = TAB_BY_STATUS[targetTask.status?.toLowerCase()];
+        if (tab) setActiveTab(tab);
+        appliedTargetRef.current = targetTaskId;
+    }, [household, targetTaskId]);
 
     const filteredTasks = useMemo(() => {
         return household?.tasks?.filter((task: any) => {
