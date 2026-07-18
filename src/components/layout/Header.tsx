@@ -7,6 +7,7 @@ import { clearUnread } from "../../store/slices/notificationsSlice";
 import { useGetMyNotificationsQuery } from "../../api/notifications.api";
 import { useGlobalSearch } from "./hooks/useGlobalSearch";
 import SearchResults from "./components/SearchResults";
+import Avatar from "../ui/Avatar";
 
 interface HeaderProps {
   showActions?: boolean;
@@ -100,13 +101,11 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
               className="flex items-center gap-4 w-full"
             >
               <div className="relative">
-                <img
-                  src={
-                    user?.profilePicture ||
-                    "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-                  }
+                <Avatar
+                  src={user?.profilePicture}
+                  name={user?.username}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-premium-sm"
+                  className="w-10 h-10 rounded-full ring-2 ring-white shadow-premium-sm text-sm"
                 />
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
               </div>
