@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Trophy, ChevronRight } from 'lucide-react';
+import Avatar from '../../../../components/ui/Avatar';
 import type { MemberCardProps } from '../../StatsScreen.types';
 
 const MemberCard = ({ user, idx, memberStats, onSelectEntity }: MemberCardProps) => {
@@ -22,12 +23,8 @@ const MemberCard = ({ user, idx, memberStats, onSelectEntity }: MemberCardProps)
             }}
             className="bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-4 group hover:border-blue-200 transition-all cursor-pointer"
         >
-            <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm ring-1 ring-slate-100 relative">
-                {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt={user.username} className="w-full h-full object-cover" />
-                ) : (
-                    <span className="text-lg font-black text-slate-400">{user.username.charAt(0).toUpperCase()}</span>
-                )}
+            <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-slate-100 relative">
+                <Avatar src={user.profilePicture} name={user.username} alt={user.username} className="w-full h-full rounded-2xl text-lg" />
                 {idx === 0 && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
                         <Trophy size={10} className="text-white" />

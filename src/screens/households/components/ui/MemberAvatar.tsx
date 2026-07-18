@@ -1,12 +1,14 @@
+import Avatar from '../../../../components/ui/Avatar';
 import type { MemberAvatarProps } from '../../HouseholdDetail.types';
 
-const MemberAvatar = ({ username, size = "w-8 h-8", border = true }: MemberAvatarProps) => {
+const MemberAvatar = ({ username, profilePicture, size = "w-8 h-8", border = true }: MemberAvatarProps) => {
     return (
         <div className={`${size} rounded-full overflow-hidden bg-slate-100 ${border ? 'border border-white shadow-sm' : ''}`}>
-            <img 
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username || 'unassigned'}`} 
-                alt={username} 
-                className="w-full h-full object-cover"
+            <Avatar
+                src={profilePicture}
+                name={username}
+                alt={username}
+                className="w-full h-full text-[10px]"
             />
         </div>
     );
