@@ -2,7 +2,7 @@ import React from "react";
 import { CheckCircle2, Home, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import type { GlobalSearchResults } from "../types/search.types";
-import MemberAvatar from "../../../screens/households/components/ui/MemberAvatar";
+import MemberAvatar from "../../../screens/houseHolds/components/ui/MemberAvatar";
 
 interface SearchResultsProps {
   query: string;
