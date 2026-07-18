@@ -58,21 +58,32 @@ const HouseholdDetailScreen = () => {
   const [highlightedTaskId, setHighlightedTaskId] = useState<string | null>(
     null,
   );
+  const [scrolledForTaskId, setScrolledForTaskId] = useState<string | null>(
+    null,
+  );
 
-  // Scroll to and briefly highlight the task the user arrived for (e.g. via search).
-  useEffect(() => {
-    if (!targetTaskId) return;
-    if (!filteredTasks.some((t: any) => t.id === targetTaskId)) return;
-
-    const el = document.getElementById(`task-${targetTaskId}`);
-    if (!el) return;
-
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  // Once the task the user arrived for (e.g. via search) is present in the
+  // visible list, mark it to be scrolled to and highlighted. Guarded so it
+  // only fires once per target id.
+  const targetTaskIsVisible =
+    !!targetTaskId &&
+    targetTaskId !== scrolledForTaskId &&
+    filteredTasks.some((t: any) => t.id === targetTaskId);
+  if (targetTaskIsVisible) {
+    setScrolledForTaskId(targetTaskId);
     setHighlightedTaskId(targetTaskId);
+  }
+
+  // Pure DOM side effect: scroll to the highlighted task and fade it out after a beat.
+  useEffect(() => {
+    if (!highlightedTaskId) return;
+    document
+      .getElementById(`task-${highlightedTaskId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
 
     const timeout = setTimeout(() => setHighlightedTaskId(null), 2500);
     return () => clearTimeout(timeout);
-  }, [targetTaskId, filteredTasks]);
+  }, [highlightedTaskId]);
 
   if (loading) {
     return (
@@ -157,6 +168,7 @@ const HouseholdDetailScreen = () => {
                 }}
                 formatRelativeDate={formatRelativeDate}
                 idx={idx}
+                isHighlighted={task.id === highlightedTaskId}
               />
             ))}
           </AnimatePresence>
