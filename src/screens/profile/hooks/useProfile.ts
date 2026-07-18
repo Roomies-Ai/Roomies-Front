@@ -27,7 +27,7 @@ export const useProfile = () => {
   const [telegramLoading, setTelegramLoading] = useState(false);
 
   // RTK Query hooks
-  const { data: calendarStatus, refetch: refetchCalendarStatus } =
+  const { data: calendarStatus = null, refetch: refetchCalendarStatus } =
     useGetCalendarStatusQuery();
   const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] =
     useLazyGetConnectUrlQuery();
