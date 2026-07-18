@@ -46,7 +46,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 {tasks.map((task) => (
                   <button
                     key={task.id}
-                    onClick={() => onSelect(`/households/${task.householdId}`)}
+                    onClick={() =>
+                      onSelect(`/households/${task.householdId}?taskId=${task.id}`)
+                    }
                     className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors text-left"
                   >
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">

@@ -41,6 +41,7 @@ export interface TaskCardProps {
   onEdit?: (task: any) => void;
   formatRelativeDate: (date: string) => string;
   idx: number;
+  isHighlighted?: boolean;
 }
 
 export interface AssignmentModalProps {

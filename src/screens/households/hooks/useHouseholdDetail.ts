@@ -11,7 +11,7 @@ export const useHouseholdDetail = () => {
     base.setHousehold,
     base.refresh,
   );
-  const ui = useHouseholdUI(base.household);
+  const ui = useHouseholdUI(base.household, base.targetTaskId);
   const actions = useHouseholdActions(
     base.id,
     base.currentUser,

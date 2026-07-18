@@ -1,8 +1,25 @@
 import { useState, useMemo, useCallback } from 'react';
 
-export const useHouseholdUI = (household: any) => {
+const TAB_BY_STATUS: Record<string, 'OPEN' | 'IN_PROGRESS' | 'DONE'> = {
+    'pending': 'OPEN',
+    'in-progress': 'IN_PROGRESS',
+    'completed': 'DONE',
+};
+
+export const useHouseholdUI = (household: any, targetTaskId?: string | null) => {
     const [activeTab, setActiveTab] = useState<'OPEN' | 'IN_PROGRESS' | 'DONE'>('OPEN');
     const [searchQuery, setSearchQuery] = useState('');
+    const [appliedTargetId, setAppliedTargetId] = useState<string | null>(null);
+
+    // Jump to whichever tab holds the task the user navigated to (e.g. from search),
+    // so it isn't hidden behind the currently active status filter. Runs once
+    // household data has arrived, guarded so it only fires once per target id.
+    if (household && targetTaskId && targetTaskId !== appliedTargetId) {
+        const targetTask = household.tasks?.find((t: any) => t.id === targetTaskId);
+        const tab = targetTask && TAB_BY_STATUS[targetTask.status?.toLowerCase()];
+        if (tab) setActiveTab(tab);
+        setAppliedTargetId(targetTaskId);
+    }
 
     const filteredTasks = useMemo(() => {
         return household?.tasks?.filter((task: any) => {

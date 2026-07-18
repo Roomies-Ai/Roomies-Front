@@ -14,6 +14,7 @@ const TaskCard = ({
   onPointsClick,
   onEdit,
   idx,
+  isHighlighted,
 }: TaskCardProps) => {
   const isMyTask =
     String(task.assignee?.id) ===
@@ -23,12 +24,17 @@ const TaskCard = ({
 
   return (
     <motion.div
+      id={`task-${task.id}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: idx * 0.05 }}
       onClick={() => onEdit?.(task)}
-      className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col gap-6 cursor-pointer hover:border-primary/20 hover:shadow-md transition-[transform,opacity,box-shadow,border-color] group"
+      className={`bg-white p-6 rounded-[2.5rem] shadow-sm border flex flex-col gap-6 cursor-pointer hover:border-primary/20 hover:shadow-md transition-[transform,opacity,box-shadow,border-color] group ${
+        isHighlighted
+          ? "border-primary ring-4 ring-primary/30"
+          : "border-slate-50"
+      }`}
     >
       <div className="flex justify-between items-start">
         <div className="flex gap-4 flex-1 min-w-0">

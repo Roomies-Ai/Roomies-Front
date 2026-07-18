@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppSelector } from '../../../store/hooks';
 import { useGetHouseholdByIdQuery, useGetMyHouseholdsQuery } from '../../../api/household.api';
 
 export const useHouseholdBase = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const targetTaskId = searchParams.get('taskId');
     const currentUser = useAppSelector((state) => state.auth.user);
     
     const {
@@ -71,6 +73,7 @@ export const useHouseholdBase = () => {
     return useMemo(() => ({
         id,
         navigate,
+        targetTaskId,
         currentUser,
         household,
         setHousehold,
@@ -80,5 +83,5 @@ export const useHouseholdBase = () => {
         error,
         setError,
         refresh: fetchDetail
-    }), [id, navigate, currentUser, household, setHousehold, allHouseholds, loading, setLoading, error, setError, fetchDetail]);
+    }), [id, navigate, targetTaskId, currentUser, household, setHousehold, allHouseholds, loading, setLoading, error, setError, fetchDetail]);
 };
