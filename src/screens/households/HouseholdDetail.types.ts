@@ -70,16 +70,10 @@ export interface TaskIconProps {
 }
 
 export interface MemberAvatarProps {
-<<<<<<< HEAD
   username: string;
+  profilePicture?: string;
   size?: string;
   border?: boolean;
-=======
-    username: string;
-    profilePicture?: string;
-    size?: string;
-    border?: boolean;
->>>>>>> 0d97ac3ba5c97fff2ecb553163f0b4c91ae26b46
 }
 
 export interface PointsBadgeProps {
