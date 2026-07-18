@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userApi } from "../../../api/user.api";
 import {
+  useDisconnectCalendarMutation,
   useGetCalendarStatusQuery,
   useLazyGetConnectUrlQuery,
   useToggleSyncMutation,
-  useDisconnectCalendarMutation,
 } from "../../../api/calendar.api";
-import { useAppSelector, useAppDispatch } from "../../../store/hooks";
+import { userApi } from "../../../api/user.api";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { setUser as setReduxUser } from "../../../store/slices/authSlice";
-import type { ProfileUser, ProfileFormState } from "../types/profile.types";
+import type { ProfileFormState, ProfileUser } from "../types/profile.types";
 
 export const useProfile = () => {
   const navigate = useNavigate();
@@ -27,12 +27,17 @@ export const useProfile = () => {
   const [telegramLoading, setTelegramLoading] = useState(false);
 
   // RTK Query hooks
-  const { data: calendarStatus, refetch: refetchCalendarStatus } = useGetCalendarStatusQuery();
-  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] = useLazyGetConnectUrlQuery();
-  const [toggleSync, { isLoading: toggleSyncLoading }] = useToggleSyncMutation();
-  const [disconnectCalendar, { isLoading: disconnectLoading }] = useDisconnectCalendarMutation();
+  const { data: calendarStatus, refetch: refetchCalendarStatus } =
+    useGetCalendarStatusQuery();
+  const [triggerGetConnectUrl, { isFetching: connectUrlLoading }] =
+    useLazyGetConnectUrlQuery();
+  const [toggleSync, { isLoading: toggleSyncLoading }] =
+    useToggleSyncMutation();
+  const [disconnectCalendar, { isLoading: disconnectLoading }] =
+    useDisconnectCalendarMutation();
 
-  const calendarLoading = connectUrlLoading || toggleSyncLoading || disconnectLoading;
+  const calendarLoading =
+    connectUrlLoading || toggleSyncLoading || disconnectLoading;
 
   // Form State
   const [editForm, setEditForm] = useState<ProfileFormState>({
@@ -163,6 +168,28 @@ export const useProfile = () => {
     }
   }, [editForm, dispatch]);
 
+  const togglePreference = useCallback(
+    async (key: string) => {
+      const previousPreferences = editForm.preferences;
+      const updatedPreferences = {
+        ...previousPreferences,
+        [key]: !previousPreferences[key],
+      };
+      setEditForm((prev) => ({ ...prev, preferences: updatedPreferences }));
+
+      try {
+        const updated = await userApi.updateMe({
+          preferences: updatedPreferences,
+        });
+        setUser(updated);
+        dispatch(setReduxUser(updated));
+      } catch (err) {
+        console.error("Failed to update preference", err);
+        setEditForm((prev) => ({ ...prev, preferences: previousPreferences }));
+      }
+    },
+    [editForm.preferences, dispatch],
+  );
   const handleUpdateProfilePicture = useCallback(
     async (image: Blob) => {
       try {
@@ -185,16 +212,6 @@ export const useProfile = () => {
       console.error("Profile picture delete failed", err);
     }
   }, [dispatch]);
-
-  const togglePreference = useCallback((key: string) => {
-    setEditForm((prev) => ({
-      ...prev,
-      preferences: {
-        ...prev.preferences,
-        [key]: !prev.preferences[key],
-      },
-    }));
-  }, []);
 
   const addVibe = useCallback(() => {
     setEditForm((prev) => {
