@@ -38,7 +38,7 @@ export const householdApi = api.injectEndpoints({
                 url: `/households/${id}/invites`,
                 method: 'POST',
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Household', id }],
+            invalidatesTags: (_result, _error, id) => [{ type: 'Household', id }],
         }),
         addPet: builder.mutation<any, { id: string; name: string; kind: string }>({
             query: ({ id, ...data }) => ({
