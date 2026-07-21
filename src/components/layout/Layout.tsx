@@ -27,7 +27,8 @@ const Layout = () => {
                 <div className="max-w-4xl mx-auto px-8 py-5 flex justify-between items-center">
                     {navItems.map((item) => {
                     const Icon = item.icon;
-                    const isActive = location.pathname === item.path || (item.path === '/home' && location.pathname === '/');
+                    const isActive = location.pathname === item.path
+                        || (item.path === '/home' && (location.pathname === '/' || location.pathname.startsWith('/households')));
                     
                     return (
                         <button
