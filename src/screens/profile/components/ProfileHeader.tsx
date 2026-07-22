@@ -1,11 +1,14 @@
 import { LogOut } from 'lucide-react';
 import { useAppDispatch } from '../../../store/hooks';
 import { logout } from '../../../store/slices/authSlice';
+import { useLogoutMutation } from '../../../api/auth.api';
 
 const ProfileHeader = () => {
     const dispatch = useAppDispatch();
+    const [logoutMutation] = useLogoutMutation();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logoutMutation();
         dispatch(logout());
     };
 
