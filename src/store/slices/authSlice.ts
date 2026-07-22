@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { authApi } from '../../api/auth.api';
 
 interface AuthState {
   user: any | null;
@@ -20,6 +21,14 @@ const initialState: AuthState = {
   error: null,
 };
 
+const clearAuthSession = (state: AuthState) => {
+  state.user = null;
+  state.token = null;
+  state.isAuthenticated = false;
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+};
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -32,7 +41,7 @@ const authSlice = createSlice({
       action: PayloadAction<{ user: any; token: string }>
     ) => {
       const { user, token } = action.payload;
-      
+
       // Cleanup circular refs
       const cleanUser = { ...user };
       if (cleanUser.preferredTaskTypes) {
@@ -41,7 +50,7 @@ const authSlice = createSlice({
           name: t.name
         }));
       }
-      
+
       state.user = cleanUser;
       state.token = token;
       state.isAuthenticated = true;
@@ -50,11 +59,7 @@ const authSlice = createSlice({
       localStorage.setItem('user', JSON.stringify(cleanUser));
     },
     logout: (state) => {
-      state.user = null;
-      state.token = null;
-      state.isAuthenticated = false;
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      clearAuthSession(state);
     },
     setUser: (state, action: PayloadAction<any>) => {
       // Create a clean copy to avoid circular references (User -> TaskType -> User)
@@ -67,11 +72,11 @@ const authSlice = createSlice({
       }
       if (cleanUser.households) {
         cleanUser.households = cleanUser.households.map((h: any) => ({
-            id: h.id,
-            name: h.name
+          id: h.id,
+          name: h.name
         }));
       }
-      
+
       state.user = cleanUser;
       localStorage.setItem('user', JSON.stringify(cleanUser));
     },
@@ -80,6 +85,11 @@ const authSlice = createSlice({
       state.loading = false;
     },
   },
+  extraReducers: (builder) => {
+    builder.addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
+      clearAuthSession(state);
+    });
+  }
 });
 
 export const { setLoading, setCredentials, logout, setUser, setError } = authSlice.actions;
