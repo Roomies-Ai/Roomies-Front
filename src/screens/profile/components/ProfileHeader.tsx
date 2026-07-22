@@ -23,10 +23,10 @@ const ProfileHeader = () => {
             <h1 className="text-lg font-black text-slate-900 tracking-tight">Profile</h1>
             <button 
                 onClick={handleLogout}
-                className="p-2 hover:bg-slate-50 rounded-xl transition-colors"
+                className="p-2 hover:bg-red-50 text-slate-900 hover:text-red-600 rounded-xl transition-colors"
                 aria-label="Logout"
             >
-                <LogOut size={24} className="text-slate-900" />
+                <LogOut size={24} />
             </button>
         </header>
     );
