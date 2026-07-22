@@ -1,10 +1,8 @@
-import { ChevronLeft, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import { useAppDispatch } from '../../../store/hooks';
 import { logout } from '../../../store/slices/authSlice';
 
 const ProfileHeader = () => {
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const handleLogout = () => {
