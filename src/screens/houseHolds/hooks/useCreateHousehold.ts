@@ -87,8 +87,8 @@ export const useCreateHousehold = () => {
         setSuggestedTasks(prev => [
             ...prev,
             {
-                title: 'New Task',
-                description: 'Describe what needs to be done',
+                title: '',
+                description: '',
                 points: 3,
                 status: 'pending',
                 taskType: 'General',
