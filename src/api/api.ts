@@ -48,7 +48,6 @@ const baseQueryWithReauth: BaseQueryFn<
                 if (refreshResult.data) {
                     const { accessToken } = refreshResult.data as { accessToken: string };
 
-
                     localStorage.setItem("token", accessToken);
 
                     result = await rawBaseQuery(args, api, extraOptions);
