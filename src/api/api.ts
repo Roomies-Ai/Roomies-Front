@@ -47,10 +47,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
                 if (refreshResult.data) {
                     const { accessToken } = refreshResult.data as { accessToken: string };
-                    if (!accessToken) {
-                        console.log("token exp and no new token")
-                        return;
-                    }
+
 
                     localStorage.setItem("token", accessToken);
 
