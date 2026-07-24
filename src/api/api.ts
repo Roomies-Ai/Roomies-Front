@@ -55,10 +55,10 @@ const baseQueryWithReauth: BaseQueryFn<
                 );
 
                 if (refreshResult.data) {
-                    const { newToken } = refreshResult.data as { newToken: string };
+                    const { accessToken } = refreshResult.data as { accessToken: string };
 
                     // שמיעת הטוקן החדש ב-localStorage (או ב-Redux State)
-                    localStorage.setItem("token", newToken);
+                    localStorage.setItem("token", accessToken);
 
                     // הרצה חוזרת של הבקשה המקורית שנכשלה
                     result = await rawBaseQuery(args, api, extraOptions);
