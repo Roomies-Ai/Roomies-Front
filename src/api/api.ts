@@ -24,13 +24,10 @@ const baseQueryWithReauth: BaseQueryFn<
     unknown,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-    // ממתינים במידה ובקשה אחרת כבר מריצה כרגע Refresh
     await mutex.waitForUnlock();
 
-    // ביצוע הבקשה המקורית
     let result = await rawBaseQuery(args, api, extraOptions);
 
-    // חילוץ השגיאה מתוך התשובה
     const errorData = result.error?.data as { code?: string } | undefined;
 
     // בדיקה: האם חזרה שגיאת 401 והשרת ציין שהטוקן פג תוקף?
