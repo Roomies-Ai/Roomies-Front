@@ -4,7 +4,6 @@ import { Mutex } from "async-mutex";
 
 const mutex = new Mutex();
 
-// 2. ה-BaseQuery המקורי שלך
 const rawBaseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_SERVER_URL || "http://localhost:3000",
     credentials: "include",
@@ -20,7 +19,6 @@ const rawBaseQuery = fetchBaseQuery({
     },
 });
 
-// 3. ה-"Interceptor" שיושב באמצע ומטפל ב-401 מסוג TOKEN_EXPIRED
 const baseQueryWithReauth: BaseQueryFn<
     string | FetchArgs,
     unknown,
