@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Mutex } from "async-mutex";
 
-// 1. יצירת Mutex למניעת כפילויות של בקשות Refresh במקביל
 const mutex = new Mutex();
 
 // 2. ה-BaseQuery המקורי שלך
