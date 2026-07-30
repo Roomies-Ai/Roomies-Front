@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ClipboardCheck, Home, LogOut } from 'lucide-react';
+import { Home, LogOut } from 'lucide-react';
 import type { HouseholdListProps } from '../types/home.types';
 
 const HouseholdList: React.FC<HouseholdListProps> = ({ households, onNavigate, onLeave }) => {
