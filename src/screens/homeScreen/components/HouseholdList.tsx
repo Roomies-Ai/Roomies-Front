@@ -8,11 +8,11 @@ const HouseholdList: React.FC<HouseholdListProps> = ({ households, onNavigate, o
         <div className="flex flex-col gap-6 pb-8">
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-charcoal text-2xl font-black tracking-tight">My Households</h2>
-                <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
-                    <Home size={20} />
+                <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary border border-slate-50">
+                    <Home size={24} />
                 </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {households.map((household, index) => (
                     <motion.div
@@ -33,7 +33,7 @@ const HouseholdList: React.FC<HouseholdListProps> = ({ households, onNavigate, o
                             </div>
                         </div>
 
-                        <button 
+                        <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onLeave(household);

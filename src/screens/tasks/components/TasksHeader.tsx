@@ -10,7 +10,7 @@ const TasksHeader: React.FC<TasksHeaderProps> = ({ title, subtitle }) => {
     return (
         <div className="flex justify-between items-center">
             <div>
-                <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+                <h2 className="text-charcoal text-2xl font-black tracking-tight">
                     {title}
                 </h2>
                 <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">

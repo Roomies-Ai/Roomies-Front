@@ -5,8 +5,8 @@ import type { HomeActionButtonsProps } from '../types/home.types';
 
 const HomeActionButtons: React.FC<HomeActionButtonsProps> = ({ onCreateJoin, onHaveInviteCode }) => {
     return (
-        <div className="flex flex-col items-center pb-2 pt-6 bg-white border-t border-gray-50 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] fixed bottom-24 left-0 right-0 z-50">
-            <motion.button 
+        <div className="flex flex-col items-center pb-2 pt-6 fixed bottom-24 left-0 right-0 z-50">
+            <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onCreateJoin}
@@ -16,7 +16,7 @@ const HomeActionButtons: React.FC<HomeActionButtonsProps> = ({ onCreateJoin, onH
                 <span>Create or Join a Household</span>
             </motion.button>
 
-            <button 
+            <button
                 onClick={onHaveInviteCode}
                 className="text-[#94A3B8] text-sm font-bold hover:text-primary transition-colors mb-0"
             >
