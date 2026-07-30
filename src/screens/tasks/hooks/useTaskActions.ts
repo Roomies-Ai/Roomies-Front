@@ -70,19 +70,16 @@ export const useTaskActions = ({ setHouseholds, refresh }: UseTaskActionsProps) 
     const handleAddTask = async (householdId: string, taskData: any) => {
         try {
             if (Array.isArray(taskData)) {
-                const savedTasks = await taskApi.bulkCreate(householdId, taskData);
-                setHouseholds(prev => prev.map(h =>
-                    h.id === householdId ? { ...h, tasks: [...(h.tasks || []), ...savedTasks] } : h
-                ));
+                await taskApi.bulkCreate(householdId, taskData);
             } else {
-                const saved = await taskApi.createTask({ ...taskData, household: { id: householdId } });
-                setHouseholds(prev => prev.map(h =>
-                    h.id === householdId ? { ...h, tasks: [...(h.tasks || []), saved] } : h
-                ));
+                await taskApi.createTask({ ...taskData, household: { id: householdId } });
             }
+            // A household with no visible tasks yet may not be in the (filtered) list,
+            // so a full refresh is needed to make the new task's household group appear.
+            await refresh(true);
         } catch (err) {
             console.error('Failed to add task:', err);
-            refresh(true);
+            await refresh(true);
         }
     };
 

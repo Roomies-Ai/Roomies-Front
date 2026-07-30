@@ -54,6 +54,7 @@ export interface AssignmentModalProps {
   handleGetSuggestion: () => void;
   isSuggesting: boolean;
   suggestion: any;
+  isLoadingHousehold?: boolean;
 }
 
 export interface PointsModalProps {

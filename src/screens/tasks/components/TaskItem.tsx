@@ -6,7 +6,7 @@ import TaskItemHeader from './TaskItemHeader';
 import TaskItemFooter from './TaskItemFooter';
 import { taskApi } from '../../../api/task.api';
 
-const TaskItem = React.memo(({ task, onToggle, onEdit, showComplete = true }: TaskItemProps) => {
+const TaskItem = React.memo(({ task, onToggle, onEdit, onAssignClick, showComplete = true }: TaskItemProps) => {
     const isCompleted = task.status?.toLowerCase() === 'completed';
     const isProgress = task.status?.toLowerCase() === 'in-progress';
     const isTemplate = !!task.recurrenceRule && !task.recurrenceParentId;
@@ -53,7 +53,7 @@ const TaskItem = React.memo(({ task, onToggle, onEdit, showComplete = true }: Ta
                     isExpanded={isExpanded}
                 />
 
-                <TaskItemFooter task={task} />
+                <TaskItemFooter task={task} onAssignClick={onAssignClick} />
             </motion.div>
 
             {isTemplate && isExpanded && (

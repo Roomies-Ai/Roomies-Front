@@ -7,19 +7,21 @@ import HouseholdTaskGroup from './components/HouseholdTaskGroup';
 import EmptyTasksState from './components/EmptyTasksState';
 import AddTaskFAB from './components/AddTaskFAB';
 import AddTaskModal from './components/AddTaskModal';
+import AssignmentModal from '../houseHolds/components/AssignmentModal';
 
 // Hooks
 import { useTasks } from './hooks/useTasks';
 import { useTasksUI } from './hooks/useTasksUI';
 
 const TasksScreen = () => {
-    const { 
-        filteredHouseholds, 
+    const {
+        currentUser,
+        filteredHouseholds,
         filter,
         setFilter,
-        loading, 
+        loading,
         loadingHouseholds,
-        error, 
+        error,
         handleUpdateTaskStatus,
         handleUpdateTask,
         handleAddTask,
@@ -27,7 +29,16 @@ const TasksScreen = () => {
         handleClearRecurrence,
         fetchHouseholdTasks,
         refresh,
-        allHouseholds
+        allHouseholds,
+        assigningTaskId,
+        assigningHousehold,
+        isLoadingHousehold,
+        openAssignModal,
+        closeAssignModal,
+        isSuggesting,
+        suggestion,
+        handleGetSuggestion,
+        handleAssignTask
     } = useTasks();
 
     const {
@@ -75,6 +86,7 @@ const TasksScreen = () => {
                                 onToggleExpand={() => handleToggle(household.id)}
                                 onUpdateTaskStatus={handleUpdateTaskStatus}
                                 onEditTask={openEditModal}
+                                onAssignClick={openAssignModal}
                                 showCompleteInItem={filter === 'ME'}
                             />
                         ))}
@@ -86,7 +98,20 @@ const TasksScreen = () => {
 
             <AddTaskFAB onClick={() => setIsAddModalOpen(true)} />
 
-            <AddTaskModal 
+            <AssignmentModal
+                isOpen={!!assigningTaskId}
+                onClose={closeAssignModal}
+                household={assigningHousehold || { members: [], tasks: [] }}
+                assigningTaskId={assigningTaskId}
+                currentUser={currentUser}
+                handleAssignTask={handleAssignTask}
+                handleGetSuggestion={handleGetSuggestion}
+                isSuggesting={isSuggesting}
+                suggestion={suggestion}
+                isLoadingHousehold={isLoadingHousehold}
+            />
+
+            <AddTaskModal
                 isOpen={isAddModalOpen} 
                 onClose={handleCloseModal} 
                 households={allHouseholds}
