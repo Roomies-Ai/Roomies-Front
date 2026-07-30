@@ -170,7 +170,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
               href="https://t.me/RoomiesUserNameBot"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 bg-white rounded-2xl text-[#229ED9] hover:bg-gray-50 transition-all shadow-premium-sm active:scale-95 flex items-center justify-center"
+              className="p-3 bg-white rounded-2xl text-[#229ED9] hover:cursor-auto hover:bg-gray-50 transition-all shadow-premium-sm active:scale-95 flex items-center justify-center"
               title="Telegram Bot"
             >
               <Send size={20} />
