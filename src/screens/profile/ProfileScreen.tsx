@@ -72,7 +72,7 @@ const ProfileScreen = () => {
                 >
                     <button
                         onClick={handleLogout}
-                        className="absolute top-8 right-6 z-10 p-3 bg-white hover:bg-red-500 text-slate-700 hover:text-white rounded-2xl shadow-premium-sm active:scale-95 transition-all flex items-center justify-center border border-slate-100/80 hover:border-red-500"
+                        className="absolute top-8 right-6 z-10 p-3 bg-red-50 hover:bg-red-500 text-red-500 hover:text-red-50 rounded-2xl shadow-premium-sm active:scale-95 transition-all flex items-center justify-center"
                         aria-label="Logout"
                     >
                         <LogOut size={20} />
