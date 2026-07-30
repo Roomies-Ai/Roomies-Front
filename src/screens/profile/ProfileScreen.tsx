@@ -53,12 +53,11 @@ const ProfileScreen = () => {
 
     return (
         <div className="bg-[#F8FAFC] min-h-screen pb-24">
-            <ProfileHeader />
 
             {!user ? (
                 <ProfileSkeleton />
             ) : (
-                <motion.div 
+                <motion.div
                     variants={CONTAINER_VARIANTS}
                     initial="hidden"
                     animate="visible"
@@ -70,7 +69,7 @@ const ProfileScreen = () => {
                         onPictureDelete={handleDeleteProfilePicture}
                     />
 
-                    <ProfileDetailsCard 
+                    <ProfileDetailsCard
                         isEditing={isEditing}
                         setIsEditing={setIsEditing}
                         editForm={editForm}
@@ -110,7 +109,7 @@ const ProfileScreen = () => {
                         variants={ITEM_VARIANTS}
                     />
 
-                    <ProfileTasksCard 
+                    <ProfileTasksCard
                         user={user}
                         setIsTasksModalOpen={setIsTasksModalOpen}
                         variants={ITEM_VARIANTS}
@@ -118,9 +117,9 @@ const ProfileScreen = () => {
                 </motion.div>
             )}
 
-            <ChangePasswordModal 
-                isOpen={isPasswordModalOpen} 
-                onClose={() => setIsPasswordModalOpen(false)} 
+            <ChangePasswordModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
             />
 
             <PreferredTasksModal
