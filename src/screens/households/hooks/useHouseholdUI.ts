@@ -5,15 +5,24 @@ export const useHouseholdUI = (household: any) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredTasks = useMemo(() => {
-        return household?.tasks?.filter((task: any) => {
+        const filtered = household?.tasks?.filter((task: any) => {
             const status = task.status?.toLowerCase();
+            const isCompleted = status === 'completed';
+            const isAssigned = !!task.assignee;
+
             const matchesTab = 
-                (activeTab === 'OPEN' && status === 'pending') ||
-                (activeTab === 'IN_PROGRESS' && status === 'in-progress') ||
-                (activeTab === 'DONE' && status === 'completed');
+                (activeTab === 'OPEN' && !isAssigned && !isCompleted) ||
+                (activeTab === 'IN_PROGRESS' && isAssigned && !isCompleted) ||
+                (activeTab === 'DONE' && isCompleted);
             const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesTab && matchesSearch;
         }) || [];
+
+        return filtered.sort((a: any, b: any) => {
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        });
     }, [household?.tasks, activeTab, searchQuery]);
 
     const formatRelativeDate = useCallback((dateString: string) => {

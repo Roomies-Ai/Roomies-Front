@@ -1,17 +1,23 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Home, CheckCircle2, BarChart3, User } from 'lucide-react';
 import Header from './Header';
+import { useAppSelector } from '../../store/hooks';
 
 const Layout = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useAppSelector(state => state.auth);
 
-    const navItems = [
+    let navItems = [
         { icon: Home, path: '/home', label: 'Home' },
         { icon: CheckCircle2, path: '/tasks', label: 'Tasks' },
         { icon: BarChart3, path: '/stats', label: 'Stats' },
         { icon: User, path: '/profile', label: 'Profile' },
     ];
+
+    if (!user?.households || user.households.length === 0) {
+        navItems = navItems.filter(item => item.path !== '/tasks' && item.path !== '/stats');
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-white font-body">

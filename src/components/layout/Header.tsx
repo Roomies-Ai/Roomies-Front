@@ -139,26 +139,56 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-premium p-4 z-50 border border-gray-100"
+                                        className="absolute right-0 mt-3 w-80 max-h-[70vh] overflow-y-auto scrollbar-hide bg-white rounded-3xl shadow-premium p-4 z-50 border border-gray-100"
                                     >
-                                        <h3 className="text-sm font-bold text-charcoal mb-3">Tasks Due Today</h3>
+                                        <h3 className="text-sm font-bold text-charcoal mb-3">Tasks Needing Attention</h3>
                                         {notifications.length === 0 ? (
                                             <p className="text-xs text-medium-gray text-center py-4">No tasks due today</p>
                                         ) : (
-                                            <div className="space-y-3">
-                                                {notifications.map((task) => (
-                                                    <div key={task.id} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
-                                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
-                                                            {task.taskType?.name?.[0]?.toUpperCase() || '📋'}
-                                                        </div>
-                                                        <div className="min-w-0">
-                                                            <p className="text-xs font-bold text-charcoal truncate">{task.title}</p>
-                                                            <p className="text-[10px] text-medium-gray">
-                                                                {task.dueDate ? formatDueDate(task.dueDate) : 'Due today'} · {task.household?.name}
-                                                            </p>
+                                            <div className="space-y-4">
+                                                {/* Overdue Section */}
+                                                {notifications.filter(task => task.dueDate && new Date(task.dueDate).getTime() < new Date().setHours(0,0,0,0)).length > 0 && (
+                                                    <div>
+                                                        <h4 className="text-xs font-bold text-red-500 mb-2 uppercase tracking-wider">Overdue</h4>
+                                                        <div className="space-y-2">
+                                                            {notifications.filter(task => task.dueDate && new Date(task.dueDate).getTime() < new Date().setHours(0,0,0,0)).map((task) => (
+                                                                <div key={task.id} className="flex gap-3 items-start p-2 rounded-xl bg-red-50/50 hover:bg-red-50 transition-colors cursor-pointer border border-red-100/50">
+                                                                    <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs font-bold flex-shrink-0">
+                                                                        {task.taskType?.name?.[0]?.toUpperCase() || '🔴'}
+                                                                    </div>
+                                                                    <div className="min-w-0">
+                                                                        <p className="text-xs font-bold text-red-700 truncate">{task.title}</p>
+                                                                        <p className="text-[10px] text-red-500/80">
+                                                                            Overdue · {task.household?.name} {!task.assignee ? '(Unassigned)' : ''}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
                                                         </div>
                                                     </div>
-                                                ))}
+                                                )}
+
+                                                {/* Due Today Section */}
+                                                {notifications.filter(task => !task.dueDate || new Date(task.dueDate).getTime() >= new Date().setHours(0,0,0,0)).length > 0 && (
+                                                    <div>
+                                                        <h4 className="text-xs font-bold text-medium-gray mb-2 uppercase tracking-wider">Due Today</h4>
+                                                        <div className="space-y-2">
+                                                            {notifications.filter(task => !task.dueDate || new Date(task.dueDate).getTime() >= new Date().setHours(0,0,0,0)).map((task) => (
+                                                                <div key={task.id} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+                                                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
+                                                                        {task.taskType?.name?.[0]?.toUpperCase() || '📋'}
+                                                                    </div>
+                                                                    <div className="min-w-0">
+                                                                        <p className="text-xs font-bold text-charcoal truncate">{task.title}</p>
+                                                                        <p className="text-[10px] text-medium-gray">
+                                                                            {task.dueDate ? formatDueDate(task.dueDate) : 'Due today'} · {task.household?.name} {!task.assignee ? '(Unassigned)' : ''}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </motion.div>

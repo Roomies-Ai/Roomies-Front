@@ -2,7 +2,7 @@ import { User as UserIcon, Calendar } from 'lucide-react';
 import MemberAvatar from '../../households/components/ui/MemberAvatar';
 import type { TaskItemFooterProps } from './TaskItem.types';
 
-const TaskItemFooter = ({ task }: TaskItemFooterProps) => {
+const TaskItemFooter = ({ task, isOverdue }: TaskItemFooterProps) => {
     return (
         <div className="pt-3 border-t border-slate-50">
             <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-nowrap pb-1">
@@ -25,7 +25,7 @@ const TaskItemFooter = ({ task }: TaskItemFooterProps) => {
                 )}
 
                 {task.dueDate && (
-                    <div className="flex items-center gap-1.5 bg-blue-50 px-3 py-1.5 rounded-xl text-blue-600 shrink-0">
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl shrink-0 border ${isOverdue ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-transparent'}`}>
                         <Calendar size={12} />
                         <span className="text-[10px] font-black">{new Date(task.dueDate).toLocaleDateString('he-IL')}</span>
                     </div>

@@ -2,10 +2,10 @@ import { CheckCircle2, Circle, Coins, Settings2 } from 'lucide-react';
 import TaskIcon from '../../households/components/ui/TaskIcon';
 import type { TaskItemHeaderProps } from './TaskItem.types';
 
-const TaskItemHeader = ({ task, isCompleted, isProgress, onEdit, onToggle, showComplete }: TaskItemHeaderProps) => {
+const TaskItemHeader = ({ task, isCompleted, isProgress, isOverdue, onEdit, onToggle, showComplete }: TaskItemHeaderProps) => {
     return (
         <div className="flex items-start gap-4">
-            <div className={`shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${isCompleted ? 'bg-slate-200 text-slate-400' : 'bg-primary/5 text-primary'}`}>
+            <div className={`shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${isCompleted ? 'bg-slate-200 text-slate-400' : isOverdue ? 'bg-red-50 text-red-500' : 'bg-primary/5 text-primary'}`}>
                 <TaskIcon title={task.taskType?.name || task.title} size={24} />
             </div>
 

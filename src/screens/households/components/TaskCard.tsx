@@ -10,6 +10,7 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
     const isMyTask = String(task.assignee?.id) === String(currentUser?.id || currentUser?.userId);
     const isPending = task.status?.toLowerCase() === 'pending';
     const isCompleted = task.status?.toLowerCase() === 'completed';
+    const isOverdue = task.dueDate && new Date(task.dueDate).getTime() < new Date().setHours(0,0,0,0) && !isCompleted;
     
     return (
         <motion.div 
@@ -18,11 +19,11 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ delay: idx * 0.05 }}
             onClick={() => onEdit?.(task)}
-            className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col gap-6 cursor-pointer hover:border-primary/20 hover:shadow-md transition-[transform,opacity,box-shadow,border-color] group"
+            className={`p-6 rounded-[2.5rem] shadow-sm border flex flex-col gap-6 cursor-pointer hover:shadow-md transition-[transform,opacity,box-shadow,border-color] group ${isOverdue ? 'bg-red-50 border-red-200' : 'bg-white border-slate-50 hover:border-primary/20'}`}
         >
             <div className="flex justify-between items-start">
                 <div className="flex gap-4 flex-1 min-w-0">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-[#3B95EA] shrink-0">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isOverdue ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-[#3B95EA]'}`}>
                         <TaskIcon title={task.title} size={24} />
                     </div>
                     <div className="min-w-0 flex-1 pt-1">
@@ -32,7 +33,7 @@ const TaskCard = ({ task, currentUser, onUpdateStatus, onAssignClick, onPointsCl
                                 {task.taskType?.name || 'General'}
                             </span>
                             <span className="text-slate-300 shrink-0">•</span>
-                            <div className="flex items-center gap-1.5 bg-blue-50 px-2 py-1 rounded-md border border-blue-100 text-[#3B95EA] shrink-0">
+                            <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md border shrink-0 ${isOverdue ? 'bg-red-50 border-red-200 text-red-500' : 'bg-blue-50 border-blue-100 text-[#3B95EA]'}`}>
                                 <Calendar size={10} />
                                 <span className="text-[10px] font-black uppercase tracking-wider">
                                     {task.dueDate ? new Date(task.dueDate).toLocaleDateString('he-IL') : 'No Due Date'}

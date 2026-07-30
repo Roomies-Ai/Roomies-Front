@@ -101,8 +101,8 @@ const HouseholdDetailScreen = () => {
                     activeTab={activeTab} 
                     setActiveTab={setActiveTab} 
                     counts={{
-                        open: household.tasks.filter((t: any) => t.status?.toLowerCase() === 'pending').length,
-                        inProgress: household.tasks.filter((t: any) => t.status?.toLowerCase() === 'in-progress').length,
+                        open: household.tasks.filter((t: any) => !t.assignee && t.status?.toLowerCase() !== 'completed').length,
+                        inProgress: household.tasks.filter((t: any) => t.assignee && t.status?.toLowerCase() !== 'completed').length,
                         done: household.tasks.filter((t: any) => t.status?.toLowerCase() === 'completed').length,
                     }}
                 />
