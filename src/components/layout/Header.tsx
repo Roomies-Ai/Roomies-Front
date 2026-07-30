@@ -179,11 +179,10 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
             <div className="relative">
               <button
                 onClick={handleBellClick}
-                className={`p-3 bg-white rounded-2xl transition-all shadow-premium-sm active:scale-95 flex items-center justify-center ${
-                  showNotifications
-                    ? "text-primary ring-2 ring-primary/20"
-                    : "text-charcoal hover:bg-gray-50"
-                }`}
+                className={`p-3 bg-white rounded-2xl transition-all shadow-premium-sm active:scale-95 flex items-center justify-center ${showNotifications
+                  ? "text-primary ring-2 ring-primary/20"
+                  : "text-charcoal hover:bg-gray-50"
+                  }`}
               >
                 <Bell size={20} />
                 {unreadCount > 0 && (
@@ -201,7 +200,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-premium p-4 z-50 border border-gray-100"
                   >
-                    <h3 className="text-sm font-bold text-charcoal mb-3">
+                    <h3 className="text-sm font-bold text-charcoal mb-3 ml-2">
                       Tasks Due Today
                     </h3>
                     {notifications.length === 0 ? (
