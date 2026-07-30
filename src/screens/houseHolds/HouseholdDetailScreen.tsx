@@ -7,7 +7,6 @@ import { useHouseholdDetail } from "./hooks/useHouseholdDetail";
 import AddTaskModal from "../tasks/components/AddTaskModal";
 import AssignmentModal from "./components/AssignmentModal";
 import FairnessBalance from "./components/FairnessBalance";
-import HouseholdHeader from "./components/HouseholdHeader";
 import HouseholdInfo from "./components/HouseholdInfo";
 import LeaveHouseholdModal from "./components/LeaveHouseholdModal";
 import PointsModal from "./components/PointsModal";
@@ -112,11 +111,6 @@ const HouseholdDetailScreen = () => {
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen flex flex-col pb-24">
-      <HouseholdHeader
-        currentUser={currentUser}
-        onBack={() => navigate("/home")}
-      />
-
       <main className="px-6 py-6 overflow-x-hidden">
         <HouseholdInfo
           name={household.name}
