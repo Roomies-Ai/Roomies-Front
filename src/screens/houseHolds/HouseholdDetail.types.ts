@@ -23,12 +23,13 @@ export interface FairnessBalanceProps {
 }
 
 export interface TaskFiltersProps {
-  activeTab: "OPEN" | "IN_PROGRESS" | "DONE";
-  setActiveTab: (tab: "OPEN" | "IN_PROGRESS" | "DONE") => void;
+  activeTab: "OPEN" | "IN_PROGRESS" | "DONE" | "OVERDUE";
+  setActiveTab: (tab: "OPEN" | "IN_PROGRESS" | "DONE" | "OVERDUE") => void;
   counts: {
     open: number;
     inProgress: number;
     done: number;
+    overdue: number;
   };
 }
 

@@ -1,14 +1,14 @@
 import { useState, useMemo, useCallback } from 'react';
 
-const TAB_BY_STATUS: Record<string, 'OPEN' | 'IN_PROGRESS' | 'DONE'> = {
+const TAB_BY_STATUS: Record<string, 'OPEN' | 'IN_PROGRESS' | 'DONE' | 'OVERDUE'> = {
     'pending': 'OPEN',
-    'overdue': 'OPEN',
+    'overdue': 'OVERDUE',
     'in-progress': 'IN_PROGRESS',
     'completed': 'DONE',
 };
 
 export const useHouseholdUI = (household: any, targetTaskId?: string | null) => {
-    const [activeTab, setActiveTab] = useState<'OPEN' | 'IN_PROGRESS' | 'DONE'>('OPEN');
+    const [activeTab, setActiveTab] = useState<'OPEN' | 'IN_PROGRESS' | 'DONE' | 'OVERDUE'>('OPEN');
     const [searchQuery, setSearchQuery] = useState('');
     const [appliedTargetId, setAppliedTargetId] = useState<string | null>(null);
 
@@ -28,7 +28,8 @@ export const useHouseholdUI = (household: any, targetTaskId?: string | null) => 
         return household?.tasks?.filter((task: any) => {
             const status = task.status?.toLowerCase();
             const matchesTab =
-                (activeTab === 'OPEN' && (status === 'pending' || status === 'overdue')) ||
+                (activeTab === 'OPEN' && status === 'pending') ||
+                (activeTab === 'OVERDUE' && status === 'overdue') ||
                 (activeTab === 'IN_PROGRESS' && status === 'in-progress') ||
                 (activeTab === 'DONE' && status === 'completed');
             const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());

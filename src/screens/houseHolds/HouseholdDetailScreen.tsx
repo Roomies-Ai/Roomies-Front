@@ -129,9 +129,10 @@ const HouseholdDetailScreen = () => {
           setActiveTab={setActiveTab}
           counts={{
             open: household.tasks.filter(
-              (t: any) =>
-                t.status?.toLowerCase() === "pending" ||
-                t.status?.toLowerCase() === "overdue",
+              (t: any) => t.status?.toLowerCase() === "pending",
+            ).length,
+            overdue: household.tasks.filter(
+              (t: any) => t.status?.toLowerCase() === "overdue",
             ).length,
             inProgress: household.tasks.filter(
               (t: any) => t.status?.toLowerCase() === "in-progress",
