@@ -12,9 +12,9 @@ import { useHomeUI } from './hooks/useHomeUI';
 
 const HomeScreen = () => {
     const { households, loading, error, refresh } = useHomeScreen();
-    const { 
-        handleCreateJoin, 
-        handleJoinWithCode, 
+    const {
+        handleCreateJoin,
+        handleJoinWithCode,
         handleNavigateToHousehold,
         handleLeaveHousehold,
         handleConfirmLeave,
@@ -24,7 +24,7 @@ const HomeScreen = () => {
     } = useHomeUI(refresh);
 
     return (
-        <div className="bg-white flex-1 flex flex-col relative">
+        <div className="bg-[#F8FAFC] flex-1 flex flex-col relative">
             {/* MAIN CONTENT AREA */}
             <div className="flex-1 flex flex-col overflow-hidden px-8 w-full max-w-4xl mx-auto">
                 {loading ? (
@@ -36,9 +36,9 @@ const HomeScreen = () => {
                         {/* 1. SCROLLABLE CONTENT (List or Empty State) */}
                         <div className="flex-1 overflow-y-auto scrollbar-hide py-4 pb-28">
                             {households.length > 0 ? (
-                                <HouseholdList 
-                                    households={households} 
-                                    onNavigate={handleNavigateToHousehold} 
+                                <HouseholdList
+                                    households={households}
+                                    onNavigate={handleNavigateToHousehold}
                                     onLeave={handleLeaveHousehold}
                                 />
                             ) : (
@@ -47,15 +47,15 @@ const HomeScreen = () => {
                         </div>
 
                         {/* 2. FIXED FOOTER (Buttons) */}
-                        <HomeActionButtons 
-                            onCreateJoin={handleCreateJoin} 
-                            onHaveInviteCode={handleJoinWithCode} 
+                        <HomeActionButtons
+                            onCreateJoin={handleCreateJoin}
+                            onHaveInviteCode={handleJoinWithCode}
                         />
                     </div>
                 )}
             </div>
-            
-            <LeaveHouseholdModal 
+
+            <LeaveHouseholdModal
                 isOpen={isLeaveModalOpen}
                 onClose={() => setIsLeaveModalOpen(false)}
                 onConfirm={handleConfirmLeave}
