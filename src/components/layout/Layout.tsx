@@ -30,7 +30,7 @@ const Layout = () => {
             <Header showActions={true} />
 
             {/* Main Content Area */}
-            <main className="flex-1 flex flex-col relative pb-24 pt-28">
+            <main className="flex-1 flex flex-col relative pb-24 pt-28 bg-[#F8FAFC]">
                 <Outlet />
             </main>
 
@@ -69,16 +69,14 @@ const Layout = () => {
                                 className={`flex flex-col items-center gap-1.5 transition-[transform,opacity,color] duration-300 relative group`}
                                 style={{ background: 'none', boxShadow: 'none', padding: 0, transform: 'none' }}
                             >
-                                <div className={`transition-[transform,opacity,color] duration-300 ${
-                                    isActive
+                                <div className={`transition-[transform,opacity,color] duration-300 ${isActive
                                         ? 'text-primary scale-110'
                                         : 'text-[#94A3B8] hover:text-primary/70'
-                                }`}>
+                                    }`}>
                                     <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                                 </div>
-                                <span className={`text-[10px] font-bold uppercase tracking-wider transition-[color,opacity] duration-300 ${
-                                    isActive ? 'text-primary' : 'text-[#94A3B8]'
-                                }`}>
+                                <span className={`text-[10px] font-bold uppercase tracking-wider transition-[color,opacity] duration-300 ${isActive ? 'text-primary' : 'text-[#94A3B8]'
+                                    }`}>
                                     {item.label}
                                 </span>
                             </button>
