@@ -18,12 +18,17 @@ const Layout = () => {
     const { data: activeHousehold } = useGetHouseholdByIdQuery(activeHouseholdId ?? '', { skip: !isViewingHousehold });
     const { data: households = [] } = useGetMyHouseholdsQuery();
 
-    const navItems = [
+    let navItems = [
         { icon: Home, path: '/home', label: 'Home' },
         { icon: CheckCircle2, path: '/tasks', label: 'Tasks' },
         { icon: BarChart3, path: '/stats', label: 'Stats' },
         { icon: User, path: '/profile', label: 'Profile' },
     ];
+
+    // if user is not in a household, remove the Home tab
+    if (households?.length === 0) {
+        navItems = navItems.filter(item => item.path !== '/tasks' && item.path !== '/stats');
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-white font-body">

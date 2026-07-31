@@ -11,9 +11,6 @@ export const useHouseholdUI = (household: any, targetTaskId?: string | null) => 
     const [searchQuery, setSearchQuery] = useState('');
     const [appliedTargetId, setAppliedTargetId] = useState<string | null>(null);
 
-    // Jump to whichever tab holds the task the user navigated to (e.g. from search),
-    // so it isn't hidden behind the currently active status filter. Runs once
-    // household data has arrived, guarded so it only fires once per target id.
     if (household && targetTaskId && targetTaskId !== appliedTargetId) {
         const targetTask = household.tasks?.find((t: any) => t.id === targetTaskId);
         const tab = targetTask && TAB_BY_STATUS[targetTask.status?.toLowerCase()];
@@ -24,12 +21,18 @@ export const useHouseholdUI = (household: any, targetTaskId?: string | null) => 
     const filteredTasks = useMemo(() => {
         return household?.tasks?.filter((task: any) => {
             const status = task.status?.toLowerCase();
+            const isCompleted = status === 'completed';
+            const isAssigned = !!task.assignee;
             const matchesTab = 
-                (activeTab === 'OPEN' && status === 'pending') ||
-                (activeTab === 'IN_PROGRESS' && status === 'in-progress') ||
-                (activeTab === 'DONE' && status === 'completed');
+                (activeTab === 'OPEN' && !isAssigned && !isCompleted) ||
+                (activeTab === 'IN_PROGRESS' && isAssigned && !isCompleted) ||
+                (activeTab === 'DONE' && isCompleted);
             const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesTab && matchesSearch;
+        }).sort((a: any, b: any) => {
+            const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+            const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+            return dateA - dateB;
         }) || [];
     }, [household?.tasks, activeTab, searchQuery]);
 
