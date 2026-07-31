@@ -21,6 +21,7 @@ const TaskCard = ({
     String(currentUser?.id || currentUser?.userId);
   const isPending = task.status?.toLowerCase() === "pending";
   const isCompleted = task.status?.toLowerCase() === "completed";
+  const isOverdue = task.dueDate && new Date(task.dueDate).getTime() < new Date().setHours(0,0,0,0) && !isCompleted;
 
   return (
     <motion.div
@@ -33,12 +34,12 @@ const TaskCard = ({
       className={`bg-white p-6 rounded-[2.5rem] shadow-sm border flex flex-col gap-6 cursor-pointer hover:border-primary/20 hover:shadow-md transition-[transform,opacity,box-shadow,border-color] group ${
         isHighlighted
           ? "border-primary ring-4 ring-primary/30"
-          : "border-slate-50"
+          : isOverdue ? "border-red-200 bg-red-50" : "border-slate-50"
       }`}
     >
       <div className="flex justify-between items-start">
         <div className="flex gap-4 flex-1 min-w-0">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-[#3B95EA] shrink-0">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isOverdue ? 'bg-red-500 text-red-500' : 'bg-blue-50 text-[#3B95EA]'}`}>
             <TaskIcon title={task.title} size={24} />
           </div>
           <div className="min-w-0 flex-1 pt-1">
@@ -50,7 +51,7 @@ const TaskCard = ({
                 {task.taskType?.name || "General"}
               </span>
               <span className="text-slate-300 shrink-0">•</span>
-              <div className="flex items-center gap-1.5 bg-blue-50 px-2 py-1 rounded-md border border-blue-100 text-[#3B95EA] shrink-0">
+              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md border shrink-0 ${isOverdue ? 'bg-red-50 border-red-200 text-red-500' : 'bg-blue-50 border-blue-100 text-[#3B95EA]'}`}>
                 <Calendar size={10} />
                 <span className="text-[10px] font-black uppercase tracking-wider">
                   {task.dueDate

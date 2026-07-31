@@ -75,13 +75,13 @@ export const useStats = () => {
 
     const handleTakeTask = async (taskId: string) => {
         if (!currentUser || !stats) return;
-        
+
         // Optimistic UI Update
         const task = stats.tasks.find((t: any) => t.id === taskId);
         const isOverdue = task?.dueDate && new Date(task.dueDate) < new Date();
         const nextStatus = isOverdue ? 'overdue' : 'in-progress';
 
-        const updatedTasks = stats.tasks.map((t: any) => 
+        const updatedTasks = stats.tasks.map((t: any) =>
             t.id === taskId ? { ...t, assignee: currentUser, status: nextStatus } : t
         );
         const newStats = { ...stats, tasks: updatedTasks };
