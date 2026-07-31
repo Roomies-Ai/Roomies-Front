@@ -39,7 +39,7 @@ const TaskCard = ({
     >
       <div className="flex justify-between items-start">
         <div className="flex gap-4 flex-1 min-w-0">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isOverdue ? 'bg-red-500 text-red-500' : 'bg-blue-50 text-[#3B95EA]'}`}>
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isOverdue ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-[#3B95EA]'}`}>
             <TaskIcon title={task.title} size={24} />
           </div>
           <div className="min-w-0 flex-1 pt-1">

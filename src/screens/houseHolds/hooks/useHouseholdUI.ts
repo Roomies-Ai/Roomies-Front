@@ -21,10 +21,12 @@ export const useHouseholdUI = (household: any, targetTaskId?: string | null) => 
     const filteredTasks = useMemo(() => {
         return household?.tasks?.filter((task: any) => {
             const status = task.status?.toLowerCase();
+            const isCompleted = status === 'completed';
+            const isAssigned = !!task.assignee;
             const matchesTab = 
-                (activeTab === 'OPEN' && status === 'pending') ||
-                (activeTab === 'IN_PROGRESS' && status === 'in-progress') ||
-                (activeTab === 'DONE' && status === 'completed');
+                (activeTab === 'OPEN' && !isAssigned && !isCompleted) ||
+                (activeTab === 'IN_PROGRESS' && isAssigned && !isCompleted) ||
+                (activeTab === 'DONE' && isCompleted);
             const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesTab && matchesSearch;
         }).sort((a: any, b: any) => {
