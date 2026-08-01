@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CheckSquare, Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHouseholdDetail } from "./hooks/useHouseholdDetail";
+import { deriveTab } from "./hooks/useHouseholdUI";
 
 // Sub-components
 import AddTaskModal from "../tasks/components/AddTaskModal";
@@ -128,18 +129,16 @@ const HouseholdDetailScreen = () => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           counts={{
-            open: household.tasks.filter(
-              (t: any) => t.status?.toLowerCase() === "pending",
-            ).length,
+            open: household.tasks.filter((t: any) => deriveTab(t) === "OPEN")
+              .length,
             overdue: household.tasks.filter(
-              (t: any) => t.status?.toLowerCase() === "overdue",
+              (t: any) => deriveTab(t) === "OVERDUE",
             ).length,
             inProgress: household.tasks.filter(
-              (t: any) => t.status?.toLowerCase() === "in-progress",
+              (t: any) => deriveTab(t) === "IN_PROGRESS",
             ).length,
-            done: household.tasks.filter(
-              (t: any) => t.status?.toLowerCase() === "completed",
-            ).length,
+            done: household.tasks.filter((t: any) => deriveTab(t) === "DONE")
+              .length,
           }}
         />
 

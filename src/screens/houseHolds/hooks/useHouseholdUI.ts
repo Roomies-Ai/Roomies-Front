@@ -1,10 +1,15 @@
 import { useState, useMemo, useCallback } from 'react';
 
-const TAB_BY_STATUS: Record<string, 'OPEN' | 'IN_PROGRESS' | 'DONE' | 'OVERDUE'> = {
-    'pending': 'OPEN',
-    'overdue': 'OVERDUE',
-    'in-progress': 'IN_PROGRESS',
-    'completed': 'DONE',
+// Mirrors the overdue check used for the red styling on TaskCard/TaskItem: due
+// date has passed (as of today) and the task isn't done yet. Kept in sync with
+// the live due date rather than the backend's daily-cron `status` field so a
+// task's tab always matches how it's actually rendered.
+export const deriveTab = (task: any): 'OPEN' | 'IN_PROGRESS' | 'DONE' | 'OVERDUE' => {
+    const status = task.status?.toLowerCase();
+    if (status === 'completed') return 'DONE';
+    const isOverdue = task.dueDate && new Date(task.dueDate).getTime() < new Date().setHours(0, 0, 0, 0);
+    if (isOverdue) return 'OVERDUE';
+    return task.assignee ? 'IN_PROGRESS' : 'OPEN';
 };
 
 export const useHouseholdUI = (household: any, targetTaskId?: string | null) => {
@@ -12,28 +17,23 @@ export const useHouseholdUI = (household: any, targetTaskId?: string | null) => 
     const [searchQuery, setSearchQuery] = useState('');
     const [appliedTargetId, setAppliedTargetId] = useState<string | null>(null);
 
-    // Jump to whichever tab holds the task the user navigated to (e.g. from search),
-    // so it isn't hidden behind the currently active status filter. Runs once
-    // household data has arrived, guarded so it only fires once per target id.
     if (household && targetTaskId && targetTaskId !== appliedTargetId) {
         const targetTask = household.tasks?.find((t: any) => t.id === targetTaskId);
         if (targetTask) {
-            const tab = TAB_BY_STATUS[targetTask.status?.toLowerCase()];
-            if (tab) setActiveTab(tab);
+            setActiveTab(deriveTab(targetTask));
             setAppliedTargetId(targetTaskId);
         }
     }
 
     const filteredTasks = useMemo(() => {
         return household?.tasks?.filter((task: any) => {
-            const status = task.status?.toLowerCase();
-            const matchesTab =
-                (activeTab === 'OPEN' && status === 'pending') ||
-                (activeTab === 'OVERDUE' && status === 'overdue') ||
-                (activeTab === 'IN_PROGRESS' && status === 'in-progress') ||
-                (activeTab === 'DONE' && status === 'completed');
+            const matchesTab = deriveTab(task) === activeTab;
             const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesTab && matchesSearch;
+        }).sort((a: any, b: any) => {
+            const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+            const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+            return dateA - dateB;
         }) || [];
     }, [household?.tasks, activeTab, searchQuery]);
 

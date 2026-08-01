@@ -31,7 +31,12 @@ export const useTasks = () => {
                 ]);
 
                 const allWithTasks = householdsList.map(h => {
-                    const filteredTasks = myTasks.filter(t => t.household?.id === h.id);
+                    const filteredTasks = myTasks.filter(t => t.household?.id === h.id)
+                        .sort((a, b) => {
+                            if (!a.dueDate) return 1;
+                            if (!b.dueDate) return -1;
+                            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+                        });
                     return {
                         ...h,
                         tasks: filteredTasks,
@@ -45,7 +50,14 @@ export const useTasks = () => {
                 setHouseholds(allWithTasks.filter(h => h.tasks.length > 0));
             } else {
                 const list = await getMyHouseholds(false).unwrap();
-                const withTasks = list.map(h => ({ ...h, tasks: h.tasks || [] }));
+                const withTasks = list.map(h => ({
+                    ...h,
+                    tasks: [...(h.tasks || [])].sort((a: any, b: any) => {
+                        if (!a.dueDate) return 1;
+                        if (!b.dueDate) return -1;
+                        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+                    })
+                }));
                 setAllHouseholdsRaw(withTasks);
                 setHouseholds(withTasks);
             }
@@ -64,9 +76,17 @@ export const useTasks = () => {
         try {
             const full = await getHouseholdById(householdId).unwrap();
             loadedHouseholdIds.current.add(householdId);
-            setHouseholds(prev => prev.map(h => 
-                h.id === householdId ? { ...h, ...full } : h
-            ));
+            setHouseholds(prev => prev.map(h => {
+                if (h.id === householdId) {
+                    const sortedTasks = [...(full.tasks || [])].sort((a: any, b: any) => {
+                        if (!a.dueDate) return 1;
+                        if (!b.dueDate) return -1;
+                        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+                    });
+                    return { ...h, ...full, tasks: sortedTasks };
+                }
+                return h;
+            }));
         } catch (err) {
             console.error(`Failed to lazy load tasks for household ${householdId}:`, err);
         } finally {

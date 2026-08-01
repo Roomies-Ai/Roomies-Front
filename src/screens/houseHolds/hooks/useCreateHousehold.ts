@@ -3,9 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateHouseholdMutation } from '../../../api/household.api';
 import { HOUSE_TYPES } from '../../../api/houseType.api';
 import { taskApi, type SuggestedTask } from '../../../api/task.api';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { setUser } from '../../../store/slices/authSlice';
 
 export const useCreateHousehold = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const { user } = useAppSelector(state => state.auth);
     const [createHousehold] = useCreateHouseholdMutation();
     const [step, setStep] = useState(1);
     const [name, setName] = useState('');
@@ -124,6 +128,13 @@ export const useCreateHousehold = () => {
 
             if (approvedTasks.length > 0) {
                 await taskApi.bulkCreate(household.id, approvedTasks);
+            }
+            if (user) {
+                const updatedUser = {
+                    ...user,
+                    households: [...(user.households || []), { id: household.id, name: household.name }]
+                };
+                dispatch(setUser(updatedUser));
             }
 
             navigate('/home');

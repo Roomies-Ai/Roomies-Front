@@ -12,6 +12,7 @@ export interface TaskItemHeaderProps {
     task: Task;
     isCompleted: boolean;
     isProgress: boolean;
+    isOverdue: boolean;
     onEdit: () => void;
     onToggle: () => void;
     showComplete: boolean;
@@ -22,4 +23,5 @@ export interface TaskItemHeaderProps {
 export interface TaskItemFooterProps {
     task: Task;
     onAssignClick?: () => void;
+    isOverdue: boolean;
 }
