@@ -4,6 +4,7 @@ export interface TaskItemProps {
     task: Task;
     onToggle: () => void;
     onEdit: () => void;
+    onAssignClick?: () => void;
     showComplete?: boolean;
 }
 
@@ -21,5 +22,6 @@ export interface TaskItemHeaderProps {
 
 export interface TaskItemFooterProps {
     task: Task;
+    onAssignClick?: () => void;
     isOverdue: boolean;
 }

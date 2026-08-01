@@ -3,6 +3,7 @@ import { useAppSelector } from '../../../store/hooks';
 import { useLazyGetMyHouseholdsQuery, useLazyGetHouseholdByIdQuery } from '../../../api/household.api';
 import { taskApi } from '../../../api/task.api';
 import { useTaskActions } from './useTaskActions';
+import { useTasksAssignment } from './useTasksAssignment';
 import type { HouseholdTasks, TaskFilter } from '../types/tasks.types';
 
 export const useTasks = () => {
@@ -10,6 +11,7 @@ export const useTasks = () => {
     const [getMyHouseholds] = useLazyGetMyHouseholdsQuery();
     const [getHouseholdById] = useLazyGetHouseholdByIdQuery();
     const [households, setHouseholds] = useState<HouseholdTasks[]>([]);
+    const [allHouseholdsRaw, setAllHouseholdsRaw] = useState<HouseholdTasks[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [filter, setFilter] = useState<TaskFilter>('ME');
@@ -28,7 +30,7 @@ export const useTasks = () => {
                     taskApi.getMyTasks()
                 ]);
 
-                const householdsWithMyTasks = householdsList.map(h => {
+                const allWithTasks = householdsList.map(h => {
                     const filteredTasks = myTasks.filter(t => t.household?.id === h.id)
                         .sort((a, b) => {
                             if (!a.dueDate) return 1;
@@ -39,22 +41,25 @@ export const useTasks = () => {
                         ...h,
                         tasks: filteredTasks,
                         taskCount: filteredTasks.length,
-                        members: h.members || [], 
+                        members: h.members || [],
                         taskTypes: h.taskTypes || []
                     };
-                }).filter(h => h.tasks.length > 0);
+                });
 
-                setHouseholds(householdsWithMyTasks);
+                setAllHouseholdsRaw(allWithTasks);
+                setHouseholds(allWithTasks.filter(h => h.tasks.length > 0));
             } else {
                 const list = await getMyHouseholds(false).unwrap();
-                setHouseholds(list.map(h => ({
+                const withTasks = list.map(h => ({
                     ...h,
                     tasks: [...(h.tasks || [])].sort((a: any, b: any) => {
                         if (!a.dueDate) return 1;
                         if (!b.dueDate) return -1;
                         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
                     })
-                })));
+                }));
+                setAllHouseholdsRaw(withTasks);
+                setHouseholds(withTasks);
             }
         } catch (err: any) {
             setError(err.data?.message || err.message || 'Failed to fetch tasks');
@@ -101,6 +106,18 @@ export const useTasks = () => {
         handleClearRecurrence,
     } = useTaskActions({ setHouseholds, refresh: fetchData });
 
+    const {
+        assigningTaskId,
+        assigningHousehold,
+        isLoadingHousehold,
+        openAssignModal,
+        closeAssignModal,
+        isSuggesting,
+        suggestion, setSuggestion,
+        handleGetSuggestion,
+        handleAssignTask
+    } = useTasksAssignment(households, setHouseholds, fetchData);
+
     return useMemo(() => ({
         currentUser,
         filteredHouseholds: households,
@@ -116,8 +133,19 @@ export const useTasks = () => {
         handleClearRecurrence,
         fetchHouseholdTasks,
         refresh: fetchData,
-        allHouseholds: households
-    }), [currentUser, households, filter, setFilter, loading, loadingHouseholds, error,
+        allHouseholds: allHouseholdsRaw,
+        assigningTaskId,
+        assigningHousehold,
+        isLoadingHousehold,
+        openAssignModal,
+        closeAssignModal,
+        isSuggesting,
+        suggestion, setSuggestion,
+        handleGetSuggestion,
+        handleAssignTask
+    }), [currentUser, households, allHouseholdsRaw, filter, setFilter, loading, loadingHouseholds, error,
         handleUpdateTaskStatus, handleUpdateTask, handleAddTask, handleDeleteTask,
-        handleClearRecurrence, fetchHouseholdTasks, fetchData]);
+        handleClearRecurrence, fetchHouseholdTasks, fetchData,
+        assigningTaskId, assigningHousehold, isLoadingHousehold, openAssignModal, closeAssignModal,
+        isSuggesting, suggestion, setSuggestion, handleGetSuggestion, handleAssignTask]);
 };

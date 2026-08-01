@@ -6,7 +6,8 @@ const TaskFilters = ({ activeTab, setActiveTab, counts }: TaskFiltersProps) => {
             {[
                 { id: 'OPEN', label: 'Open', count: counts.open },
                 { id: 'IN_PROGRESS', label: 'In Progress', count: counts.inProgress },
-                { id: 'DONE', label: 'Done', count: counts.done }
+                { id: 'DONE', label: 'Done', count: counts.done },
+                { id: 'OVERDUE', label: 'Overdue', count: counts.overdue }
             ].map((tab) => (
                 <button
                     key={tab.id}

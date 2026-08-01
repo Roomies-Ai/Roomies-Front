@@ -2,7 +2,7 @@ import robotIcon from '../../../../assets/svg/robot.svg';
 
 const LoginHeader: React.FC = () => {
     return (
-        <div className="relative w-full h-[320px] shrink-0">
+        <div className="relative w-full h-[320px] md:h-[280px] lg:h-[320px] shrink-0">
             <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{

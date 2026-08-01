@@ -11,9 +11,10 @@ const AssignmentModal = ({
     assigningTaskId, 
     currentUser, 
     handleAssignTask, 
-    handleGetSuggestion, 
-    isSuggesting, 
-    suggestion 
+    handleGetSuggestion,
+    isSuggesting,
+    suggestion,
+    isLoadingHousehold
 }: AssignmentModalProps) => {
     return (
         <AnimatePresence>
@@ -75,15 +76,21 @@ const AssignmentModal = ({
                                 </button>
                             )}
                             
-                            {household.members?.map((member: any) => (
-                                <MemberAssignmentItem 
-                                    key={member.id}
-                                    member={member}
-                                    isSuggested={suggestion?.userId === member.id}
-                                    isMe={member.id === currentUser?.id}
-                                    onClick={() => handleAssignTask(assigningTaskId, member.id)}
-                                />
-                            ))}
+                            {isLoadingHousehold ? (
+                                <div className="text-center py-10 text-slate-400 font-bold">
+                                    Loading members...
+                                </div>
+                            ) : (
+                                household.members?.map((member: any) => (
+                                    <MemberAssignmentItem
+                                        key={member.id}
+                                        member={member}
+                                        isSuggested={suggestion?.userId === member.id}
+                                        isMe={member.id === currentUser?.id}
+                                        onClick={() => handleAssignTask(assigningTaskId, member.id)}
+                                    />
+                                ))
+                            )}
                         </div>
                     </motion.div>
                 </div>

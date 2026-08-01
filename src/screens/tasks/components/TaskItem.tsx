@@ -6,7 +6,7 @@ import TaskItemHeader from './TaskItemHeader';
 import TaskItemFooter from './TaskItemFooter';
 import { taskApi } from '../../../api/task.api';
 
-const TaskItem = React.memo(({ task, onToggle, onEdit, showComplete = true }: TaskItemProps) => {
+const TaskItem = React.memo(({ task, onToggle, onEdit, onAssignClick, showComplete = true }: TaskItemProps) => {
     const isCompleted = task.status?.toLowerCase() === 'completed';
     const isProgress = task.status?.toLowerCase() === 'in-progress';
     const isOverdue = Boolean(task.dueDate && new Date(task.dueDate) < new Date() && !isCompleted);
@@ -57,7 +57,7 @@ const TaskItem = React.memo(({ task, onToggle, onEdit, showComplete = true }: Ta
                     isExpanded={isExpanded}
                 />
 
-                <TaskItemFooter task={task} isOverdue={isOverdue} />
+                <TaskItemFooter task={task} onAssignClick={onAssignClick} isOverdue={isOverdue} />
             </motion.div>
 
             {isTemplate && isExpanded && (

@@ -12,6 +12,7 @@ interface HouseholdTaskGroupProps {
     onToggleExpand: () => void;
     onUpdateTaskStatus: (taskId: string, currentStatus: string) => void;
     onEditTask: (task: Task) => void;
+    onAssignClick: (taskId: string) => void;
     showCompleteInItem: boolean;
 }
 
@@ -22,6 +23,7 @@ const HouseholdTaskGroup = React.memo(({
     onToggleExpand,
     onUpdateTaskStatus,
     onEditTask,
+    onAssignClick,
     showCompleteInItem
 }: HouseholdTaskGroupProps) => {
     return (
@@ -60,11 +62,12 @@ const HouseholdTaskGroup = React.memo(({
                                 </>
                             ) : (
                                 household.tasks.map((task) => (
-                                    <TaskItem 
-                                        key={task.id} 
-                                        task={task} 
+                                    <TaskItem
+                                        key={task.id}
+                                        task={task}
                                         onToggle={() => onUpdateTaskStatus(task.id, task.status)}
-                                        onEdit={() => onEditTask(task)}
+                                        onEdit={() => onEditTask({ ...task, household: task.household || { id: household.id, name: household.name } })}
+                                        onAssignClick={() => onAssignClick(task.id)}
                                         showComplete={showCompleteInItem}
                                     />
                                 ))

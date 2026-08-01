@@ -47,6 +47,8 @@ export const useAddTaskModal = ({
     }, [households, selectedHousehold, lockedHouseholdId]);
 
     useEffect(() => {
+        let cancelled = false;
+
         const fetchActiveDetail = async () => {
             if (!selectedHousehold) return;
 
@@ -56,22 +58,23 @@ export const useAddTaskModal = ({
             }
 
             const inList = households.find(h => h.id === selectedHousehold);
-            if (inList && inList.members && inList.taskTypes) {
+            if (inList && inList.members?.length > 0 && inList.taskTypes?.length > 0) {
                 householdDetailCache.current[selectedHousehold] = inList;
-                setActiveHouseholdDetail(inList);
+                if (!cancelled) setActiveHouseholdDetail(inList);
                 return;
             }
 
             try {
                 const full = await getHouseholdById(selectedHousehold).unwrap();
                 householdDetailCache.current[selectedHousehold] = full;
-                setActiveHouseholdDetail(full);
+                if (!cancelled) setActiveHouseholdDetail(full);
             } catch (err) {
                 console.error('Failed to fetch active household detail', err);
             }
         };
 
         fetchActiveDetail();
+        return () => { cancelled = true; };
     }, [selectedHousehold, getHouseholdById, households]);
 
     const activeHousehold = activeHouseholdDetail;
@@ -94,11 +97,10 @@ export const useAddTaskModal = ({
             }
             setRecurrenceRule(taskToEdit.recurrenceRule ?? null);
             
-            const parentHousehold = households.find(h => 
-                h.tasks?.some((t: any) => t.id === taskToEdit.id)
-            );
-            if (parentHousehold) {
-                setSelectedHousehold(parentHousehold.id);
+            const parentHouseholdId = taskToEdit.household?.id
+                || households.find(h => h.tasks?.some((t: any) => t.id === taskToEdit.id))?.id;
+            if (parentHouseholdId) {
+                setSelectedHousehold(parentHouseholdId);
             }
             
             setMode('MANUAL');

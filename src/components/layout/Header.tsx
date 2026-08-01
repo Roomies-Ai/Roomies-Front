@@ -40,6 +40,12 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
     closeSearch();
   };
 
+  const handleNotificationClick = (task: any) => {
+    if (!task.household?.id) return;
+    navigate(`/households/${task.household.id}?taskId=${task.id}`);
+    setShowNotifications(false);
+  };
+
   useEffect(() => {
     if (!isSearchOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
@@ -214,7 +220,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                                   <h4 className="text-xs font-bold text-red-500 mb-2 uppercase tracking-wider">Overdue</h4>
                                   <div className="space-y-2">
                                       {notifications.filter(task => task.dueDate && new Date(task.dueDate).getTime() < new Date().setHours(0,0,0,0)).map((task) => (
-                                          <div key={task.id} className="flex gap-3 items-start p-2 rounded-xl bg-red-50/50 hover:bg-red-50 transition-colors cursor-pointer border border-red-100/50">
+                                          <div key={task.id} onClick={() => handleNotificationClick(task)} className="flex gap-3 items-start p-2 rounded-xl bg-red-50/50 hover:bg-red-50 transition-colors cursor-pointer border border-red-100/50">
                                               <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs font-bold flex-shrink-0">
                                                   {task.taskType?.name?.[0]?.toUpperCase() || '🔴'}
                                               </div>
@@ -235,7 +241,7 @@ const Header: React.FC<HeaderProps> = ({ showActions = true }) => {
                                   <h4 className="text-xs font-bold text-medium-gray mb-2 uppercase tracking-wider">Due Today</h4>
                                   <div className="space-y-2">
                                       {notifications.filter(task => !task.dueDate || new Date(task.dueDate).getTime() >= new Date().setHours(0,0,0,0)).map((task) => (
-                                          <div key={task.id} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+                                          <div key={task.id} onClick={() => handleNotificationClick(task)} className="flex gap-3 items-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
                                               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
                                                   {task.taskType?.name?.[0]?.toUpperCase() || '📋'}
                                               </div>
